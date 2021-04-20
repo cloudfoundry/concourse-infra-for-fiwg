@@ -1,0 +1,23 @@
+{{- if .Values.web.enabled -}}
+{{- if or .Values.concourse.web.auth.mainTeam.config (or .Values.concourse.web.configRBAC .Values.concourse.web.baseResourceTypeDefaults) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "concourse.web.fullname" . }}
+  labels:
+    app: {{ template "concourse.web.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  {{- if .Values.concourse.web.auth.mainTeam.config }}
+  main-team.yml: {{ .Values.concourse.web.auth.mainTeam.config | quote }}
+  {{- end -}}
+  {{- if .Values.concourse.web.configRBAC }}
+  config-rbac.yml: {{ .Values.concourse.web.configRBAC | quote }}
+  {{- end -}}
+  {{- if .Values.concourse.web.baseResourceTypeDefaults }}
+  brt-defaults.yml: {{ .Values.concourse.web.baseResourceTypeDefaults | quote }}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

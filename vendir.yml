@@ -1,0 +1,21 @@
+---
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+minimumRequiredVersion: 0.11.0
+directories:
+
+# the components in this section below are handled by their corresponding build scripts
+# the manual param tells vendir to not override/touch the contents of these config/_ytt_lib/<concourse> directories
+- path: config/concourse/_ytt_lib
+  contents:
+  - path: concourse
+    manual: {}
+
+- path: build/concourse/_vendir/
+  contents:
+  - path: .
+    helmChart:
+      name: concourse
+      version: "15.0.3"
+      repository:
+        url: https://concourse-charts.storage.googleapis.com/
