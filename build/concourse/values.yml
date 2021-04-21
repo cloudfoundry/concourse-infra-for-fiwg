@@ -12,4 +12,9 @@ concourse:
     kubernetes:
       enabled: false
     credhub:
-      enabled: true
+      enabled: false
+
+web:
+  service:
+    api:
+      type: LoadBalancer

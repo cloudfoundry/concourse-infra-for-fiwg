@@ -83,7 +83,7 @@ metadata:
     release: concourse
     heritage: Helm
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
   - name: atc
     port: 8080
@@ -219,18 +219,6 @@ spec:
               key: postgresql-password
         - name: CONCOURSE_POSTGRES_DATABASE
           value: concourse
-        - name: CONCOURSE_CREDHUB_URL
-          value: null
-        - name: CONCOURSE_CREDHUB_CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: concourse-web
-              key: credhub-client-id
-        - name: CONCOURSE_CREDHUB_CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: concourse-web
-              key: credhub-client-secret
         - name: CONCOURSE_GC_INTERVAL
           value: 30s
         - name: CONCOURSE_GC_ONE_OFF_GRACE_PERIOD
@@ -292,9 +280,6 @@ spec:
         - name: concourse-keys
           mountPath: /concourse-keys
           readOnly: true
-        - name: credhub-keys
-          mountPath: /concourse-credhub
-          readOnly: true
         - name: auth-keys
           mountPath: /concourse-auth
           readOnly: true
@@ -310,11 +295,6 @@ spec:
             path: session_signing_key
           - key: worker-key-pub
             path: worker_key.pub
-      - name: credhub-keys
-        secret:
-          secretName: concourse-web
-          defaultMode: 256
-          items: null
       - name: auth-keys
         secret:
           secretName: concourse-web
