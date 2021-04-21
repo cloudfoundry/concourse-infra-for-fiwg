@@ -3,6 +3,14 @@ apiVersion: vendir.k14s.io/v1alpha1
 kind: Config
 minimumRequiredVersion: 0.11.0
 directories:
+- path: config/credhub/_ytt_lib
+  contents:
+  - path: .
+    git:
+      url: https://github.com/cloudfoundry-incubator/credhub
+      ref: efe8a24
+    includePaths:
+    - kubernetes/**/*
 
 # the components in this section below are handled by their corresponding build scripts
 # the manual param tells vendir to not override/touch the contents of these config/_ytt_lib/<concourse> directories
@@ -10,6 +18,11 @@ directories:
   contents:
   - path: concourse
     manual: {}
+- path: config/quarks-secret/_ytt_lib
+  contents:
+  - path: quarks-secret
+    manual: {}
+
 
 - path: build/concourse/_vendir/
   contents:
@@ -19,3 +32,12 @@ directories:
       version: "15.0.3"
       repository:
         url: https://concourse-charts.storage.googleapis.com/
+
+- path: build/quarks-secret/_vendir/
+  contents:
+  - path: .
+    helmChart:
+      name: quarks-secret
+      version: "1.0.758"
+      repository:
+        url: https://cloudfoundry-incubator.github.io/quarks-helm

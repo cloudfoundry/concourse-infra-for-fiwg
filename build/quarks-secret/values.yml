@@ -1,0 +1,6 @@
+fullnameOverride: quarks-secret
+
+global:
+  monitoredID: concourse
+
+applyCRD: false

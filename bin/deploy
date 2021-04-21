@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kapp deploy -a concourse -f <(ytt -f config)

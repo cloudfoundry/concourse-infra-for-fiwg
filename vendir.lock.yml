@@ -1,6 +1,12 @@
 apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
+  - git:
+      commitTitle: Update CredHub API doc URL...
+      sha: efe8a2424526964d693afdedbfb3760deb9eba33
+    path: .
+  path: config/credhub/_ytt_lib
+- contents:
   - manual: {}
     path: concourse
   path: config/concourse/_ytt_lib
@@ -10,4 +16,10 @@ directories:
       version: 15.0.3
     path: .
   path: build/concourse/_vendir/
+- contents:
+  - helmChart:
+      appVersion: 1.0.758
+      version: 1.0.758
+    path: .
+  path: build/quarks-secret/_vendir/
 kind: LockConfig
