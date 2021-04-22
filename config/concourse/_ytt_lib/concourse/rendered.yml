@@ -31,51 +31,6 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: concourse-postgresql-headless
-  labels:
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.13
-    app.kubernetes.io/instance: concourse
-    app.kubernetes.io/managed-by: Helm
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-  namespace: default
-spec:
-  type: ClusterIP
-  clusterIP: None
-  publishNotReadyAddresses: true
-  ports:
-  - name: tcp-postgresql
-    port: 5432
-    targetPort: tcp-postgresql
-  selector:
-    app.kubernetes.io/name: postgresql
-    app.kubernetes.io/instance: concourse
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: concourse-postgresql
-  labels:
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.13
-    app.kubernetes.io/instance: concourse
-    app.kubernetes.io/managed-by: Helm
-  annotations: null
-  namespace: default
-spec:
-  type: ClusterIP
-  ports:
-  - name: tcp-postgresql
-    port: 5432
-    targetPort: tcp-postgresql
-  selector:
-    app.kubernetes.io/name: postgresql
-    app.kubernetes.io/instance: concourse
-    role: primary
----
-apiVersion: v1
-kind: Service
-metadata:
   name: concourse-web
   labels:
     app: concourse-web
@@ -155,14 +110,23 @@ spec:
         - --migrate-to-latest-version
         env:
         - name: CONCOURSE_POSTGRES_HOST
-          value: concourse-postgresql
+          value: 127.0.0.1
+        - name: CONCOURSE_POSTGRES_PORT
+          value: "5432"
         - name: CONCOURSE_POSTGRES_USER
-          value: concourse
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: postgresql-user
         - name: CONCOURSE_POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: concourse-postgresql
+              name: concourse-web
               key: postgresql-password
+        - name: CONCOURSE_POSTGRES_SSLMODE
+          value: disable
+        - name: CONCOURSE_POSTGRES_CONNECT_TIMEOUT
+          value: 5m
         - name: CONCOURSE_POSTGRES_DATABASE
           value: concourse
         volumeMounts: null
@@ -209,14 +173,23 @@ spec:
         - name: CONCOURSE_BUILD_TRACKER_INTERVAL
           value: 10s
         - name: CONCOURSE_POSTGRES_HOST
-          value: concourse-postgresql
+          value: 127.0.0.1
+        - name: CONCOURSE_POSTGRES_PORT
+          value: "5432"
         - name: CONCOURSE_POSTGRES_USER
-          value: concourse
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: postgresql-user
         - name: CONCOURSE_POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: concourse-postgresql
+              name: concourse-web
               key: postgresql-password
+        - name: CONCOURSE_POSTGRES_SSLMODE
+          value: disable
+        - name: CONCOURSE_POSTGRES_CONNECT_TIMEOUT
+          value: 5m
         - name: CONCOURSE_POSTGRES_DATABASE
           value: concourse
         - name: CONCOURSE_GC_INTERVAL
@@ -300,154 +273,6 @@ spec:
           secretName: concourse-web
           defaultMode: 256
           items: null
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: concourse-postgresql
-  labels:
-    app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.13
-    app.kubernetes.io/instance: concourse
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: primary
-  annotations: null
-  namespace: default
-spec:
-  serviceName: concourse-postgresql-headless
-  replicas: 1
-  updateStrategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: postgresql
-      app.kubernetes.io/instance: concourse
-      role: primary
-  template:
-    metadata:
-      name: concourse-postgresql
-      labels:
-        app.kubernetes.io/name: postgresql
-        helm.sh/chart: postgresql-10.3.13
-        app.kubernetes.io/instance: concourse
-        app.kubernetes.io/managed-by: Helm
-        role: primary
-        app.kubernetes.io/component: primary
-    spec:
-      affinity:
-        podAffinity: null
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: postgresql
-                  app.kubernetes.io/instance: concourse
-                  app.kubernetes.io/component: primary
-              namespaces:
-              - default
-              topologyKey: kubernetes.io/hostname
-            weight: 1
-        nodeAffinity: null
-      securityContext:
-        fsGroup: 1001
-      containers:
-      - name: concourse-postgresql
-        image: docker.io/bitnami/postgresql:11.11.0-debian-10-r31
-        imagePullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: 250m
-            memory: 256Mi
-        securityContext:
-          runAsUser: 1001
-        env:
-        - name: BITNAMI_DEBUG
-          value: "false"
-        - name: POSTGRESQL_PORT_NUMBER
-          value: "5432"
-        - name: POSTGRESQL_VOLUME_DIR
-          value: /bitnami/postgresql
-        - name: PGDATA
-          value: /bitnami/postgresql/data
-        - name: POSTGRES_POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: concourse-postgresql
-              key: postgresql-postgres-password
-        - name: POSTGRES_USER
-          value: concourse
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: concourse-postgresql
-              key: postgresql-password
-        - name: POSTGRES_DB
-          value: concourse
-        - name: POSTGRESQL_ENABLE_LDAP
-          value: "no"
-        - name: POSTGRESQL_ENABLE_TLS
-          value: "no"
-        - name: POSTGRESQL_LOG_HOSTNAME
-          value: "false"
-        - name: POSTGRESQL_LOG_CONNECTIONS
-          value: "false"
-        - name: POSTGRESQL_LOG_DISCONNECTIONS
-          value: "false"
-        - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
-          value: "off"
-        - name: POSTGRESQL_CLIENT_MIN_MESSAGES
-          value: error
-        - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
-          value: pgaudit
-        ports:
-        - name: tcp-postgresql
-          containerPort: 5432
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - exec pg_isready -U "concourse" -d "dbname=concourse" -h 127.0.0.1 -p 5432
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 6
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - -e
-            - |
-              exec pg_isready -U "concourse" -d "dbname=concourse" -h 127.0.0.1 -p 5432
-              [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 6
-        volumeMounts:
-        - name: dshm
-          mountPath: /dev/shm
-        - name: data
-          mountPath: /bitnami/postgresql
-          subPath: null
-      volumes:
-      - name: dshm
-        emptyDir:
-          medium: Memory
-          sizeLimit: 1Gi
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 8Gi
 ---
 apiVersion: apps/v1
 kind: StatefulSet

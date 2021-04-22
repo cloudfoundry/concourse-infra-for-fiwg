@@ -1,35 +1,42 @@
 #@ load("@ytt:template", "template")
 #@ load("@ytt:data", "data")
 
-#@ def add_database_user(name):
----
-apiVersion: sql.cnrm.cloud.google.com/v1beta1
-kind: SQLUser
+apiVersion: apps/v1
+kind: DaemonSet
 metadata:
-  name: #@ name
+  name: cloudsql-proxy
   namespace: concourse
-  annotations:
-    cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
+  labels:
+    app: cloudsql-proxy
 spec:
-  resourceID: concourse
-  instanceRef:
-    external: #@ data.values.database.name
-  password:
-    valueFrom:
-      secretKeyRef:
-        name: #@ name + "-postgresql-password"
-        key: password
----
-apiVersion: quarks.cloudfoundry.org/v1alpha1
-kind: QuarksSecret
-metadata:
-  name: #@ name + "-postgresql-password"
-  namespace: concourse
-spec:
-  type: password
-  secretName: #@ name + "-postgresql-password"
-#@ end
-
---- #@ template.replace(add_database_user("concourse"))
---- #@ template.replace(add_database_user("credhub"))
---- #@ template.replace(add_database_user("uaa"))
+  selector:
+    matchLabels:
+      app: cloudsql-proxy
+  template:
+    metadata:
+      labels:
+        app: cloudsql-proxy
+    spec:
+      serviceAccountName: cloud-sql-auth-proxy
+      containers:
+      - name: cloudsql-proxy
+        image: 'gcr.io/cloudsql-docker/gce-proxy:1.17'
+        command:
+        - /cloud_sql_proxy
+        args:
+        - --dir=/cloudsql
+        - #@ "-instances=" + data.values.google.project_id + ":" + data.values.google.region + ":" + data.values.database.name + "=tcp:0.0.0.0:5432"
+        ports:
+        - name: cloudsql-port
+          containerPort: 5432
+          hostPort: 5432
+        livenessProbe:
+          tcpSocket:
+            port: cloudsql-port
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: cloudsql-port
+          initialDelaySeconds: 5
+          timeoutSeconds: 1

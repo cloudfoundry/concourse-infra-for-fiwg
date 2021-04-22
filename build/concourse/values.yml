@@ -7,13 +7,18 @@ rbac:
 secrets:
   create: false
 
+postgresql:
+  enabled: false
+
 concourse:
   web:
     kubernetes:
       enabled: false
     credhub:
       enabled: false
-
+    postgres:
+      host: 127.0.0.1
+      database: concourse
 web:
   service:
     api:

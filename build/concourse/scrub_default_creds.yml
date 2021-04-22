@@ -1,9 +1,5 @@
 #@ load("@ytt:overlay", "overlay")
 
-#@overlay/match by=overlay.subset({"kind": "Secret", "metadata": {"name": "concourse-postgresql"}})
-#@overlay/remove
----
-
 #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "concourse-web"}})
 ---
 spec:
