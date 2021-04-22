@@ -1,5 +1,6 @@
 #@data/values
 ---
-#! your system domain, e.g., "system.cf.example.com"
-blobstore:
-  access_key_id: foo
+google:
+  project_id: cloud-foundry-310819
+database:
+  name: concourse3
