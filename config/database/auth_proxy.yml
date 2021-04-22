@@ -1,0 +1,58 @@
+#@ load("@ytt:data", "data")
+
+#@ def email():
+#@ return "cloud-sql-auth-proxy@" + data.values.google.project_id + ".iam.gserviceaccount.com"
+#@ end
+
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  name: cloud-sql-auth-proxy
+  namespace: concourse
+  annotations:
+    cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
+spec:
+  displayName: Used by Cloud SQL Auth proxy
+
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: iampolicymember-cloud-sql-auth-proxy
+  namespace: concourse
+  annotations:
+    cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
+spec:
+  member: #@ "serviceAccount:" + email()
+  role: roles/cloudsql.client
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: #@ "projects/" + data.values.google.project_id
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-sql-auth-proxy
+  namespace: concourse
+  annotations:
+    iam.gke.io/gcp-service-account: #@ email()
+
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: iampolicymember-cloud-sql-auth-proxy-workload-identity
+  namespace: concourse
+  annotations:
+    cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
+spec:
+  member: #@ "serviceAccount:" + data.values.google.project_id + ".svc.id.goog[concourse/cloud-sql-auth-proxy]"
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: cloud-sql-auth-proxy
+    namespace: concourse

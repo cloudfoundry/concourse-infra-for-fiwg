@@ -2,5 +2,6 @@
 ---
 google:
   project_id: cloud-foundry-310819
+  region: europe-west4
 database:
   name: concourse3

@@ -19,4 +19,21 @@ metadata:
   labels:
     quarks.cloudfoundry.org/monitored: concourse
 
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "concourse-web"}})
+---
+spec:
+  template:
+    spec:
+      serviceAccountName: cloud-sql-auth-proxy
+      containers:
+      #@overlay/append
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.17
+        command:
+          - "/cloud_sql_proxy"
+          - "-log_debug_stdout=true"
+          - #@ "-instances=" + data.values.google.project_id + ":" + data.values.google.region + ":" + data.values.database.name + "=tcp:5432"
+        securityContext:
+          runAsNonRoot: true
+
 --- #@ template.replace(overlay.apply(library.get("concourse").eval(), add_concourse_namespace()))
