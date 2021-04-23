@@ -47,7 +47,6 @@ spec:
           valueFrom:
             fieldRef:
               apiVersion: v1
-              fieldPath: status.hostIP      #@overlay/append
-
+              fieldPath: status.hostIP
 
 --- #@ template.replace(overlay.apply(library.get("concourse").eval(), add_concourse_namespace()))
