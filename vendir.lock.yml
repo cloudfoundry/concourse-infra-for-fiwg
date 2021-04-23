@@ -5,11 +5,23 @@ directories:
       commitTitle: Update CredHub API doc URL...
       sha: efe8a2424526964d693afdedbfb3760deb9eba33
     path: .
-  path: config/credhub/_ytt_lib
+  path: config/credhub/_ytt_lib/credhub
+- contents:
+  - git:
+      commitTitle: Update UAA image reference in k8s deployment template to 75.1.0
+      sha: 2776c98e3135745803ecbd099d3298ef8feb2f3b
+      tags:
+      - v75.1.0
+    path: .
+  path: config/uaa/_ytt_lib/uaa
 - contents:
   - manual: {}
     path: concourse
   path: config/concourse/_ytt_lib
+- contents:
+  - manual: {}
+    path: quarks-secret
+  path: config/quarks-secret/_ytt_lib
 - contents:
   - helmChart:
       appVersion: 7.2.0

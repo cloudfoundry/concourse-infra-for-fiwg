@@ -1,0 +1,13 @@
+#@ load("@ytt:library", "library")
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:template", "template")
+
+#@ def add_concourse_namespace():
+#@overlay/match by=overlay.all, expects="1+"
+---
+metadata:
+  #@overlay/match missing_ok=True
+  namespace: concourse
+#@ end
+
+--- #!@ template.replace(overlay.apply(library.get("credhub").eval(), add_concourse_namespace()))
