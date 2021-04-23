@@ -4,6 +4,10 @@
 #@ return "cloud-sql-auth-proxy@" + data.values.google.project_id + ".iam.gserviceaccount.com"
 #@ end
 
+#!@ Based on these docs: https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine
+#!@ K8s Service account bound via workloadIdentity to Google Service account with cloudsql.client
+#!@ cnrm references: https://cloud.google.com/config-connector/docs/reference/resource-docs/iam/iampolicymember
+
 ---
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMServiceAccount
