@@ -10,6 +10,7 @@ and supporting infra structure used by the community maintained BOSH stemcell.
 - ytt
 - kapp
 - jq
+- kubectl
 
 ## Getting started
 
@@ -48,7 +49,7 @@ gcloud container clusters create concourse \
     --release-channel regular \
     --addons ConfigConnector \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
-    --enable-stackdriver-kubernetes
+    --enable-stackdriver-kubernetes \
     --enable-autoscaling --max-nodes=3 --min-nodes=1
 ```
 
