@@ -9,8 +9,10 @@ metadata:
   name: #@ name
   namespace: concourse
   annotations:
+    kapp.k14s.io/owned-for-deletion: ""
     cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
 spec:
+  resourceID: #@ name
   instanceRef:
     external: #@ data.values.database.name
   password:
@@ -32,3 +34,26 @@ spec:
 --- #@ template.replace(add_database_user("concourse"))
 --- #@ template.replace(add_database_user("credhub"))
 --- #@ template.replace(add_database_user("uaa"))
+
+---
+apiVersion: kapp.k14s.io/v1alpha1
+kind: Config
+
+rebaseRules:
+- path: [metadata, annotations, cnrm.cloud.google.com/management-conflict-prevention-policy]
+  type: copy
+  sources: [new, existing]
+  resourceMatchers: &matchers
+  - apiVersionKindMatcher:
+      apiVersion: sql.cnrm.cloud.google.com/v1beta1
+      kind: SQLUser
+
+- path: [metadata, annotations, cnrm.cloud.google.com/mutable-but-unreadable-fields]
+  type: copy
+  sources: [new, existing]
+  resourceMatchers: *matchers
+
+- path: [metadata, annotations, cnrm.cloud.google.com/observed-secret-versions]
+  type: copy
+  sources: [new, existing]
+  resourceMatchers: *matchers
