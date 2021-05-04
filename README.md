@@ -50,7 +50,7 @@ gcloud container clusters create concourse \
     --addons ConfigConnector \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-stackdriver-kubernetes \
-    --enable-autoscaling --max-nodes=3 --min-nodes=1
+    --enable-autoscaling --max-nodes=6 --min-nodes=1
 ```
 
 #### config connector
