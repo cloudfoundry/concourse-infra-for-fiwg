@@ -51,13 +51,13 @@ login:
 
 ---
 
-#@ def secret_uaa_client_credential_data(client_name, credentials):
-oauth:
-  #@yaml/text-templated-strings
-  clients:
-    (@= client_name @):
-      secret: #@ credentials
-#@ end
+#! #@ def secret_uaa_client_credential_data(client_name, credentials):
+#! oauth:
+#!   #@yaml/text-templated-strings
+#!   clients:
+#!     (@= client_name @):
+#!       secret: #@ credentials
+#! #@ end
 
 #@ uaa = library.get("uaa")
 ---
