@@ -1,6 +1,7 @@
 #@ load("@ytt:library", "library")
 #@ load("@ytt:overlay", "overlay")
 #@ load("@ytt:template", "template")
+#@ load("@ytt:yaml", "yaml")
 
 #@ def add_concourse_namespace():
 #@overlay/match by=overlay.all, expects="1+"
@@ -10,4 +11,70 @@ metadata:
   namespace: concourse
 #@ end
 
---- #!@ template.replace(overlay.apply(library.get("credhub").eval(), add_concourse_namespace()))
+
+---
+#@ template.replace(overlay.apply(library.get("credhub").eval(), add_concourse_namespace()))
+---
+
+#! Remove templated secrets so we can generate the credentials w/ Quarks
+#@ def remove(kind, name):
+#@overlay/remove
+kind: #@ kind
+metadata:
+  name: #@ name
+#@ end
+
+--- #!@overlay/match by=overlay.subset(remove("Secret", "uaa-ca"))
+--- #!@overlay/match by=overlay.subset(remove("Secret", "server-ca"))
+--- #@overlay/match by=overlay.subset(remove("ConfigMap", "credhub-config"))
+
+#! removing the loadbalancer ip as we should just randomly pick one
+#@overlay/match by=overlay.subset({"kind": "Service", "metadata":{"name":"credhub"}})
+---
+spec:
+  #@overlay/remove
+  loadBalancerIP:
+
+#@overlay/match by=overlay.subset({"kind":"Deployment", "metadata":{"name":"credhub"}})
+---
+spec:
+  template:
+    spec: #! pod spec
+      containers:
+      #@overlay/match by=overlay.subset({"name": "credhub-server"})
+      #@overlay/merge
+      - name: credhub-server
+        env:
+        #@overlay/append
+        - name: CREDHUB_POSTGRES_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        #@overlay/match by=overlay.subset({"name": "KEY_STORE_PASSWORD"})
+        #@overlay/replace
+        - name: KEY_STORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: credhub-keystore-key
+              key: password
+        #@overlay/match by=overlay.subset({"name": "TRUST_STORE_PASSWORD"})
+        #@overlay/replace
+        - name: TRUST_STORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: credhub-truststore-key
+              key: password
+        #@overlay/match by=overlay.subset({"name": "ENCRYPTION_PASSWORD"})
+        #@overlay/replace
+        - name: ENCRYPTION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: encryption-key
+              key: password
+      volumes:
+        #@overlay/match by=overlay.subset({"name": "config"})
+        #@overlay/replace
+        - name: config
+          secret:
+            secretName: credhub-config
