@@ -42,6 +42,13 @@ gcloud sql instances create concourse \
     --root-password=$(gcloud secrets versions access $(gcloud --format=json secrets versions list postgres-admin | jq -r 'map(select(.state == "ENABLED"))[0].name'))
 ```
 
+create databases on sql instance
+```
+for ds in concourse credhub uaa; do \
+gcloud sql databases create $ds --instance concourse; \
+done
+```
+
 #### build gke
 ```
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
