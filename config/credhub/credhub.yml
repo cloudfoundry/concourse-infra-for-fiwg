@@ -78,3 +78,8 @@ spec:
         - name: config
           secret:
             secretName: credhub-config
+        #@overlay/match by=overlay.subset({"name": "config"})
+        #@overlay/replace
+        - name: server-ca
+          secret:
+            secretName: credhub.ca
