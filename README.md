@@ -57,7 +57,24 @@ gcloud container clusters create concourse \
     --addons ConfigConnector \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-stackdriver-kubernetes \
-    --enable-autoscaling --max-nodes=6 --min-nodes=1
+    --region europe-west4-a \
+    --enable-autoscaling --max-nodes=6 --min-nodes=4
+```
+TODO: --cluster-ipv4-cidr
+
+create _concourse_ namespace
+Created outside of kapp so that kapp can store its metadata inside the _concourse_ namespace
+TODO: change namespace setting in bin/deploy before recreting the cluster
+```
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: concourse
+  labels:
+    quarks.cloudfoundry.org/monitored: concourse
+EOF
 ```
 
 #### config connector
