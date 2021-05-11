@@ -154,6 +154,8 @@ spec:
             secretKeyRef:
               name: concourse-web
               key: local-users
+        - name: CONCOURSE_EXTERNAL_URL
+          value: http://34.90.62.88:8080
         - name: CONCOURSE_DEBUG_BIND_IP
           value: 127.0.0.1
         - name: CONCOURSE_DEBUG_BIND_PORT
@@ -192,6 +194,20 @@ spec:
           value: 5m
         - name: CONCOURSE_POSTGRES_DATABASE
           value: concourse
+        - name: CONCOURSE_CREDHUB_CA_CERT
+          value: /concourse-credhub/ca.cert
+        - name: CONCOURSE_CREDHUB_URL
+          value: https://credhub.concourse.svc.cluster.local:9000
+        - name: CONCOURSE_CREDHUB_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: credhub-client-id
+        - name: CONCOURSE_CREDHUB_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: credhub-client-secret
         - name: CONCOURSE_GC_INTERVAL
           value: 30s
         - name: CONCOURSE_GC_ONE_OFF_GRACE_PERIOD
@@ -204,6 +220,18 @@ spec:
           value: /concourse-keys/session_signing_key
         - name: CONCOURSE_MAIN_TEAM_LOCAL_USER
           value: test
+        - name: CONCOURSE_MAIN_TEAM_GITHUB_USER
+          value: ramonskie, yatzek
+        - name: CONCOURSE_GITHUB_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: github-client-id
+        - name: CONCOURSE_GITHUB_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: concourse-web
+              key: github-client-secret
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -253,6 +281,9 @@ spec:
         - name: concourse-keys
           mountPath: /concourse-keys
           readOnly: true
+        - name: credhub-keys
+          mountPath: /concourse-credhub
+          readOnly: true
         - name: auth-keys
           mountPath: /concourse-auth
           readOnly: true
@@ -268,6 +299,13 @@ spec:
             path: session_signing_key
           - key: worker-key-pub
             path: worker_key.pub
+      - name: credhub-keys
+        secret:
+          secretName: concourse-web
+          defaultMode: 256
+          items:
+          - key: credhub-ca-cert
+            path: ca.cert
       - name: auth-keys
         secret:
           secretName: concourse-web

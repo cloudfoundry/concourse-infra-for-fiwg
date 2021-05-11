@@ -15,10 +15,32 @@ concourse:
     kubernetes:
       enabled: false
     credhub:
-      enabled: false
+      enabled: true
+      url: https://credhub.concourse.svc.cluster.local:9000
+      useCaCert: true
+      insecureSkipVerify: false
     postgres:
       host: 127.0.0.1
       database: concourse
+    localAuth:
+      enabled: true
+    auth:
+      github:
+        enabled: true
+      mainTeam:
+        github:
+          ## Comma-separated allow list of GitHub users.
+          ##
+          user: ramonskie, yatzek
+
+          ## Comma-separated allow list of GitHub orgs.
+          ##
+          org:
+
+          ## Comma-separated allow list of GitHub teams.
+          ##
+          team:
+    externalUrl: http://34.90.62.88:8080
 web:
   service:
     api:
