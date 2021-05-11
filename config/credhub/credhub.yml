@@ -25,7 +25,7 @@ metadata:
 #@ end
 
 --- #!@overlay/match by=overlay.subset(remove("Secret", "uaa-ca"))
---- #!@overlay/match by=overlay.subset(remove("Secret", "server-ca"))
+--- #@overlay/match by=overlay.subset(remove("Secret", "server-ca"))
 --- #@overlay/match by=overlay.subset(remove("ConfigMap", "credhub-config"))
 
 #! removing the loadbalancer ip as we should just randomly pick one
