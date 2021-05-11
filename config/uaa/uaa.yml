@@ -97,25 +97,25 @@ oauth:
       autoapprove:
       - openid
       id: admin
-    credhub_client:
+    credhub_cli:
       override: true
       authorized-grant-types: password,refresh_token
       scope: credhub.read,credhub.write
       authorities: uaa.resource
       access-token-validity: 60
       refresh-token-validity: 1800
+      secret: ""
     credhub_admin_client:
-      override: true
-      authorized-grant-types: client_credentials
-      scope: uaa.none
-      authorities: credhub.read,credhub.write
       access-token-validity: 3600
+      authorities: credhub.read,credhub.write
+      authorized-grant-types: client_credentials
+      override: true
+      scope: ""
   #@overlay/match missing_ok=True
   user:
     authorities:
       - openid
       - scim.me
-      - scim.userids
       - cloud_controller.read
       - cloud_controller.write
       - cloud_controller_service_permissions.read
@@ -123,58 +123,15 @@ oauth:
       - uaa.user
       - approvals.me
       - oauth.approvals
+      - notification_preferences.read
+      - notification_preferences.write
       - profile
       - roles
       - user_attributes
       - uaa.offline_token
+      - credhub.read
+      - credhub.write
 
-issuer:
-  uri: #@ "https://uaa." + data.values.system_domain
-
-#@overlay/match missing_ok=True
-zones:
-  internal:
-    hostnames:
-    - #@ "uaa.concourse" + ".svc.cluster.local"
-
-#@overlay/match missing_ok=True
-#@overlay/match-child-defaults missing_ok=True
-login:
-  url: #@ "https://login." + data.values.system_domain
-  entityBaseURL: #@ "https://uaa." + data.values.system_domain
-  entityID: cloudfoundry-saml-login
-
-#@overlay/remove
-LOGIN_SECRET: "uaa-login-secret"
-
-#@overlay/match missing_ok=True
-uaa:
-  url: #@ "https://uaa." + data.values.system_domain
-  token:
-    url: #@ "https://uaa." + data.values.system_domain + "/oauth/token"
-  approvals:
-    url: #@ "https://uaa." + data.values.system_domain + "/approvals"
-  login:
-    url: #@ "https://uaa." + data.values.system_domain + "/authenticate"
-  limitedFunctionality:
-    enabled: false
-    whitelist:
-      endpoints:
-        - /oauth/authorize/**
-        - /oauth/token/**
-        - /check_token/**
-        - /login/**
-        - /login.do
-        - /logout/**
-        - /logout.do
-        - /saml/**
-        - /autologin/**
-        - /authenticate/**
-        - /idp_discovery/**
-      methods:
-        - GET
-        - HEAD
-        - OPTIONS
 #@ end
 
 #@ def overlay_uaa_config(old, new):
@@ -240,12 +197,18 @@ spec:
           mountPath: #@ "{}/concourse_user_credentials.yml".format(secrets_dir)
           subPath: concourse_user_credentials.yml
           readOnly: true
-        #@overlay/remove
-        - name: admin-client-credentials-file
+        #@overlay/append
+        - name:  credhub-admin-client-credentials-file
+          mountPath: #@ "{}/credhub_admin_client_credentials.yml".format(secrets_dir)
+          subPath: credhub_admin_client_credentials.yml
+          readOnly: true
       volumes:
       #@overlay/append
       - name: concourse-user-credentials-file
         secret:
           secretName: uaa-concourse-user-credentials
-      #@overlay/remove
-      - name: admin-client-credentials-file
+      #@overlay/append
+      - name: credhub-admin-client-credentials-file
+        secret:
+          secretName: credhub-admin-client-credentials
+
