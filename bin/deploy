@@ -12,4 +12,4 @@ metadata:
 EOF
 fi
 
-kapp deploy -a concourse -n concourse -f <(ytt -f config)
+kapp deploy -c -a concourse -n concourse -f <(ytt -f config)
