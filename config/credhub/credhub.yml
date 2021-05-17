@@ -34,6 +34,7 @@ metadata:
 spec:
   #@overlay/remove
   loadBalancerIP:
+  type: ClusterIP
 
 #@overlay/match by=overlay.subset({"kind":"Deployment", "metadata":{"name":"credhub"}})
 ---
