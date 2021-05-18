@@ -194,8 +194,8 @@ spec:
         volumeMounts:
         #@overlay/append
         - name: concourse-user-credentials-file
-          mountPath: #@ "{}/concourse_user_credentials.yml".format(secrets_dir)
-          subPath: concourse_user_credentials.yml
+          mountPath: #@ "{}/concourse_admin_user_credentials.yml".format(secrets_dir)
+          subPath: concourse_admin_user_credentials.yml
           readOnly: true
         #@overlay/append
         - name:  credhub-admin-client-credentials-file
