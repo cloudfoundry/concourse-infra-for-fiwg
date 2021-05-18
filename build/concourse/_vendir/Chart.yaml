@@ -20,4 +20,4 @@ sources:
 - https://github.com/concourse/concourse-chart
 - https://github.com/concourse/concourse
 type: application
-version: 15.0.3
+version: 15.2.0

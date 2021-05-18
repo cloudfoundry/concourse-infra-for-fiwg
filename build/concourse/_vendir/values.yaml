@@ -545,7 +545,7 @@ concourse:
       ## if the Vault authentication backend requires params from secrets, set this to true,
       ## and provide a value in secrets (field `vault-client-auth-param`).
       ##
-      useAuthParam: false
+      useAuthParam:
 
       ## Path to a directory of PEMEncoded CA cert files to verify the vault server SSL cert.
       ##
@@ -1725,7 +1725,7 @@ concourse:
       ## Driver to use for managing volumes.
       ## Possible values: detect, naive, btrfs, and overlay.
       ##
-      driver: naive
+      driver:
 
       ## Path to btrfs binary
       ##
@@ -2138,11 +2138,14 @@ web:
     annotations: {}
 
     ## Hostnames.
-    ## Must be provided if Ingress is enabled.
-    ## Example:
-    ##   - concourse.domain.com
-    ##
+    ## Either `hosts` or `rulesOverride` must be provided if Ingress is enabled.
+    ## `hosts` sets up the Ingress with default rules per provided hostname.
     hosts:
+
+    ## Ingress rules override
+    ## Either `hosts` or `rulesOverride` must be provided if Ingress is enabled.
+    ## `rulesOverride` allows the user to define the full set of ingress rules, for more complex Ingress setups.
+    rulesOverride:
 
     ## TLS configuration.
     ## Secrets must be manually created in the namespace.
@@ -2246,6 +2249,11 @@ worker:
   ## For managing where secrets should be mounted for worker agents
   ##
   keySecretsPath: "/concourse-keys"
+
+  ## For managing where additional certs should be added into a worker.
+  ## You can add additional certs with secrets.workerAdditionalCerts
+  ##
+  certsPath: "/etc/ssl/certs"
 
   ## Configure additional volumeMounts for the
   ## worker container(s)
@@ -2682,6 +2690,18 @@ secrets:
   workerKeyPub: |-
     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC496FSYFcBAKgDtMsBAJiF/6/NxlXKP5UZecyEsedYuTt1GOgJTwaA1qZ1LmHsbfLDE68oDdiM4uvxfI4wtLhz57w3u0jOUxZ2JeF7SVwEf1nVqLn4Gh/f8GUNQGSyIp1zUD5Bx9fq0PAyQ47mt7Ufi84rcf8LKl7nzAIHTcdg2BvTkQN9bUGPaq/Pb1W2bKPAQy4OzXTSIyrAJ89TH2jFeaZfyxQFGbD9jVHH/yl0oiMrDeaRYgccE5II+KY7WoLjsBry/9Qf2ERELKTK4UeIGIqWci9lab1ti+GxFPPiC3krNFjo4jShV4eUs4cNIrjwNrxVaKPXmU6o7Y3Hpayx Concourse
 
+  ## Additonal certs to add to a workers certsPath
+  ## Example:
+  ## workerAdditionalCerts: |-
+  ##   -----BEGIN CERTIFICATE-----
+  ##   ....
+  ##   -----END CERTIFICATE-----
+  ##   -----BEGIN CERTIFICATE-----
+  ##   ....
+  ##   -----END CERTIFICATE-----
+  ##   ....
+  #
+  workerAdditionalCerts:
 
   ## Secrets for web interface login
   ##
