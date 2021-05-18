@@ -4,7 +4,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -19,7 +19,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 data:
@@ -34,7 +34,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -52,7 +52,7 @@ metadata:
   name: concourse-web-worker-gateway
   labels:
     app: concourse-web
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -70,7 +70,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -86,7 +86,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -318,7 +318,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-15.0.3
+    chart: concourse-15.2.0
     release: concourse
     heritage: Helm
 spec:
@@ -413,8 +413,6 @@ spec:
           value: 127.0.0.1
         - name: CONCOURSE_BAGGAGECLAIM_DEBUG_BIND_PORT
           value: "7787"
-        - name: CONCOURSE_BAGGAGECLAIM_DRIVER
-          value: naive
         - name: CONCOURSE_BAGGAGECLAIM_BTRFS_BIN
           value: btrfs
         - name: CONCOURSE_BAGGAGECLAIM_MKFS_BIN
