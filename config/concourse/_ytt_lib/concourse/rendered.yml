@@ -41,7 +41,7 @@ spec:
   type: LoadBalancer
   ports:
   - name: atc
-    port: 8080
+    port: 80
     targetPort: atc
   selector:
     app: concourse-web
@@ -146,7 +146,7 @@ spec:
         - name: CONCOURSE_LOG_LEVEL
           value: info
         - name: CONCOURSE_BIND_PORT
-          value: "8080"
+          value: "80"
         - name: CONCOURSE_BIND_IP
           value: 0.0.0.0
         - name: CONCOURSE_ADD_LOCAL_USER
@@ -155,7 +155,7 @@ spec:
               name: concourse-web
               key: local-users
         - name: CONCOURSE_EXTERNAL_URL
-          value: http://34.90.62.88:8080
+          value: http://ci.cloudfoundry.org
         - name: CONCOURSE_DEBUG_BIND_IP
           value: 127.0.0.1
         - name: CONCOURSE_DEBUG_BIND_PORT
@@ -256,7 +256,7 @@ spec:
           value: 30s
         ports:
         - name: atc
-          containerPort: 8080
+          containerPort: 80
         - name: tsa
           containerPort: 2222
         - name: atc-debug

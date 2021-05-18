@@ -12,6 +12,7 @@ postgresql:
 
 concourse:
   web:
+    bindPort: 80
     kubernetes:
       enabled: false
     credhub:
@@ -40,7 +41,7 @@ concourse:
           ## Comma-separated allow list of GitHub teams.
           ##
           team:
-    externalUrl: http://34.90.62.88:8080
+    externalUrl: http://ci.cloudfoundry.org
 web:
   service:
     api:
