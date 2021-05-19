@@ -23,6 +23,12 @@ gcloud init
 
 ### Rebuild infra from scratch
 
+#### create service account for infra resources
+```
+gcloud iam service-accounts create concourse
+PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null) \
+gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:concourse@$PROJECT_ID.iam.gserviceaccount.com" --role="roles/owner"
+```
 
 #### setup postgres
 if there are no passwords created for the postgresl admin password
