@@ -50,3 +50,4 @@ web:
   service:
     api:
       type: LoadBalancer
+      loadBalancerIP: 34.90.62.88

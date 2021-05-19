@@ -39,6 +39,7 @@ metadata:
     heritage: Helm
 spec:
   type: LoadBalancer
+  loadBalancerIP: 34.90.62.88
   ports:
   - name: atc
     port: 80
