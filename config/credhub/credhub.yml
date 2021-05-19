@@ -45,6 +45,7 @@ spec:
       #@overlay/match by=overlay.subset({"name": "credhub-server"})
       #@overlay/merge
       - name: credhub-server
+        image: pcfseceng/credhub:latest
         env:
         #@overlay/append
         - name: CREDHUB_POSTGRES_HOST
@@ -73,6 +74,10 @@ spec:
             secretKeyRef:
               name: encryption-key
               key: password
+        #@overlay/match by=overlay.subset({"name": "SUBJECT_ALTERNATIVE_NAMES"})
+        #@overlay/replace
+        - name: SUBJECT_ALTERNATIVE_NAMES
+          value: "IP:127.0.0.1, DNS:credhub.concourse.svc.cluster.local"
       volumes:
         #@overlay/match by=overlay.subset({"name": "config"})
         #@overlay/replace

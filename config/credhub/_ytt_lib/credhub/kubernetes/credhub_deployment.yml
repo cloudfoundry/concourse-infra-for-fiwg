@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: credhub-server
-          image: pcfseceng/credhub:latest
+          image: pcfseceng/credhub-src:latest
           #@ if/end data.values.use_local_image == "true":
           imagePullPolicy: Never
           ports:
@@ -42,7 +42,7 @@ spec:
               value: /etc/trusted_cas/certificate
             - name: SUBJECT_ALTERNATIVE_NAMES
               #@yaml/text-templated-strings
-              value: "IP:127.0.0.1, DNS:credhub.concourse.svc.cluster.local"
+              value: "IP: (@= data.values.load_balancer_ip @)"
           volumeMounts:
             - name: uaa-ca
               mountPath: /etc/trusted_cas

@@ -19,11 +19,11 @@
   security:
     authorization:
       acls:
-        enabled: false
+        enabled: true
       permissions:
         - actors:
-            - "uaa-client:credhub_cli"
-            - "uaa-client:credhub_admin_client"
+            - "uaa-client:credhub_client"
+            - "uaa-user:66e087aa-b6e2-4e98-b699-a0c17f175b27"
           operations:
             - read
             - write
