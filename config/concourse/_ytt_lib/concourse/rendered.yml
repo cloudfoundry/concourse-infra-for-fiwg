@@ -43,6 +43,9 @@ spec:
   - name: atc
     port: 80
     targetPort: atc
+  - name: atc-tls
+    port: 443
+    targetPort: atc-tls
   selector:
     app: concourse-web
 ---
@@ -154,8 +157,10 @@ spec:
             secretKeyRef:
               name: concourse-web
               key: local-users
+        - name: CONCOURSE_TLS_BIND_PORT
+          value: "443"
         - name: CONCOURSE_EXTERNAL_URL
-          value: http://ci.cloudfoundry.org
+          value: https://ci.cloudfoundry.org
         - name: CONCOURSE_DEBUG_BIND_IP
           value: 127.0.0.1
         - name: CONCOURSE_DEBUG_BIND_PORT
@@ -254,9 +259,13 @@ spec:
           value: /concourse-keys/worker_key.pub
         - name: CONCOURSE_TSA_HEARTBEAT_INTERVAL
           value: 30s
+        - name: CONCOURSE_ENABLE_LETS_ENCRYPT
+          value: "true"
         ports:
         - name: atc
           containerPort: 80
+        - name: atc-tls
+          containerPort: 443
         - name: tsa
           containerPort: 2222
         - name: atc-debug
