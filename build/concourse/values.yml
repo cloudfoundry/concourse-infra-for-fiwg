@@ -45,7 +45,7 @@ concourse:
           ## Comma-separated allow list of GitHub teams.
           ##
           team:
-    externalUrl: https://ci.cloudfoundry.org
+    externalUrl: https://bosh.ci.cloudfoundry.org
 web:
   service:
     api:
