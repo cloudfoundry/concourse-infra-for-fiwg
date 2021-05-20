@@ -17,9 +17,9 @@ set -eu
 
 
 credhub_server="https://credhub.concourse.svc.cluster.local:9000"
-credhub_ca_cert="$(kubectl get secret credhub.ca -o json | jq -r .data.certificate | base64 -D)"
+credhub_ca_cert="$(kubectl --namespace concourse get secret credhub.ca -o json | jq -r .data.certificate | base64 --decode)"
 credhub_client="credhub_admin_client"
-credhub_secret="$(kubectl get secret credhub-admin-client-credentials -o json | jq  -r .data.password | base64 -D)"
+credhub_secret="$(kubectl --namespace concourse get secret credhub-admin-client-credentials -o json | jq  -r .data.password | base64 --decode)"
 
 kubectl run credhub-cli \
         --rm -i -t \
