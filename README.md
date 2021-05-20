@@ -19,8 +19,6 @@ Configure the correct project and default region (will be loaded from project se
 gcloud init
 ```
 
-
-
 ### Rebuild infra from scratch
 
 #### create service account for infra resources
@@ -37,13 +35,16 @@ you can check this with `gcloud secrets versions list postgres-admin` if not fol
 gcloud secrets create postgres-admin
 openssl rand -base64 14 | gcloud secrets versions add postgres-admin --data-file=-
 ```
+
 build postgres instance
+
 ```
 gcloud sql instances create concourse \
     --database-version=POSTGRES_13 \
     --availability-type=regional \
     --region=$(gcloud config get-value compute/region 2>/dev/null) \
-    --cpu=1 --memory=4 \
+    --cpu=1 \
+    --memory=4 \
     --enable-point-in-time-recovery \
     --root-password=$(gcloud secrets versions access $(gcloud --format=json secrets versions list postgres-admin | jq -r 'map(select(.state == "ENABLED"))[0].name'))
 ```
@@ -51,7 +52,7 @@ gcloud sql instances create concourse \
 create databases on sql instance
 ```
 for ds in concourse credhub uaa; do \
-gcloud sql databases create $ds --instance concourse; \
+  gcloud sql databases create $ds --instance concourse; \
 done
 ```
 
@@ -64,23 +65,51 @@ gcloud container clusters create concourse \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-stackdriver-kubernetes \
     --region europe-west4-a \
-    --enable-autoscaling --max-nodes=6 --min-nodes=4
+    --num-nodes=1 \
+    --min-nodes=1 \
+    --max-nodes=3 \
+    --enable-autoscaling \
+    --cluster-ipv4-cidr=10.104.0.0/14 \
+    --master-ipv4-cidr=172.16.0.32/28 \
+    --enable-private-nodes \
+    --enable-ip-alias \
+    --no-enable-master-authorized-networks \
+    --machine-type=n1-standard-4 \
+    --service-account=concourse@$PROJECT_ID.iam.gserviceaccount.com
 ```
-TODO: --cluster-ipv4-cidr
 
-create _concourse_ namespace
-Created outside of kapp so that kapp can store its metadata inside the _concourse_ namespace
-TODO: change namespace setting in bin/deploy before recreting the cluster
 ```
-cat <<EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: concourse
-  labels:
-    quarks.cloudfoundry.org/monitored: concourse
-EOF
+PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
+gcloud container node-pools create concourse-workers \
+    --cluster=concourse \
+    --machine-type=n1-standard-8 \
+    --enable-autoscaling \
+    --enable-autoupgrade \
+    --preemptible \
+    --num-nodes=1 \
+    --min-nodes=1 \
+    --max-nodes=4 \
+    --region europe-west4-a \
+    --tags=workers-preemptible \
+    --node-taints=workers=true:NoSchedule \
+    --service-account=concourse@$PROJECT_ID.iam.gserviceaccount.com
+```
+
+NAT gateway:
+1. Create a Cloud Router:
+```
+gcloud compute routers create nat-router \
+    --network default \
+    --region europe-west4
+```
+
+2. Add a configuration to the router:
+```
+gcloud compute routers nats create nat-config \
+    --router-region europe-west4 \
+    --router nat-router \
+    --nat-all-subnet-ip-ranges \
+    --auto-allocate-nat-external-ips
 ```
 
 #### config connector
@@ -102,7 +131,7 @@ cnrm-system@${PROJECT_ID}.iam.gserviceaccount.com \
 
 # TODO document creating the concourse gke cluster using the gcloud cli
 
-#### Setting up the external Cloud Sql database
+- sql database uses an public ip address for sql proxy only. This should also be possible by using a private ip. See https://console.cloud.google.com/sql/instances/concourse/edit?orgonly=true&project=cloud-foundry-310819&supportedpurview=organizationId
 
 
 
