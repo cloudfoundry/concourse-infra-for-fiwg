@@ -67,3 +67,5 @@ worker:
       operator: "Equal"
       value: "true"
       effect: "NoSchedule"
+worker:
+  kind: Deployment
