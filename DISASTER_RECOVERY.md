@@ -39,9 +39,7 @@ Once both secrets have been modified, delete the credhub pod for the changes to 
 
 ## SQL users password update
 
-There is an issue with [configconnector](https://cloud.google.com/config-connector/docs/overview), in a situation
-where concourse is redeployed from scratch, SQL user passwords are not updated and pods cannot connect to their databases.
-In such situation update the passwords by running the script below:
+There is an issue with [Config Connector](https://cloud.google.com/config-connector/docs/overview), when concourse/uaa/credhub are redeployed from scratch, SQL user passwords are not updated and pods cannot connect to their databases. In such situation update the passwords by running the script below:
 ```
 for user in concourse credhub uaa; do \
   pass=$(kubectl get secret "$user-postgresql-password" -o json | jq -r .data.password | base64 --decode); \
