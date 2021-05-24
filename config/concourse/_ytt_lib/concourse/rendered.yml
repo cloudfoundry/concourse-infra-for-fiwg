@@ -345,6 +345,11 @@ spec:
         release: concourse
     spec:
       serviceAccountName: default
+      tolerations:
+      - effect: NoSchedule
+        key: workers
+        operator: Equal
+        value: "true"
       terminationGracePeriodSeconds: 60
       initContainers:
       - name: concourse-worker-init-rm
