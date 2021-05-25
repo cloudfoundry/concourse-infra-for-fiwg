@@ -435,6 +435,8 @@ spec:
         - name: pre-stop-hook
           mountPath: /pre-stop-hook.sh
           subPath: pre-stop-hook.sh
+        - mountPath: /concourse-work-dir
+          name: concourse-work-dir
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -455,6 +457,8 @@ spec:
                   app: concourse-worker
                   release: concourse
       volumes:
+      - emptyDir: {}
+        name: concourse-work-dir
       - name: pre-stop-hook
         configMap:
           name: concourse-worker
