@@ -139,7 +139,7 @@ cnrm-system@${PROJECT_ID}.iam.gserviceaccount.com \
 #### Store credhub encryption key in Google Secrets
 
 Once deployed, we have to save credhub encryption key to Google Secrets in case of a disaster situation.
-This is to be done only on first deployment, see [DISASTER_RECOVERY](./DISASTER_RECOVERY.md) for recovery details.
+This is to be done only on first deployment, see [docs/disaster_recovery](./docs/disaster_recovery.md) for recovery details.
 
 ```
 gcloud secrets create credhub-encryption-key

@@ -1,7 +1,7 @@
 # Disaster recovery
 
 Credhub encrypts secrets before storing them in a database.
-In case of a DR situation, credhub encryption key has to restored from GCP Secret Manager before credhub can read data from its database. See [README](./README.md) for more details about preserving the credhub encryption key in GCP.
+In case of a DR situation, credhub encryption key has to restored from GCP Secret Manager before credhub can read data from its database. See [README](../README.md) for more details about preserving the credhub encryption key in GCP.
 
 ## Restore Credhub encryption key from Google Secrets
 
