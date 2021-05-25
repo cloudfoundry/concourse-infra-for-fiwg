@@ -323,7 +323,7 @@ spec:
           items: null
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: concourse-worker
   labels:
@@ -332,7 +332,6 @@ metadata:
     release: concourse
     heritage: Helm
 spec:
-  serviceName: concourse-worker
   replicas: 2
   selector:
     matchLabels:
@@ -351,24 +350,6 @@ spec:
         operator: Equal
         value: "true"
       terminationGracePeriodSeconds: 60
-      initContainers:
-      - name: concourse-worker-init-rm
-        image: concourse/concourse:7.2.0
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: true
-        command:
-        - /bin/bash
-        args:
-        - -ce
-        - |-
-          for v in $((btrfs subvolume list --sort=-ogen "/concourse-work-dir" || true) | awk '{print $9}'); do
-            (btrfs subvolume show "/concourse-work-dir/$v" && btrfs subvolume delete "/concourse-work-dir/$v") || true
-          done
-          rm -rf "/concourse-work-dir/*"
-        volumeMounts:
-        - name: concourse-work-dir
-          mountPath: /concourse-work-dir
       containers:
       - name: concourse-worker
         image: concourse/concourse:7.2.0
@@ -400,6 +381,8 @@ spec:
           value: "8888"
         - name: CONCOURSE_HEALTHCHECK_TIMEOUT
           value: 5s
+        - name: CONCOURSE_EPHEMERAL
+          value: "true"
         - name: CONCOURSE_DEBUG_BIND_IP
           value: 127.0.0.1
         - name: CONCOURSE_DEBUG_BIND_PORT
@@ -449,11 +432,11 @@ spec:
         - name: concourse-keys
           mountPath: /concourse-keys
           readOnly: true
-        - name: concourse-work-dir
-          mountPath: /concourse-work-dir
         - name: pre-stop-hook
           mountPath: /pre-stop-hook.sh
           subPath: pre-stop-hook.sh
+        - mountPath: /concourse-work-dir
+          name: concourse-work-dir
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -474,6 +457,9 @@ spec:
                   app: concourse-worker
                   release: concourse
       volumes:
+      - emptyDir:
+          sizeLimit: 20Gi
+        name: concourse-work-dir
       - name: pre-stop-hook
         configMap:
           name: concourse-worker
@@ -486,15 +472,5 @@ spec:
             path: host_key.pub
           - key: worker-key
             path: worker_key
-  volumeClaimTemplates:
-  - metadata:
-      name: concourse-work-dir
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 20Gi
-  updateStrategy:
+  strategy:
     type: RollingUpdate
-  podManagementPolicy: Parallel

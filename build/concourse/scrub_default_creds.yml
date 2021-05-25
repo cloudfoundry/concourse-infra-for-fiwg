@@ -8,10 +8,12 @@ spec:
       #@overlay/remove
       annotations:
 
-#@overlay/match by=overlay.subset({"kind": "StatefulSet", "metadata": {"name": "concourse-worker"}})
+#! remove 'initContainers: null' from yaml, causes kapp to throw an error: "Unexpected non-array found: <nil>"
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "concourse-worker"}})
 ---
 spec:
   template:
-    metadata:
+    spec:
+      #@overlay/match by=overlay.subset(None),expects="0+"
       #@overlay/remove
-      annotations:
+      initContainers:
