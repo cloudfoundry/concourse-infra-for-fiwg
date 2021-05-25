@@ -40,11 +40,11 @@ concourse:
 
           ## Comma-separated allow list of GitHub orgs.
           ##
-          org: cloudfoundry
+          org:
 
           ## Comma-separated allow list of GitHub teams.
           ##
-          team: bosh-stemcell
+          team: cloudfoundry:bosh-stemcell
     externalUrl: https://bosh.ci.cloudfoundry.org
 web:
   service:
