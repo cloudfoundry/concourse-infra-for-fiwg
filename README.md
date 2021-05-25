@@ -129,6 +129,23 @@ cnrm-system@${PROJECT_ID}.iam.gserviceaccount.com \
   --role="roles/iam.workloadIdentityUser"
 ```
 
+#### Deploy the project to the cluster
+```
+./bin/sync
+./bin/build
+./bin/deploy
+```
+
+#### Store credhub encryption key in Google Secrets
+
+Once deployed, we have to save credhub encryption key to Google Secrets in case of a disaster situation.
+This is to be done only on first deployment, see [docs/disaster_recovery](./docs/disaster_recovery.md) for recovery details.
+
+```
+gcloud secrets create credhub-encryption-key
+kubectl get secret credhub-encryption-key -o json | jq -r .data.password | base64 --decode | gcloud secrets versions add credhub-encryption-key --data-file=-
+```
+
 # TODO document creating the concourse gke cluster using the gcloud cli
 
 - sql database uses an public ip address for sql proxy only. This should also be possible by using a private ip. See https://console.cloud.google.com/sql/instances/concourse/edit?orgonly=true&project=cloud-foundry-310819&supportedpurview=organizationId
