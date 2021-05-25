@@ -345,6 +345,11 @@ spec:
         release: concourse
     spec:
       serviceAccountName: default
+      tolerations:
+      - effect: NoSchedule
+        key: workers
+        operator: Equal
+        value: "true"
       terminationGracePeriodSeconds: 60
       initContainers:
       - name: concourse-worker-init-rm
@@ -450,6 +455,15 @@ spec:
           mountPath: /pre-stop-hook.sh
           subPath: pre-stop-hook.sh
       affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-nodepool
+                operator: In
+                values:
+                - concourse-workers
+            weight: 50
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100

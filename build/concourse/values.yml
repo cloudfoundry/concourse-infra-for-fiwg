@@ -51,3 +51,19 @@ web:
     api:
       type: LoadBalancer
       loadBalancerIP: 34.90.62.88
+worker:
+  additionalAffinities:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 50
+          preference:
+            matchExpressions:
+              - key: cloud.google.com/gke-nodepool
+                operator: In
+                values:
+                  - "concourse-workers"
+  tolerations:
+    - key: "workers"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
