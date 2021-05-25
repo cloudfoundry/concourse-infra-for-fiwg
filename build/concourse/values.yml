@@ -36,15 +36,15 @@ concourse:
         github:
           ## Comma-separated allow list of GitHub users.
           ##
-          user: ramonskie, yatzek
+          user:
 
           ## Comma-separated allow list of GitHub orgs.
           ##
-          org:
+          org: cloudfoundry
 
           ## Comma-separated allow list of GitHub teams.
           ##
-          team:
+          team: bosh-stemcell
     externalUrl: https://bosh.ci.cloudfoundry.org
 web:
   service:
