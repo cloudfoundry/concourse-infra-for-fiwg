@@ -226,8 +226,8 @@ spec:
           value: /concourse-keys/session_signing_key
         - name: CONCOURSE_MAIN_TEAM_LOCAL_USER
           value: test
-        - name: CONCOURSE_MAIN_TEAM_GITHUB_USER
-          value: ramonskie, yatzek
+        - name: CONCOURSE_MAIN_TEAM_GITHUB_TEAM
+          value: cloudfoundry:bosh-stemcell
         - name: CONCOURSE_GITHUB_CLIENT_ID
           valueFrom:
             secretKeyRef:
