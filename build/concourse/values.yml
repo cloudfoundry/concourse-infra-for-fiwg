@@ -73,4 +73,5 @@ worker:
       mountPath: /concourse-work-dir
   additionalVolumes:
     - name: concourse-work-dir
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 20Gi
