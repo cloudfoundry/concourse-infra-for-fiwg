@@ -210,5 +210,11 @@ spec:
       #@overlay/append
       - name: credhub-admin-client-credentials-file
         secret:
-          secretName: credhub-admin-client-credentials
+          secretName: uaa-credhub-admin-client-credentials
+      #@overlay/match by=overlay.subset({"name": "encryption-keys-file"})
+      #@overlay/replace
+      - name: encryption-keys-file
+        secret:
+          secretName: uaa-encryption-keys
+
 
