@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Init script to create a concourse cluster based on Kubernetes on Google Cloud. It will only be used
+# to initialize a cluster, but not for maintaining it.
+# The cluster will be created in region europe-west4.
+#
+# Please login in to gcp before executing this script
+#  >> gcloud auth login
+#
+# Go to the gcp project where the concourse cluster should be located
+#  >> gcloud config set project <project id>
+#
+
+PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
+CONCOURSE_SA=concourse
+CNRM_SA=cnrm-system
+
+# create service account for infra resources
+gcloud iam service-accounts create ${CONCOURSE_SA}
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${CONCOURSE_SA}@${PROJECT_ID}.iam.gserviceaccount.com" --role="roles/owner"
+
+# create prostgres instance
+gcloud secrets create postgres-admin
+openssl rand -base64 14 | gcloud secrets versions add postgres-admin --data-file=-
+
+gcloud sql instances create concourse \
+  --database-version=POSTGRES_13 \
+  --availability-type=regional \
+  --region=$(gcloud config get-value compute/region 2>/dev/null) \
+  --cpu=1 \
+  --memory=4 \
+  --enable-point-in-time-recovery \
+  --root-password=$(gcloud secrets versions access $(gcloud --format=json secrets versions list postgres-admin | jq -r 'map(select(.state == "ENABLED"))[0].name'))
+
+# create application databases on postgres instance
+for ds in concourse credhub uaa; do \
+  gcloud sql databases create $ds --instance concourse; \
+done
+
+# create gke cluster and dedicated node pool for concourse workers using preemptible vms
+gcloud container clusters create concourse \
+  --release-channel regular \
+  --addons ConfigConnector \
+  --workload-pool=${PROJECT_ID}.svc.id.goog \
+  --enable-stackdriver-kubernetes \
+  --region europe-west4-a \
+  --num-nodes=1 \
+  --min-nodes=1 \
+  --max-nodes=3 \
+  --enable-autoscaling \
+  --cluster-ipv4-cidr=10.104.0.0/14 \
+  --master-ipv4-cidr=172.16.0.32/28 \
+  --enable-private-nodes \
+  --enable-ip-alias \
+  --no-enable-master-authorized-networks \
+  --machine-type=n1-standard-4 \
+  --service-account=${CONCOURSE_SA}@${PROJECT_ID}.iam.gserviceaccount.com
+
+gcloud container node-pools create concourse-workers \
+  --cluster=concourse \
+  --machine-type=n1-standard-8 \
+  --enable-autoscaling \
+  --enable-autoupgrade \
+  --preemptible \
+  --num-nodes=1 \
+  --min-nodes=1 \
+  --max-nodes=4 \
+  --region europe-west4-a \
+  --tags=workers-preemptible \
+  --node-taints=workers=true:NoSchedule \
+  --service-account=${CONCOURSE_SA}@${PROJECT_ID}.iam.gserviceaccount.com
+
+# configure outgoing traffic
+gcloud compute routers create nat-router \
+    --network default \
+    --region europe-west4
+
+gcloud compute routers nats create nat-config \
+    --router-region europe-west4 \
+    --router nat-router \
+    --nat-all-subnet-ip-ranges \
+    --auto-allocate-nat-external-ips
+
+# configure config connector (translation of k8s resources -> gcp resources)
+gcloud iam service-accounts create ${CNRM_SA}
+# bind the roles/owner to the service account
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+  --member="serviceAccount:${CNRM_SA}@${PROJECT_ID}.iam.gserviceaccount.com" --role="roles/owner"
+# bind roles/iam.workloadIdentityUser to the cnrm-controller-manager Kubernetes Service Account
+# in the cnrm-system Namespace
+gcloud iam service-accounts add-iam-policy-binding ${CNRM_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
+  --member="serviceAccount:${PROJECT_ID}.svc.id.goog[${CNRM_SA}/cnrm-controller-manager]" \
+  --role="roles/iam.workloadIdentityUser"
