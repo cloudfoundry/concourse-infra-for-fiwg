@@ -74,4 +74,4 @@ worker:
   additionalVolumes:
     - name: concourse-work-dir
       emptyDir:
-        sizeLimit: 20Gi
+        sizeLimit: 200Gi

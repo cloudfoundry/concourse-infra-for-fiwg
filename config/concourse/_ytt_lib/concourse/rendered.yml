@@ -458,7 +458,7 @@ spec:
                   release: concourse
       volumes:
       - emptyDir:
-          sizeLimit: 20Gi
+          sizeLimit: 200Gi
         name: concourse-work-dir
       - name: pre-stop-hook
         configMap:
