@@ -65,6 +65,8 @@ gcloud container node-pools create concourse-workers \
   --num-nodes=1 \
   --min-nodes=1 \
   --max-nodes=4 \
+  --disk-size=500GB \
+  --disk-type=pd-balanced \
   --region europe-west4-a \
   --tags=workers-preemptible \
   --node-taints=workers=true:NoSchedule \
