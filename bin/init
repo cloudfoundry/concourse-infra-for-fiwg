@@ -83,6 +83,14 @@ gcloud compute routers nats create nat-config \
     --nat-all-subnet-ip-ranges \
     --auto-allocate-nat-external-ips
 
+# setup firewall to connect from gke to internal instance vms
+# https://cloud.google.com/kubernetes-engine/docs/troubleshooting#autofirewall
+network=$(gcloud container clusters describe CLUSTER_NAME --format=get"(network)")
+ipv4_cidr=$(gcloud container clusters describe CLUSTER_NAME --format=get"(clusterIpv4Cidr)")
+gcloud compute firewall-rules create "CLUSTER_NAME-to-all-vms-on-network" \
+  --network="${network}" --source-ranges="${ipv4_cidr}" \
+  --allow=tcp,udp,icmp,esp,ah,sctp
+
 # configure config connector (translation of k8s resources -> gcp resources)
 gcloud iam service-accounts create ${CNRM_SA}
 # bind the roles/owner to the service account
