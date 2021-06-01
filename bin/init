@@ -1,8 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -eu
 
-# Init script to create a concourse cluster based on Kubernetes on Google Cloud. It will only be used
-# to initialize a cluster, but not for maintaining it.
-# The cluster will be created in region europe-west4.
+# Bootstrap script to create a GKE cluster and a cloudSQL database needed to deploy Concourse.
 #
 # Please login in to gcp before executing this script
 #  >> gcloud auth login
@@ -14,6 +13,7 @@
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
 CONCOURSE_SA=concourse
 CNRM_SA=cnrm-system
+CLUSTER_NAME=concourse
 
 # create service account for infra resources
 gcloud iam service-accounts create ${CONCOURSE_SA}
@@ -38,7 +38,7 @@ for ds in concourse credhub uaa; do \
 done
 
 # create gke cluster and dedicated node pool for concourse workers using preemptible vms
-gcloud container clusters create concourse \
+gcloud container clusters create $CLUSTER_NAME \
   --release-channel regular \
   --addons ConfigConnector \
   --workload-pool=${PROJECT_ID}.svc.id.goog \
@@ -57,7 +57,7 @@ gcloud container clusters create concourse \
   --service-account=${CONCOURSE_SA}@${PROJECT_ID}.iam.gserviceaccount.com
 
 gcloud container node-pools create concourse-workers \
-  --cluster=concourse \
+  --cluster=$CLUSTER_NAME \
   --machine-type=n1-standard-4 \
   --enable-autoscaling \
   --enable-autoupgrade \
@@ -85,11 +85,16 @@ gcloud compute routers nats create nat-config \
 
 # setup firewall to connect from gke to internal instance vms
 # https://cloud.google.com/kubernetes-engine/docs/troubleshooting#autofirewall
-network=$(gcloud container clusters describe CLUSTER_NAME --format=get"(network)")
-ipv4_cidr=$(gcloud container clusters describe CLUSTER_NAME --format=get"(clusterIpv4Cidr)")
-gcloud compute firewall-rules create "CLUSTER_NAME-to-all-vms-on-network" \
+network=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(network)" --region europe-west4-a)
+ipv4_cidr=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(clusterIpv4Cidr)" --region europe-west4-a)
+gcloud compute firewall-rules create "$CLUSTER_NAME-to-all-vms-on-network" \
   --network="${network}" --source-ranges="${ipv4_cidr}" \
   --allow=tcp,udp,icmp,esp,ah,sctp
+
+# create subnets required for deploying bosh workloads and running  tests
+gcloud compute networks subnets create bosh-integration1 --network=default --range=10.100.0.0/24 --region=europe-west4
+gcloud compute networks subnets create bosh-integration2 --network=default --range=10.100.1.0/24 --region=europe-west4
+gcloud compute networks subnets create bosh-integration3 --network=default --range=10.100.2.0/24 --region=europe-west4
 
 # configure config connector (translation of k8s resources -> gcp resources)
 gcloud iam service-accounts create ${CNRM_SA}
