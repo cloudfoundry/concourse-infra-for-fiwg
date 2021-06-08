@@ -67,11 +67,14 @@ worker:
       operator: "Equal"
       value: "true"
       effect: "NoSchedule"
-  kind: Deployment
-  additionalVolumeMounts:
-    - name: concourse-work-dir
-      mountPath: /concourse-work-dir
-  additionalVolumes:
-    - name: concourse-work-dir
-      emptyDir:
-        sizeLimit: 200Gi
+  kind: StatefulSet
+#  additionalVolumeMounts:
+#    - name: concourse-work-dir
+#      mountPath: /concourse-work-dir
+#  additionalVolumes:
+#    - name: concourse-work-dir
+#      emptyDir:
+#        sizeLimit: 200Gi
+persistence:
+  worker:
+    size: 200Gi
