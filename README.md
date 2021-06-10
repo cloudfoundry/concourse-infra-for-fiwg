@@ -38,6 +38,13 @@ Use the script `bin/init` to create a new concourse cluster from scratch. Note y
 ./bin/deploy
 ```
 
+### Connect to credhub
+
+To spin up a pod and start a credhub-cli session run:
+```
+./start-credhub-cli.sh
+```
+
 ### Store credhub encryption key in Google Secrets
 
 Once deployed, we have to save credhub encryption key to Google Secrets in case of a disaster situation.
