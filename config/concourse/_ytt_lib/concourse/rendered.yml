@@ -426,7 +426,7 @@ spec:
           containerPort: 8888
         resources:
           requests:
-            cpu: 100m
+            cpu: 3000m
             memory: 512Mi
         securityContext:
           privileged: true
