@@ -343,6 +343,8 @@ spec:
         app: concourse-worker
         release: concourse
     spec:
+      nodeSelector:
+        cloud.google.com/gke-local-ssd: "true"
       serviceAccountName: default
       tolerations:
       - effect: NoSchedule
@@ -424,7 +426,7 @@ spec:
           containerPort: 8888
         resources:
           requests:
-            cpu: 100m
+            cpu: 3000m
             memory: 512Mi
         securityContext:
           privileged: true
@@ -457,8 +459,8 @@ spec:
                   app: concourse-worker
                   release: concourse
       volumes:
-      - emptyDir:
-          sizeLimit: 200Gi
+      - hostPath:
+          path: /mnt/disks/ssd0
         name: concourse-work-dir
       - name: pre-stop-hook
         configMap:

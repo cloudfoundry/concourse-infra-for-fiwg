@@ -73,5 +73,10 @@ worker:
       mountPath: /concourse-work-dir
   additionalVolumes:
     - name: concourse-work-dir
-      emptyDir:
-        sizeLimit: 200Gi
+      hostPath:
+        path: "/mnt/disks/ssd0"
+  nodeSelector:
+    cloud.google.com/gke-local-ssd: "true"
+  resources:
+    requests:
+      cpu: "3000m"
