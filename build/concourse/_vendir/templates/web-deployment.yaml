@@ -66,6 +66,9 @@ spec:
       {{- if .Values.web.extraInitContainers }}
       {{- toYaml .Values.web.extraInitContainers | nindent 8 }}
       {{- end }}
+      {{- if .Values.web.priorityClassName }}
+      priorityClassName: {{ .Values.web.priorityClassName }}
+      {{- end }}
       {{- if .Values.web.shareProcessNamespace }}
       shareProcessNamespace: true
       {{- end }}
@@ -120,6 +123,10 @@ spec:
             {{- if .Values.concourse.web.enablep2pVolumeStreaming }}
             - name: CONCOURSE_ENABLE_P2P_VOLUME_STREAMING
               value: {{ .Values.concourse.web.enablep2pVolumeStreaming | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.enableCacheStreamedVolumes }}
+            - name: CONCOURSE_ENABLE_CACHE_STREAMED_VOLUMES
+              value: {{ .Values.concourse.web.enableCacheStreamedVolumes | quote }}
             {{- end }}
             {{- if .Values.concourse.web.jobSchedulingMaxInFlight }}
             - name: CONCOURSE_JOB_SCHEDULING_MAX_IN_FLIGHT
@@ -248,10 +255,6 @@ spec:
             {{- if .Values.concourse.web.tracing.otlpUseTls }}
             - name: CONCOURSE_TRACING_OTLP_USE_TLS
               value: {{ .Values.concourse.web.tracing.otlpUseTls | quote }}
-            {{- end }}
-            {{- if .Values.concourse.web.tracing.honeycombServiceName }}
-            - name: CONCOURSE_TRACING_HONEYCOMB_SERVICE_NAME
-              value: {{ .Values.concourse.web.tracing.honeycombServiceName | quote }}
             {{- end }}
             {{- if .Values.concourse.web.metrics.bufferSize }}
             - name: CONCOURSE_METRICS_BUFFER_SIZE
@@ -753,6 +756,10 @@ spec:
             {{- if .Values.concourse.web.xFrameOptions }}
             - name: CONCOURSE_X_FRAME_OPTIONS
               value: {{ .Values.concourse.web.xFrameOptions | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.contentSecurityPolicy }}
+            - name: CONCOURSE_CONTENT_SECURITY_POLICY
+              value: {{ .Values.concourse.web.contentSecurityPolicy | quote }}
             {{- end }}
             {{- if .Values.concourse.web.gc.interval }}
             - name: CONCOURSE_GC_INTERVAL

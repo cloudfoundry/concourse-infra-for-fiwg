@@ -45,6 +45,9 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
+      {{- if .Values.worker.priorityClassName }}
+      priorityClassName: {{ .Values.worker.priorityClassName }}
+      {{- end }}
       {{- if .Values.worker.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds }}
       {{- end }}
@@ -190,6 +193,9 @@ spec:
     - metadata:
         name: concourse-work-dir
       spec:
+      {{- if .Values.persistence.worker.selector }}
+        selector: {{- .Values.persistence.worker.selector | toYaml | nindent 10 }}
+      {{- end }}
         accessModes:
           - {{ .Values.persistence.worker.accessMode | quote }}
         resources:

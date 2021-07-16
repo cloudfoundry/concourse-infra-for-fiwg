@@ -24,8 +24,8 @@ directories:
   path: config/quarks-secret/_ytt_lib
 - contents:
   - helmChart:
-      appVersion: 7.2.0
-      version: 15.2.0
+      appVersion: 7.3.2
+      version: 15.6.0
     path: .
   path: build/concourse/_vendir/
 - contents:

@@ -21,7 +21,7 @@ image: concourse/concourse
 ##      of `concourse/concourse`.
 ## Ref: https://hub.docker.com/r/concourse/concourse/tags/
 ##
-imageTag: "7.2.0"
+imageTag: "7.3.2"
 
 ## Specific image digest to use in place of a tag.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/overview/#container-images
@@ -103,6 +103,10 @@ concourse:
     ## By default all volume streming goes through the web nodes.
     ##
     enablep2pVolumeStreaming: false
+
+    ## Enable caching streamed resource volumes on the destination worker.
+    ##
+    enableCacheStreamedVolumes: false
 
     ## Maximum number of jobs to be scheduling at the same time.
     ##
@@ -671,12 +675,6 @@ concourse:
       ##
       honeycombDataset:
 
-      ## Name of the service being traced
-      ##
-      ## Example: "concourse"
-      ##
-      honeycombServiceName:
-
       ## OTLP address to send traces to
       ##
       ## Example: "otel-collector:55680"
@@ -836,9 +834,15 @@ concourse:
         ##     action: labeldrop
         metricRelabelings:
 
-    ## The value to set for X-Frame-Options. If omitted, the header is not set.
+    ## The value to set for X-Frame-Options. If omitted, the default value in
+    ## the Concourse binary is used.
     ##
     xFrameOptions:
+
+    ## The value to set for Content-Security-Policy header. If omitted, the default
+    ## value in the Concourse binary is used.
+    ##
+    contentSecurityPolicy:
 
     gc:
       ## Interval on which to perform garbage collection.
@@ -1649,7 +1653,7 @@ concourse:
       ## Path to a config file to use for the Containerd daemon.
       config:
 
-      ## Enable a proxy DNS server for Garden
+      ## Enable a proxy DNS server for Garden. Note: this implicitly turns on container access to host network.
       dnsProxyEnable:
 
       ## MTU size for container network interfaces. Defaults to the MTU of the interface used for outbound access by the host
@@ -1671,6 +1675,9 @@ concourse:
       ##   - 1.1.1.1
       ##   - 2.2.2.2
       restrictedNetworks: []
+
+      ## Allows containers to reach host network.
+      allowHostAccess:
 
       ## Maximum container capacity. 0 means no limit. Defaults to 250.
       maxContainers:
@@ -1829,6 +1836,10 @@ web:
   ##   command: ['sh', '-c', 'echo Hello && sleep 3600']
   ##
   extraInitContainers: []
+
+  ## Pod priority class to assign to web pods.
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#pod-priority
+  priorityClassName:
 
   ## Enable or disable the process namespace sharing for the web nodes.
   ## This allows signaling the concourse process from a sidecar container.
@@ -2352,6 +2363,10 @@ worker:
   ##
   tolerations: []
 
+  ## Pod priority class to assign to worker pods.
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#pod-priority
+  priorityClassName:
+
   ## Time to allow the pod to terminate before being forcefully terminated. This should provide time for
   ## the worker to retire, i.e. drain its tasks. See https://concourse-ci.org/worker-internals.html for worker
   ## lifecycle semantics.
@@ -2414,6 +2429,11 @@ persistence:
     ## Persistent Volume Storage Size.
     ##
     size: 20Gi
+
+    # You can define additional selector for pvc
+    selector:
+    #   matchLabels:
+    #     app-volume: "concourse"
 
 ## Configuration values for the postgresql dependency.
 ## Ref: https://github.com/helm/charts/blob/master/stable/postgresql/README.md

@@ -236,7 +236,7 @@ Return concourse environment variables for worker configuration
 - name: CONCOURSE_GARDEN_CONFIG
   value: {{ .Values.concourse.worker.garden.config | quote }}
 {{- end }}
-{{- if .Values.concourse.worker.garden.dnsProxyEnable }}
+{{- if not (kindIs "invalid" .Values.concourse.worker.garden.dnsProxyEnable) }}
 - name: CONCOURSE_GARDEN_DNS_PROXY_ENABLE
   value: {{ .Values.concourse.worker.garden.dnsProxyEnable | quote }}
 {{- end }}
@@ -283,6 +283,10 @@ Return concourse environment variables for worker configuration
 - name: CONCOURSE_CONTAINERD_RESTRICTED_NETWORK
   value: {{ . | title | quote }}
 {{- end }}
+{{- end }}
+{{- if .Values.concourse.worker.containerd.allowHostAccess }}
+- name: CONCOURSE_CONTAINERD_ALLOW_HOST_ACCESS
+  value: {{ .Values.concourse.worker.containerd.allowHostAccess | quote }}
 {{- end }}
 {{- if .Values.concourse.worker.containerd.maxContainers }}
 - name: CONCOURSE_CONTAINERD_MAX_CONTAINERS

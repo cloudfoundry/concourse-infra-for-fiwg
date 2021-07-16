@@ -87,7 +87,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `imageDigest` | Specific image digest to use in place of a tag. | `nil` |
 | `imagePullPolicy` | Concourse image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Array of imagePullSecrets in the namespace for pulling images | `[]` |
-| `imageTag` | Concourse image version | `7.2.0` |
+| `imageTag` | Concourse image version | `7.3.2` |
 | `image` | Concourse image | `concourse/concourse` |
 | `nameOverride` | Provide a name in place of `concourse` for `app:` labels | `nil` |
 | `persistence.enabled` | Enable Concourse persistence using Persistent Volume Claims | `true` |
@@ -99,6 +99,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `postgresql.persistence.enabled` | Enable PostgreSQL persistence using Persistent Volume Claims | `true` |
 | `postgresql.persistence.size` | Persistent Volume Storage Size | `8Gi` |
 | `postgresql.persistence.storageClass` | Concourse data Persistent Volume Storage Class | `nil` |
+| `persistence.worker.selector` | Concourse Worker Persistent Volume selector | `nil` |
 | `postgresql.postgresqlDatabase` | PostgreSQL Database to create | `concourse` |
 | `postgresql.postgresqlPassword` | PostgreSQL Password for the new user | `concourse` |
 | `postgresql.postgresqlUsername` | PostgreSQL User to create | `concourse` |
@@ -236,6 +237,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `web.service.prometheus.annotations` | Concourse Web Prometheus Service annotations | `nil` |
 | `web.service.prometheus.labels` | Additional concourse web prometheus service labels | `nil` |
 | `web.shareProcessNamespace` | Enable or disable the process namespace sharing for the web nodes | `false` |
+| `web.priorityClassName` | Sets a PriorityClass for the web pods | `nil` |
 | `web.sidecarContainers` | Array of extra containers to run alongside the Concourse web container | `nil` |
 | `web.extraInitContainers` | Array of extra init containers to run before the Concourse web container | `nil` |
 | `web.strategy` | Strategy for updates to deployment. | `{}` |
@@ -273,6 +275,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `worker.resources.requests.memory` | Minimum amount of memory resources requested | `512Mi` |
 | `worker.sidecarContainers` | Array of extra containers to run alongside the Concourse worker container | `nil` |
 | `worker.extraInitContainers` | Array of extra init containers to run before the Concourse worker container | `nil` |
+| `worker.priorityClassName` | Sets a PriorityClass for the worker pods | `nil` |
 | `worker.terminationGracePeriodSeconds` | Upper bound for graceful shutdown to allow the worker to drain its tasks | `60` |
 | `worker.tolerations` | Tolerations for the worker nodes | `[]` |
 | `worker.updateStrategy` | `OnDelete` or `RollingUpdate` (requires Kubernetes >= 1.7) | `RollingUpdate` |
@@ -285,6 +288,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `worker.containerd.maxContainers` | Max container capacity where 0 means no limit | `nil` |
 | `worker.containerd.networkPool` | Network range to use for dynamically allocated container subnets | `nil` |
 | `worker.containerd.requestTimeout` | Time to wait for requests to Containerd to complete | `nil` |
+| `worker.containerd.allowHostAccess` | Allows containers to reach host network | `false` |
 
 For configurable Concourse parameters, refer to [`values.yaml`](values.yaml)' `concourse` section. All parameters under this section are strictly mapped from the `concourse` binary commands.
 
