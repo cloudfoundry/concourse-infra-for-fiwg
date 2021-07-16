@@ -1,6 +1,3 @@
-image: concourse/concourse
-imageTag: "7.2.0"
-
 rbac:
   create: false
 
