@@ -16,6 +16,13 @@ enc_key=$(gcloud secrets versions access 1 --secret credhub-encryption-key | bas
 kubectl patch secret credhub-encryption-key -p="{\"data\":{\"password\": \"$enc_key\"}}"
 ```
 
+### Github config
+```
+ghID=paste your github oauth id from your org
+ghSecret=paste your github oauth secret from your org
+kubectl -n concourse create secret generic github --from-literal=id=${ghID} --from-literal=secret=${ghSecret}
+```
+
 ### credhub-config
 
 Get the original config yaml and save it to a temp file:

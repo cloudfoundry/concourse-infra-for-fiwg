@@ -31,6 +31,15 @@ Then you are able to use `kubectl` against the gke cluster for further work.
 
 Use the script `bin/init` to create a new concourse cluster from scratch. Note you need to be logged in to gcp and set the correct project id.
 
+#### add github oauth credentials
+this is neccary of you want to be able to login with your github credentials
+please note that this should be a github org auth app
+```
+ghID=paste your github oauth id from your org
+ghSecret=paste your github oauth secret from your org
+kubectl -n concourse create secret generic github --from-literal=id=${ghID} --from-literal=secret=${ghSecret}
+```
+
 ### Deploy the project to the cluster
 ```
 ./bin/sync

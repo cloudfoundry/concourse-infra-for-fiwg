@@ -18,6 +18,7 @@ metadata:
     kapp.k14s.io/owned-for-deletion: ""
     cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
 spec:
+  resourceID: cloud-sql-auth-proxy
   displayName: Used by Cloud SQL Auth proxy
 
 ---
