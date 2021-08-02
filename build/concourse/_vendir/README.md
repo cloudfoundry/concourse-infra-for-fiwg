@@ -87,7 +87,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `imageDigest` | Specific image digest to use in place of a tag. | `nil` |
 | `imagePullPolicy` | Concourse image pull policy | `IfNotPresent` |
 | `imagePullSecrets` | Array of imagePullSecrets in the namespace for pulling images | `[]` |
-| `imageTag` | Concourse image version | `7.3.2` |
+| `imageTag` | Concourse image version | `7.4.0` |
 | `image` | Concourse image | `concourse/concourse` |
 | `nameOverride` | Provide a name in place of `concourse` for `app:` labels | `nil` |
 | `persistence.enabled` | Enable Concourse persistence using Persistent Volume Claims | `true` |
@@ -184,6 +184,7 @@ The following table lists the configurable parameters of the Concourse chart and
 | `web.datadog.agentHostUseHostIP` | Use IP of Pod's node overrides `agentHost` | `false` |
 | `web.datadog.agentHost` | Datadog Agent host | `127.0.0.1` |
 | `web.datadog.agentPort` | Datadog Agent port | `8125` |
+| `web.datadog.agentUdsFilepath` | Datadog agent unix domain socket (uds) filepath to expose dogstatsd metrics (ex. `/tmp/datadog.socket`) | `nil` |
 | `web.datadog.enabled` | Enable or disable Datadog metrics | `false` |
 | `web.datadog.prefix` | Prefix for emitted metrics | `"concourse.ci"` |
 | `web.enabled` | Enable or disable the web component | `true` |

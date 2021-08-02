@@ -21,7 +21,7 @@ image: concourse/concourse
 ##      of `concourse/concourse`.
 ## Ref: https://hub.docker.com/r/concourse/concourse/tags/
 ##
-imageTag: "7.3.2"
+imageTag: "7.4.0"
 
 ## Specific image digest to use in place of a tag.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/overview/#container-images
@@ -107,6 +107,10 @@ concourse:
     ## Enable caching streamed resource volumes on the destination worker.
     ##
     enableCacheStreamedVolumes: false
+
+    ## Enable web UI and API endpoint for resource causality.
+    ##
+    enableResourceCausality: false
 
     ## Maximum number of jobs to be scheduling at the same time.
     ##
@@ -724,6 +728,11 @@ concourse:
       ##
       agentPort: 8125
 
+      ## Datadog agent unix domain socket (uds) filepath to expose dogstatsd metrics
+      ## e.g. /tmp/datadog.socket
+      ##
+      agentUdsFilepath:
+
       ## Prefix for all metrics to easily find them in Datadog
       ##
       prefix: "concourse.ci"
@@ -913,6 +922,26 @@ concourse:
       ## Example: 5s for 5 seconds
       ##
       timeout:
+
+      result:
+        ## Name of key in the Open Policy Agent result to check if the action is allowed.
+        ##
+        ## Example: result.allowed
+        ##
+        allowedKey:
+
+        ## Name of key in the Open Policy Agent result to check if it should hard block and fail, or soft block and emit warning on failure.
+        ##
+        ## Example: result.block
+        ##
+        shouldBlockKey:
+
+        ## Name of key in the Open Policy Agent result to extract the messages from.
+        ##
+        ## Example: result.reasons
+        ##
+        messagesKey:
+
 
     policyCheck:
       ## Array of HTTP methods to filter through policy checking.

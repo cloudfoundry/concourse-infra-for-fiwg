@@ -15,6 +15,7 @@ metadata:
   name: cloud-sql-auth-proxy
   namespace: concourse
   annotations:
+    cnrm.cloud.google.com/management-conflict-prevention-policy: "none"
     kapp.k14s.io/owned-for-deletion: ""
     cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
 spec:

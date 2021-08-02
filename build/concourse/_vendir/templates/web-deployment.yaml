@@ -128,6 +128,10 @@ spec:
             - name: CONCOURSE_ENABLE_CACHE_STREAMED_VOLUMES
               value: {{ .Values.concourse.web.enableCacheStreamedVolumes | quote }}
             {{- end }}
+            {{- if .Values.concourse.web.enableResourceCausality }}
+            - name: CONCOURSE_ENABLE_RESOURCE_CAUSALITY
+              value: {{ .Values.concourse.web.enableResourceCausality | quote }}
+            {{- end }}
             {{- if .Values.concourse.web.jobSchedulingMaxInFlight }}
             - name: CONCOURSE_JOB_SCHEDULING_MAX_IN_FLIGHT
               value: {{ .Values.concourse.web.jobSchedulingMaxInFlight | quote }}
@@ -675,16 +679,23 @@ spec:
               value: {{ .Values.concourse.web.metrics.attribute | quote }}
             {{- end }}
             {{- if .Values.concourse.web.datadog.enabled }}
-            - name: CONCOURSE_DATADOG_AGENT_HOST
             {{- if .Values.concourse.web.datadog.agentHostUseHostIP }}
+            - name: CONCOURSE_DATADOG_AGENT_HOST
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-            {{- else }}
+            {{- else if .Values.concourse.web.datadog.agentHost }}
+            - name: CONCOURSE_DATADOG_AGENT_HOST
               value: {{ .Values.concourse.web.datadog.agentHost | quote }}
             {{- end }}
+            {{- if .Values.concourse.web.datadog.agentPort }}
             - name: CONCOURSE_DATADOG_AGENT_PORT
               value: {{ .Values.concourse.web.datadog.agentPort | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.datadog.agentUdsFilepath }}
+            - name: CONCOURSE_DATADOG_AGENT_UDS_FILEPATH
+              value: {{ .Values.concourse.web.datadog.agentUdsFilepath | quote }}
+            {{- end }}
             {{- if .Values.concourse.web.datadog.prefix }}
             - name: CONCOURSE_DATADOG_PREFIX
               value: {{ .Values.concourse.web.datadog.prefix | quote }}
@@ -818,6 +829,18 @@ spec:
             {{- if .Values.concourse.web.opa.timeout }}
             - name: CONCOURSE_OPA_TIMEOUT
               value: {{ .Values.concourse.web.opa.timeout | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.opa.result.allowedKey }}
+            - name: CONCOURSE_OPA_RESULT_ALLOWED_KEY
+              value: {{ .Values.concourse.web.opa.result.allowedKey | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.opa.result.shouldBlockKey }}
+            - name: CONCOURSE_OPA_RESULT_SHOULD_BLOCK_KEY
+              value: {{ .Values.concourse.web.opa.result.shouldBlockKey | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.opa.result.messagesKey }}
+            - name: CONCOURSE_OPA_RESULT_MESSAGES_KEY
+              value: {{ .Values.concourse.web.opa.result.messagesKey | quote }}
             {{- end }}
             {{- if .Values.concourse.web.policyCheck.filterHttpMethods }}
             - name: CONCOURSE_POLICY_CHECK_FILTER_HTTP_METHOD
@@ -1451,6 +1474,11 @@ spec:
               mountPath: {{ .Values.web.syslogSecretsPath | quote }}
               readOnly: true
             {{- end }}
+            {{- if .Values.concourse.web.datadog.agentUdsFilepath }}
+            - name: dsdsocket
+              mountPath: {{ .Values.concourse.web.datadog.agentUdsFilepath | dir | quote }}
+              readOnly: true
+            {{- end }}
             - name: auth-keys
               mountPath: {{ .Values.web.authSecretsPath | quote }}
               readOnly: true
@@ -1569,6 +1597,11 @@ spec:
             items:
               - key: syslog-ca-cert
                 path: ca.cert
+        {{- end }}
+        {{- if .Values.concourse.web.datadog.agentUdsFilepath }}
+        - name: dsdsocket
+          hostPath:
+            path: {{ .Values.concourse.web.datadog.agentUdsFilepath | dir | printf "%s/"| quote }}
         {{- end }}
         - name: auth-keys
           secret:
