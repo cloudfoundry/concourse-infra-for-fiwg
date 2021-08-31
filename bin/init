@@ -79,7 +79,8 @@ gcloud compute routers nats create nat-config \
     --router-region europe-west4 \
     --router nat-router \
     --nat-all-subnet-ip-ranges \
-    --auto-allocate-nat-external-ips
+    --auto-allocate-nat-external-ips \
+    --min-ports-per-vm=512
 
 # setup firewall to connect from gke to internal instance vms
 # https://cloud.google.com/kubernetes-engine/docs/troubleshooting#autofirewall
