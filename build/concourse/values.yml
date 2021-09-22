@@ -43,6 +43,7 @@ concourse:
           ##
           team: cloudfoundry:bosh-stemcell
     externalUrl: https://bosh.ci.cloudfoundry.org
+    enableResourceCausality: true
 web:
   service:
     api:

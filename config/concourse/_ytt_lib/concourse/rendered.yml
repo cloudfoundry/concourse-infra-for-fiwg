@@ -143,6 +143,8 @@ spec:
         env:
         - name: CONCOURSE_ENABLE_GLOBAL_RESOURCES
           value: "true"
+        - name: CONCOURSE_ENABLE_RESOURCE_CAUSALITY
+          value: "true"
         - name: CONCOURSE_SECRET_RETRY_ATTEMPTS
           value: "5"
         - name: CONCOURSE_SECRET_RETRY_INTERVAL
