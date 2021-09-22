@@ -11,6 +11,7 @@ metadata:
   annotations:
     kapp.k14s.io/owned-for-deletion: ""
     cnrm.cloud.google.com/project-id: #@ data.values.google.project_id
+    cnrm.cloud.google.com/state-into-spec: merge
 spec:
   resourceID: #@ name
   instanceRef:
