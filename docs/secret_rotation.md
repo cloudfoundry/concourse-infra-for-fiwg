@@ -17,15 +17,15 @@ Once finished, we need to update database passwords and restart pods for the cha
 Update database password:
 ```
 for user in concourse credhub uaa; do \
-  pass=$(kubectl get secret "$user-postgresql-password" -o json | jq -r .data.password | base64 --decode); \
+  pass=$(kubectl -n concourse get secret "$user-postgresql-password" -o json | jq -r .data.password | base64 --decode); \
   gcloud sql users set-password "$user" -i concourse --password="$pass";\
 done
 ```
 
 Recreate all pods:
 ```
-kubectl delete pod -l app=uaa-deployment
-kubectl delete pod -l app=credhub
-kubectl delete pod -l app=concourse-web
-kubectl delete pod -l app=concourse-worker
+kubectl -n concourse delete pod -l app=uaa-deployment
+kubectl -n concourse delete pod -l app=credhub
+kubectl -n concourse delete pod -l app=concourse-web
+kubectl -n concourse delete pod -l app=concourse-worker
 ```
