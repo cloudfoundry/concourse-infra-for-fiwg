@@ -1,11 +1,11 @@
 # Secret Rotation
 
 To rotate secrets set the "rotate_quark_secrets" property to true in config/values/00-values.yml file:
-```
+```yaml
 rotate_quark_secrets: true
 ```
 and run:
-```
+```bash
 ./bin/deploy
 ```
 
@@ -28,4 +28,14 @@ kubectl -n concourse delete pod -l app=uaa-deployment
 kubectl -n concourse delete pod -l app=credhub
 kubectl -n concourse delete pod -l app=concourse-web
 kubectl -n concourse delete pod -l app=concourse-worker
+```
+
+Reset to original (non-rotating) state by setting the "rotate_quark_secrets" property to false in config/values/00-values.yml file:
+
+```yaml
+rotate_quark_secrets: false
+```
+and run:
+```bash
+./bin/deploy
 ```
