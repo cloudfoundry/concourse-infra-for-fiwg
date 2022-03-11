@@ -4,7 +4,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -19,7 +19,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 data:
@@ -34,7 +34,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -56,7 +56,7 @@ metadata:
   name: concourse-web-worker-gateway
   labels:
     app: concourse-web
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -74,7 +74,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -90,7 +90,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -108,7 +108,7 @@ spec:
       serviceAccountName: default
       initContainers:
       - name: concourse-migration
-        image: concourse/concourse:7.6.0
+        image: concourse/concourse:7.7.0
         args:
         - migrate
         - --migrate-to-latest-version
@@ -136,7 +136,7 @@ spec:
         volumeMounts: null
       containers:
       - name: concourse-web
-        image: concourse/concourse:7.6.0
+        image: concourse/concourse:7.7.0
         imagePullPolicy: IfNotPresent
         args:
         - web
@@ -330,7 +330,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-16.1.2
+    chart: concourse-16.1.21
     release: concourse
     heritage: Helm
 spec:
@@ -356,7 +356,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
       - name: concourse-worker
-        image: concourse/concourse:7.6.0
+        image: concourse/concourse:7.7.0
         imagePullPolicy: IfNotPresent
         args:
         - worker
@@ -423,12 +423,6 @@ spec:
           value: "5"
         - name: CONCOURSE_CONTAINER_SWEEPER_MAX_IN_FLIGHT
           value: "5"
-        - name: CONCOURSE_TRACING_SERVICE_NAME
-          value: worker-trace
-        - name: CONCOURSE_TRACING_JAEGER_ENDPOINT
-          value: http://somethinig/api/traces
-        - name: CONCOURSE_TRACING_JAEGER_SERVICE
-          value: worker-trace-jaeger
         ports:
         - name: worker-hc
           containerPort: 8888
