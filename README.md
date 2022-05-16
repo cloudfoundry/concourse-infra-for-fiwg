@@ -1,7 +1,8 @@
-# BOSH Community Stemcell CI Infra
+# Cloud Foundry Community CI Infra
 
-This repo holds the deployment templates used to deploy the Concourse instance
-and supporting infra structure used by the community maintained BOSH stemcell.
+This repo holds the deployment templates used to deploy a CF community Concourse instance
+and supporting infra structure. It's used for maintaining the BOSH stemcell Concourse and for the 
+Application Runtime Deployments WG Concourse.
 
 ## Requirements
 - gcloud => 337.0.0
@@ -14,49 +15,118 @@ and supporting infra structure used by the community maintained BOSH stemcell.
 
 ## Getting started
 
+Authenticate to your GCP account with:
+```
+gcloud auth login
+```
+
 Configure the correct project and default region (will be loaded from project settings) by running:
 ```
 gcloud init
 ```
 
-Configure access to the gke cluster by executing the following command:
+### Initialise new GCP projects
+
+For new GCP projects, make sure to enable the following APIs in advance (otherwise the "init" script cannot allocate some resources):
+- "Cloud Resource Manager API"
+- "Secret Manager API"
+- "Cloud SQL Admin API"
+- "Kubernetes Engine API"
+- "Identity and Access Management (IAM) API"
+
+### Reserve load balancer IP address
+
+First, you must reserve a static IP address for the load balancer. In the GCP console, go to:
+"Networking" -> "VPC network" -> "IP addresses" -> "Reserve external static address"
+
+Adapt the "Region", but leave everything else to the default value. When the IP address has been allocated,
+copy it into [build/concourse/values.yml](build/concourse/values.yml) as `loadBalancerIP`.
+
+For more information on allocating IPs, see https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address
+
+### Setup infrastructure
+
+Use the script `bin/init` to create a new Concourse cluster from scratch. The script will create a SQL instance, a GKE Kubernetes cluster,
+network resources and service accounts.
+
+### Initialise kubectl
+
+Configure access to the GKE cluster by executing the following command:
 ```
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null) \
-gcloud container clusters get-credentials concourse --zone europe-west4-a --project ${PROJECT_ID}
+gcloud container clusters get-credentials concourse --zone <your cluster's zone> --project ${PROJECT_ID}
 ```
-Then you are able to use `kubectl` against the gke cluster for further work.
-
-
-### Rebuild infra from scratch
-
-Use the script `bin/init` to create a new concourse cluster from scratch. Note you need to be logged in to gcp and set the correct project id.
-
-#### add github oauth credentials
-this is neccary of you want to be able to login with your github credentials
-please note that this should be a github org auth app
+Then you are able to use `kubectl` against the GKE cluster for further work. To test cluster access, you can call:
 ```
-ghID=paste your github oauth id from your org
-ghSecret=paste your github oauth secret from your org
+kubectl cluster-info
+```
+
+### Create GitHub OAuth application
+
+This is necessary if you want to be able to login with your GitHub profile. Log on to github.com and navigate to:
+"Settings" -> "Developer settings" -> "OAuth Apps" -> "New OAuth App"
+
+As "Homepage URL", enter the Concourse's base URL. As "Authorization callback URL", enter the Concourse URL followed
+by `/sky/issuer/callback`.
+
+When the app has been created, store its Client ID and the Client secret as Kubernetes secret:
+```
+ghID=paste your Client ID
+ghSecret=paste your Client secret
 kubectl -n concourse create secret generic github --from-literal=id=${ghID} --from-literal=secret=${ghSecret}
 ```
 
-### Deploy the project to the cluster
+### Sync external repositories
+
+The project uses [vendir](https://carvel.dev/vendir/) to manage external repositories. The [vendir.yml](vendir.yml) file
+declares a list of repositories which are synched into the workspace:
 ```
 ./bin/sync
+```
+
+### Use Helm to generate Kubernetes deployments
+
+First, adapt the parameters in the Concourse `values.yml` files to your project: [values.yml](build/concourse/values.yml).
+
+You should check and adapt at least these parameters:
+- concourse.web.auth.mainTeam
+- concourse.web.externalUrl
+- web.service.api.loadBalancerIP
+
+Then call the `build` script which uses Helm templating and ytt to generate the Kubernetes deployments:
+```
 ./bin/build
+```
+
+### Deploy the project to the cluster
+
+Now you can deploy the all applications with [kapp](https://carvel.dev/kapp/):
+```
 ./bin/deploy
 ```
+This will deploy a Credhub instance, a UAA, the [Quarks Secret](https://quarks.suse.dev/docs/quarks-secret/) manager,
+the [Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy) and the
+[GCP Config Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started). Note that the Config Connector
+is used to create additional GCP service accounts.
+
+When `deploy` has finished successfully, you should see a list of running workloads in the GCP console.
 
 ### Connect to credhub
 
-To spin up a pod and start a credhub-cli session run:
+To spin up a pod and start a CredHub CLI session run:
 ```
 ./start-credhub-cli.sh
 ```
 
-### Store credhub encryption key in Google Secrets
+In the pod you can call:
+```
+credhub find
+```
+to see a list of all credentials (initially there are no credentials).
 
-Once deployed, we have to save credhub encryption key to Google Secrets in case of a disaster situation.
+### Store CredHub encryption key in Google Secrets
+
+Once deployed, we have to save CredHub encryption key to Google Secrets in case of a disaster situation.
 This is to be done only on first deployment, see [docs/disaster_recovery](./docs/disaster_recovery.md) for recovery details.
 
 ```
