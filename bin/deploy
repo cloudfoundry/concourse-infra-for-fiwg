@@ -1,16 +1,6 @@
 #!/bin/bash
 
-if ! kubectl get ns concourse 2>/dev/null; then
-  cat <<EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: concourse
-  labels:
-    quarks.cloudfoundry.org/monitored: concourse
-EOF
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 
 if [[ ${PROJECT_REGION:-"unset"} == "unset" ]]; then
   echo "Please set environment variable \"PROJECT_REGION\" to the desired region."
@@ -21,4 +11,5 @@ fi
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
 
 echo "Using GCP project \"$PROJECT_ID\" and region \"$PROJECT_REGION\" for deployment..."
+"${SCRIPT_DIR}/bin/create-concourse-namespace"
 kapp deploy -c -a concourse -n concourse -f <(ytt -f config --data-value google.project_id="$PROJECT_ID" --data-value google.region="$PROJECT_REGION")

@@ -48,8 +48,9 @@ gcloud container clusters create $CLUSTER_NAME \
   --release-channel regular \
   --addons ConfigConnector \
   --workload-pool=${PROJECT_ID}.svc.id.goog \
-  --enable-stackdriver-kubernetes \
   --region "$PROJECT_REGION" \
+  --logging=SYSTEM,WORKLOAD \
+  --monitoring=SYSTEM \
   --num-nodes=1 \
   --min-nodes=1 \
   --max-nodes=3 \
