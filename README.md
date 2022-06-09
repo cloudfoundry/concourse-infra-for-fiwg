@@ -25,6 +25,11 @@ Configure the correct project and default region (will be loaded from project se
 gcloud init
 ```
 
+Set the project region (see https://cloud.google.com/compute/docs/regions-zones):
+```
+PROJECT_REGION="..."
+```
+
 ### Initialise new GCP projects
 
 For new GCP projects, make sure to enable the following APIs in advance (otherwise the "init" script cannot allocate some resources):
@@ -54,16 +59,23 @@ network resources and service accounts.
 Configure access to the GKE cluster by executing the following command:
 ```
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null) \
-gcloud container clusters get-credentials concourse --zone <your cluster's zone> --project ${PROJECT_ID}
+gcloud container clusters get-credentials concourse --zone ${PROJECT_REGION} --project ${PROJECT_ID}
 ```
 Then you are able to use `kubectl` against the GKE cluster for further work. To test cluster access, you can call:
 ```
 kubectl cluster-info
 ```
 
+### Create Namespace
+
+For the following step you need a Kubernetes namespace. Run this script once:
+```
+./bin/create-concourse-namespace
+```
+
 ### Create GitHub OAuth application
 
-This is necessary if you want to be able to login with your GitHub profile. Log on to github.com and navigate to:
+This is necessary if you want to be able to authenticate with your GitHub profile. Log on to github.com and navigate to:
 "Settings" -> "Developer settings" -> "OAuth Apps" -> "New OAuth App"
 
 As "Homepage URL", enter the Concourse's base URL. As "Authorization callback URL", enter the Concourse URL followed
@@ -79,7 +91,7 @@ kubectl -n concourse create secret generic github --from-literal=id=${ghID} --fr
 ### Sync external repositories
 
 The project uses [vendir](https://carvel.dev/vendir/) to manage external repositories. The [vendir.yml](vendir.yml) file
-declares a list of repositories which are synched into the workspace:
+declares a list of repositories which are synced into the workspace:
 ```
 ./bin/sync
 ```
@@ -104,14 +116,14 @@ Now you can deploy the all applications with [kapp](https://carvel.dev/kapp/):
 ```
 ./bin/deploy
 ```
-This will deploy a Credhub instance, a UAA, the [Quarks Secret](https://quarks.suse.dev/docs/quarks-secret/) manager,
+This will deploy a CredHub instance, a UAA, the [Quarks Secret](https://quarks.suse.dev/docs/quarks-secret/) manager,
 the [Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy) and the
 [GCP Config Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started). Note that the Config Connector
 is used to create additional GCP service accounts.
 
 When `deploy` has finished successfully, you should see a list of running workloads in the GCP console.
 
-### Connect to credhub
+### Connect to CredHub
 
 To spin up a pod and start a CredHub CLI session run:
 ```
