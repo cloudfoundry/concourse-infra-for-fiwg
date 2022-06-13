@@ -10,6 +10,12 @@ set -eu
 #  >> gcloud config set project <project id>
 #
 
+if [[ ${PROJECT_REGION:-"unset"} == "unset" ]]; then
+  echo "Please set environment variable \"PROJECT_REGION\" to the desired region."
+  echo "For a list of all regions, see https://cloud.google.com/compute/docs/regions-zones"
+  exit 1
+fi
+
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
 CONCOURSE_SA=concourse
 CNRM_SA=cnrm-system
@@ -26,7 +32,7 @@ openssl rand -base64 14 | gcloud secrets versions add postgres-admin --data-file
 gcloud sql instances create concourse \
   --database-version=POSTGRES_13 \
   --availability-type=regional \
-  --region=$(gcloud config get-value compute/region 2>/dev/null) \
+  --region="$PROJECT_REGION" \
   --cpu=1 \
   --memory=4 \
   --enable-point-in-time-recovery \
@@ -42,9 +48,9 @@ gcloud container clusters create $CLUSTER_NAME \
   --release-channel regular \
   --addons ConfigConnector \
   --workload-pool=${PROJECT_ID}.svc.id.goog \
+  --region "$PROJECT_REGION" \
   --logging=SYSTEM,WORKLOAD \
   --monitoring=SYSTEM \
-  --region europe-west4-a \
   --num-nodes=1 \
   --min-nodes=1 \
   --max-nodes=3 \
@@ -66,7 +72,7 @@ gcloud container node-pools create concourse-workers \
   --min-nodes=2 \
   --max-nodes=4 \
   --local-ssd-count 1 \
-  --region europe-west4-a \
+  --region "$PROJECT_REGION" \
   --tags=workers \
   --node-taints=workers=true:NoSchedule \
   --service-account=${CONCOURSE_SA}@${PROJECT_ID}.iam.gserviceaccount.com
@@ -74,10 +80,10 @@ gcloud container node-pools create concourse-workers \
 # configure outgoing traffic
 gcloud compute routers create nat-router \
     --network default \
-    --region europe-west4
+    --region "$PROJECT_REGION"
 
 gcloud compute routers nats create nat-config \
-    --router-region europe-west4 \
+    --router-region "$PROJECT_REGION" \
     --router nat-router \
     --nat-all-subnet-ip-ranges \
     --auto-allocate-nat-external-ips \
@@ -86,16 +92,16 @@ gcloud compute routers nats create nat-config \
 
 # setup firewall to connect from gke to internal instance vms
 # https://cloud.google.com/kubernetes-engine/docs/troubleshooting#autofirewall
-network=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(network)" --region europe-west4-a)
-ipv4_cidr=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(clusterIpv4Cidr)" --region europe-west4-a)
+network=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(network)" --region "$PROJECT_REGION")
+ipv4_cidr=$(gcloud container clusters describe $CLUSTER_NAME --format=get"(clusterIpv4Cidr)" --region "$PROJECT_REGION")
 gcloud compute firewall-rules create "$CLUSTER_NAME-to-all-vms-on-network" \
   --network="${network}" --source-ranges="${ipv4_cidr}" \
   --allow=tcp,udp,icmp,esp,ah,sctp
 
 # create subnets required for deploying bosh workloads and running  tests
-gcloud compute networks subnets create bosh-integration1 --network=default --range=10.100.0.0/24 --region=europe-west4
-gcloud compute networks subnets create bosh-integration2 --network=default --range=10.100.1.0/24 --region=europe-west4
-gcloud compute networks subnets create bosh-integration3 --network=default --range=10.100.2.0/24 --region=europe-west4
+gcloud compute networks subnets create bosh-integration1 --network=default --range=10.100.0.0/24 --region="$PROJECT_REGION"
+gcloud compute networks subnets create bosh-integration2 --network=default --range=10.100.1.0/24 --region="$PROJECT_REGION"
+gcloud compute networks subnets create bosh-integration3 --network=default --range=10.100.2.0/24 --region="$PROJECT_REGION"
 
 # configure config connector (translation of k8s resources -> gcp resources)
 gcloud iam service-accounts create ${CNRM_SA}
