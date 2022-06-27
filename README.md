@@ -1,14 +1,14 @@
 # Cloud Foundry Community CI Infra
 
 This repo holds the deployment templates used to deploy a CF community Concourse instance
-and supporting infra structure. It's used for maintaining the BOSH stemcell Concourse and for the 
+and supporting infra structure. It's used for maintaining the BOSH stemcell Concourse and for the
 Application Runtime Deployments WG Concourse.
 
 ## Requirements
 - gcloud => 337.0.0
 - helm => 3.5.4
 - vendir => 0.18
-- ytt
+- ytt => 0.41.1
 - kapp
 - jq
 - kubectl
