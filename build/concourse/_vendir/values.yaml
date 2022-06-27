@@ -21,7 +21,7 @@ image: concourse/concourse
 ##      of `concourse/concourse`.
 ## Ref: https://hub.docker.com/r/concourse/concourse/tags/
 ##
-imageTag: "7.7.0"
+imageTag: "7.8.1"
 
 ## Specific image digest to use in place of a tag.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/overview/#container-images
@@ -119,6 +119,7 @@ concourse:
 
     ## Enable P2P volume streaming between all wokrers.
     ## By default all volume streming goes through the web nodes.
+    ## NOTE: All workers must be on the same LAN network.
     ##
     enablep2pVolumeStreaming: false
 
@@ -328,6 +329,19 @@ concourse:
     ##
     ## Possible values: volume-locality | fewest-build-containers | limit-active-tasks | limit-active-containers | limit-active-volumes
     containerPlacementStrategies: []
+
+    ## A second method by which a worker is selected during container placement
+    ## that is only used for get and nested check steps.
+    ## Possible values: volume-locality | random | fewest-build-containers | limit-active-tasks | limit-active-containers | limit-active-volumes
+    noInputContainerPlacementStrategy:
+
+    ## Instead of specifying a single placement strategy, configure a chain of
+    ## them to be applied in order.
+    ##
+    ## If set, takes priority over noInputContainerPlacementStrategy.
+    ##
+    ## Possible values: volume-locality | fewest-build-containers | limit-active-tasks | limit-active-containers | limit-active-volumes
+    noInputContainerPlacementStrategies: []
 
     ## Maximum allowed number of active build tasks per worker.
     ##
@@ -551,6 +565,11 @@ concourse:
       ## URL pointing to vault addr (i.e. http://vault:8200).
       ##
       url:
+
+      ## Disable Vault SRV lookup when vault url not including port.
+      ## When vault url includes port, SRV lookup is diabled and this value has no impart.
+      ##
+      disable_srv_lookup: false
 
       ## Vault namespace to use for authentication and secret lookup.
       ##
@@ -1479,6 +1498,10 @@ concourse:
         ##
         disableGroups:
 
+        ## Disable OIDC connector to query the UserInfo endpoint
+        ##
+        disableGetUserInfo:
+
       ## Authentication (Microsoft)
       microsoft:
         enabled: false
@@ -1915,11 +1938,11 @@ concourse:
 #      behavior:
 #        scaleDown:
 #          stabilizationWindowSeconds: 1200
-#            selectPolicy: Min
-#            policies:
-#              - type: Percent
-#                value: 10
-#                periodSeconds: 300
+#          selectPolicy: Min
+#          policies:
+#            - type: Percent
+#              value: 10
+#              periodSeconds: 300
 #        scaleUp:
 #          stabilizationWindowSeconds: 60
 #      builtInMetrics:
@@ -2588,7 +2611,7 @@ persistence:
     #     app-volume: "concourse"
 
 ## Configuration values for the postgresql dependency.
-## Ref: https://github.com/helm/charts/blob/master/stable/postgresql/README.md
+## Ref: https://artifacthub.io/packages/helm/bitnami/postgresql/11.6.3
 ##
 postgresql:
 
@@ -2607,18 +2630,19 @@ postgresql:
   ##
   fullnameOverride:
 
-  ### PostgreSQL User to create.
-  ##
-  postgresqlUsername: concourse
+  auth:
+    ### PostgreSQL User to create.
+    ##
+    username: concourse
 
-  ## PostgreSQL Password for the new user.
-  ## If not set, a random 10 characters password will be used.
-  ##
-  postgresqlPassword: concourse
+    ## PostgreSQL Password for the new user.
+    ## If not set, a random 10 characters password will be used.
+    ##
+    password: concourse
 
-  ## PostgreSQL Database to create.
-  ##
-  postgresqlDatabase: concourse
+    ## PostgreSQL Database to create.
+    ##
+    database: concourse
 
   ## Allows for setting a specific cluster ip for the PostgreSQL
   ## service.

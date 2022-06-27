@@ -399,6 +399,13 @@ spec:
             - name: CONCOURSE_CONTAINER_PLACEMENT_STRATEGY
               value: {{ .Values.concourse.web.containerPlacementStrategy | quote }}
             {{- end }}
+            {{- if .Values.concourse.web.noInputContainerPlacementStrategies }}
+            - name: CONCOURSE_NO_INPUT_CONTAINER_PLACEMENT_STRATEGY
+              value: {{ .Values.concourse.web.noInputContainerPlacementStrategies | join "," | quote }}
+            {{- else if .Values.concourse.web.noInputContainerPlacementStrategy }}
+            - name: CONCOURSE_NO_INPUT_CONTAINER_PLACEMENT_STRATEGY
+              value: {{ .Values.concourse.web.noInputContainerPlacementStrategy | quote }}
+            {{- end }}
             {{- if .Values.concourse.web.limitActiveTasks }}
             - name: CONCOURSE_MAX_ACTIVE_TASKS_PER_WORKER
               value: {{ .Values.concourse.web.limitActiveTasks | quote }}
@@ -540,6 +547,8 @@ spec:
             {{- if .Values.concourse.web.vault.enabled }}
             - name: CONCOURSE_VAULT_URL
               value: {{ .Values.concourse.web.vault.url | quote }}
+            - name: CONCOURSE_VAULT_DISABLE_SRV_LOOKUP
+              value: {{ .Values.concourse.web.vault.disable_srv_lookup | quote }}
             - name: CONCOURSE_VAULT_PATH_PREFIX
               value: {{ .Values.concourse.web.vault.pathPrefix | quote }}
             {{- if.Values.concourse.web.vault.namespace }}
@@ -1312,6 +1321,10 @@ spec:
             {{- if .Values.concourse.web.auth.oidc.disableGroups }}
             - name: CONCOURSE_OIDC_DISABLE_GROUPS
               value: {{ .Values.concourse.web.auth.oidc.disableGroups | quote }}
+            {{- end }}
+            {{- if .Values.concourse.web.auth.oidc.disableGetUserInfo }}
+            - name: CONCOURSE_OIDC_DISABLE_GET_USER_INFO
+              value: {{ .Values.concourse.web.auth.oidc.disableGetUserInfo | quote }}
             {{- end }}
             {{- end }}
 

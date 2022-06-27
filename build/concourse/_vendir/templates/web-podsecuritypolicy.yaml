@@ -1,6 +1,6 @@
 {{- if .Values.web.enabled -}}
 {{- if .Values.podSecurityPolicy.create -}}
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodSecurityPolicy
 metadata:
   name: {{ template "concourse.web.fullname" . }}
@@ -20,7 +20,7 @@ spec:
   volumes:
 {{ toYaml .Values.podSecurityPolicy.allowedWebVolumes | indent 4 }}
   runAsUser:
-    rule: 'RunAsAny'    
+    rule: 'RunAsAny'
   seLinux:
     rule: 'RunAsAny'
   supplementalGroups:
