@@ -1,0 +1,5 @@
+#@data/values
+---
+database:
+  name: test
+rotate_quark_secrets: false

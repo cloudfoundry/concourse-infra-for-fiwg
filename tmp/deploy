@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
+
+echo "Using GCP project \"$PROJECT_ID\" and region \"$PROJECT_REGION\" for deployment..."
+kapp deploy -c -a concourse -n concourse -f <(ytt -f config --data-value google.project_id="$PROJECT_ID" --data-value google.region="europe-west4")

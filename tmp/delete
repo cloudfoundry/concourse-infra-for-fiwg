@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+if [[ ${PROJECT_REGION:-"unset"} == "unset" ]]; then
+  echo "Please set environment variable \"PROJECT_REGION\" to the desired region."
+  echo "For a list of all regions, see https://cloud.google.com/compute/docs/regions-zones"
+  exit 1
+fi
+
+PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
+
+echo "Using GCP project \"$PROJECT_ID\" and region \"$PROJECT_REGION\" for deployment..."
+kapp delete -c -a concourse -n concourse
