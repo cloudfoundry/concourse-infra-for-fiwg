@@ -7,7 +7,7 @@ Application Runtime Deployments WG Concourse.
 ## Requirements
 - gcloud => 337.0.0
 - helm => 3.5.4
-- vendir => 0.18
+- vendir => 0.30
 - ytt => 0.41.1
 - kapp
 - jq

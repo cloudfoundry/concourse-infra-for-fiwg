@@ -22,14 +22,11 @@ spec:
         name: #@ name + "-postgresql-password"
         key: password
 ---
-apiVersion: quarks.cloudfoundry.org/v1alpha1
-kind: QuarksSecret
+apiVersion: secretgen.k14s.io/v1alpha1
+kind: Password
 metadata:
   name: #@ name + "-postgresql-password"
   namespace: concourse
-spec:
-  type: password
-  secretName: #@ name + "-postgresql-password"
 #@ end
 
 --- #@ template.replace(add_database_user("concourse"))

@@ -19,6 +19,20 @@ directories:
       ref: v75.1.0
     includePaths:
     - k8s/templates/**/*
+# START delete when https://github.com/vmware-tanzu/carvel-secretgen-controller/issues/70 is fixed
+    # "DSECRETS_DIR" was removed to support our temporary templateconfig rewrite solution
+    ignorePaths:
+    - k8s/templates/deployment.star
+# END delete
+- path: config/carvel-secretgen-controller
+  contents:
+  - path: .
+    githubRelease:
+      slug: vmware-tanzu/carvel-secretgen-controller
+      tag: v0.10.3
+      assetNames: ["release.yml"]
+    includePaths:
+    - release.yml
 
 # the components in this section below are handled by their corresponding build scripts
 # the manual param tells vendir to not override/touch the contents of these config/_ytt_lib/<concourse> directories
@@ -26,11 +40,6 @@ directories:
   contents:
   - path: concourse
     manual: {}
-- path: config/quarks-secret/_ytt_lib
-  contents:
-  - path: quarks-secret
-    manual: {}
-
 
 - path: build/concourse/_vendir/
   contents:
@@ -40,12 +49,3 @@ directories:
       version: "17.0.6"
       repository:
         url: https://concourse-charts.storage.googleapis.com/
-
-- path: build/quarks-secret/_vendir/
-  contents:
-  - path: .
-    helmChart:
-      name: quarks-secret
-      version: "1.0.758"
-      repository:
-        url: https://cloudfoundry-incubator.github.io/quarks-helm

@@ -15,23 +15,19 @@ directories:
     path: .
   path: config/uaa/_ytt_lib/uaa
 - contents:
+  - githubRelease:
+      tag: v0.10.3
+      url: https://api.github.com/repos/vmware-tanzu/carvel-secretgen-controller/releases/71524101
+    path: .
+  path: config/carvel-secretgen-controller
+- contents:
   - manual: {}
     path: concourse
   path: config/concourse/_ytt_lib
-- contents:
-  - manual: {}
-    path: quarks-secret
-  path: config/quarks-secret/_ytt_lib
 - contents:
   - helmChart:
       appVersion: 7.8.1
       version: 17.0.6
     path: .
   path: build/concourse/_vendir/
-- contents:
-  - helmChart:
-      appVersion: 1.0.758
-      version: 1.0.758
-    path: .
-  path: build/quarks-secret/_vendir/
 kind: LockConfig
