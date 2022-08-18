@@ -182,21 +182,100 @@ spec:
   template:
     spec: #! pod spec
       initContainers:
-      - name: install
-        image: busybox:1.28
+      #@overlay/append
+      - name: fix-secrets
+        image: linuxserver/yq:amd64-latest
         command:
-        - wget
-        - "-O"
-        - "/work-dir/index.html"
-        - http://info.cern.ch
+        - /bin/sh
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          cp -R /etc/secrets/* /secrets
+          cd /secrets
+          FIXED_VALUE=$(yq -r .oauth.clients.admin.secret admin_client_credentials.yml | base64 -d)
+          yq -yi ".oauth.clients.admin.secret=\"${FIXED_VALUE}\"" admin_client_credentials.yml
+
+          FIXED_VALUE=$(yq -r .scim.users[0] concourse_admin_user_credentials.yml | cut -f 2 -d'|' |base64 -d)
+          ENCODED_VALUE=$(yq -r .scim.users[0] concourse_admin_user_credentials.yml | cut -f 2 -d'|' )
+          sed -i "s#$ENCODED_VALUE#$FIXED_VALUE#g" concourse_admin_user_credentials.yml
+
+          FIXED_VALUE=$(yq -r .scim.users[0] credhub_admin_client_credentials.yml| cut -f 2 -d'|' | base64 -d)
+          ENCODED_VALUE=$(yq -r .scim.users[0] credhub_admin_client_credentials.yml| cut -f 2 -d'|')
+          sed -i "s#$ENCODED_VALUE#$FIXED_VALUE#g" credhub_admin_client_credentials.yml
+
+          FIXED_VALUE=$(yq -r .scim.users[1] credhub_admin_client_credentials.yml| cut -f 2 -d'|' | base64 -d)
+          ENCODED_VALUE=$(yq -r .scim.users[1] credhub_admin_client_credentials.yml| cut -f 2 -d'|')
+          sed -i "s#$ENCODED_VALUE#$FIXED_VALUE#g" credhub_admin_client_credentials.yml
+
+          FIXED_VALUE=$(yq -r .database.password database_credentials.yml | base64 -d)
+          yq -yi ".database.password=\"${FIXED_VALUE}\"" database_credentials.yml
+
+          FIXED_VALUE=$(yq -r .encryption.encryption_keys[0].passphrase encryption_keys.yml | base64 -d)
+          yq -yi ".encryption.encryption_keys[0].passphrase=\"${FIXED_VALUE}\"" encryption_keys.yml
+
+          FIXED_VALUE=$(yq -r .jwt.token.policy.keys.default_jwt_policy_key.signingKey jwt_policy_signing_keys.yml | base64 -d)
+          yq -yi ".jwt.token.policy.keys.default_jwt_policy_key.signingKey=\"${FIXED_VALUE}\"" jwt_policy_signing_keys.yml
+          #REMOVE EMPTY LINES
+          sed -i '/^[[:space:]]*$/d' jwt_policy_signing_keys.yml
+
+          FIXED_VALUE=$(yq -r .login.saml.keys.default_saml_key.key saml_keys.yml | base64 -d)
+          yq -Yi ".login.saml.keys.default_saml_key.key|=\"${FIXED_VALUE}\"" saml_keys.yml
+
+          FIXED_VALUE=$(yq -r .login.saml.keys.default_saml_key.certificate saml_keys.yml | base64 -d)
+          yq -Yi ".login.saml.keys.default_saml_key.certificate|=\"${FIXED_VALUE}\"" saml_keys.yml
+
+          FIXED_VALUE=$(yq -r .login.saml.keys.default_saml_key.passphrase saml_keys.yml | base64 -d)
+          yq -Yi ".login.saml.keys.default_saml_key.passphrase=\"${FIXED_VALUE}\"" saml_keys.yml
+
+          #REMOVE EMPTY LINES
+          sed -i '/^[[:space:]]*$/d' saml_keys.yml
+
+          chmod -R 444 /secrets/*
         volumeMounts:
-        - name: workdir
+        - name: concourse-user-credentials-file
           mountPath: #@ "{}/concourse_admin_user_credentials.yml".format(secrets_dir)
+          subPath: concourse_admin_user_credentials.yml
+          readOnly: true
+        - name:  credhub-admin-client-credentials-file
+          mountPath: #@ "{}/credhub_admin_client_credentials.yml".format(secrets_dir)
+          subPath: credhub_admin_client_credentials.yml
+          readOnly: true
+        - name: fixed-secrets
+          mountPath: /secrets
+        - name: smtp-credentials-file
+          mountPath: #@ "{}/smtp_credentials.yml".format(secrets_dir)
+          subPath: smtp_credentials.yml
+          readOnly: true
+        - name: database-credentials-file
+          mountPath: #@ "{}/database_credentials.yml".format(secrets_dir)
+          subPath: database_credentials.yml
+          readOnly: true
+        - name: admin-client-credentials-file
+          mountPath: #@ "{}/admin_client_credentials.yml".format(secrets_dir)
+          subPath: admin_client_credentials.yml
+          readOnly: true
+        - name: jwt-policy-signing-keys-file
+          mountPath: #@ "{}/jwt_policy_signing_keys.yml".format(secrets_dir)
+          subPath: jwt_policy_signing_keys.yml
+          readOnly: true
+        - name: saml-keys-file
+          mountPath: #@ "{}/saml_keys.yml".format(secrets_dir)
+          subPath: saml_keys.yml
+          readOnly: true
+        - name: encryption-keys-file
+          mountPath: #@ "{}/encryption_keys.yml".format(secrets_dir)
+          subPath: encryption_keys.yml
+          readOnly: true
+      
       containers:
       #@overlay/match by="name"
       - name: uaa
         env:
         #@overlay/append
+        - name: SECRETS_DIR
+          value: /secrets
+
         - name: UAA_POSTGRES_HOST
           valueFrom:
             fieldRef:
@@ -204,17 +283,21 @@ spec:
               fieldPath: status.hostIP
         volumeMounts:
         #@overlay/append
+        - name: fixed-secrets
+          mountPath: /secrets
         - name: concourse-user-credentials-file
           mountPath: #@ "{}/concourse_admin_user_credentials.yml".format(secrets_dir)
           subPath: concourse_admin_user_credentials.yml
           readOnly: true
-        #@overlay/append
         - name:  credhub-admin-client-credentials-file
           mountPath: #@ "{}/credhub_admin_client_credentials.yml".format(secrets_dir)
           subPath: credhub_admin_client_credentials.yml
           readOnly: true
       volumes:
       #@overlay/append
+      - name: fixed-secrets
+        emptyDir:
+          medium: Memory
       - name: concourse-user-credentials-file
         secret:
           secretName: uaa-concourse-user-credentials
