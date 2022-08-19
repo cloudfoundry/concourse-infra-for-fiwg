@@ -1,7 +1,7 @@
 ---
 apiVersion: vendir.k14s.io/v1alpha1
 kind: Config
-minimumRequiredVersion: 0.11.0
+minimumRequiredVersion: 0.30.0
 directories:
 - path: config/credhub/_ytt_lib/credhub
   contents:
