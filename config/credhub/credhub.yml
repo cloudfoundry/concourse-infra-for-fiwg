@@ -52,8 +52,8 @@ spec:
         - -c
         - |
           #!/usr/bin/env bash
-          cp -R /app/config /secrets
-          cd /secrets/config
+          cp $(readlink -e /app-intermediate/application.yml) /app/config/
+          cd /app/config
 
           FIXED_VALUE=$(yq -r .server.ssl.key_store_password application.yml | base64 -d)
           yq -yi ".server.ssl.key_store_password=\"${FIXED_VALUE}\"" application.yml
@@ -70,11 +70,13 @@ spec:
 
           FIXED_VALUE=$(yq -r .encryption.providers[0].keys[0].encryption_password application.yml | base64 -d)
           yq -yi ".encryption.providers[0].keys[0].encryption_password=\"${FIXED_VALUE}\"" application.yml
+
+          sed -i 's/REPLACEME/${CREDHUB_POSTGRES_HOST}/g' application.yml
         volumeMounts:
         - name: config
-          mountPath: /app/config
+          mountPath: /app-intermediate
         - name: fixed-secrets
-          mountPath: /secrets
+          mountPath: /app/config
 #! END delete
       containers:
       #@overlay/match by=overlay.subset({"name": "credhub-server"})
@@ -117,8 +119,8 @@ spec:
         volumeMounts:
         #@overlay/match by=overlay.subset({"name": "config"})
         #@overlay/replace
-        - name: config
-          mountPath: /secrets/config
+        - name: fixed-secrets
+          mountPath: /app/config
 #! END delete
       volumes:
         #@overlay/match by=overlay.subset({"name": "config"})
