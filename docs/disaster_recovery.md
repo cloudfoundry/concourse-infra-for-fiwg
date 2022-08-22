@@ -12,8 +12,8 @@ Credhub encryption key is configured in two places:
 ### credhub-encryption-key
 
 ```
-enc_key=$(gcloud secrets versions access 1 --secret credhub-encryption-key | base64)
-kubectl patch secret credhub-encryption-key -p="{\"data\":{\"password\": \"$enc_key\"}}"
+enc_key=$(gcloud secrets versions access 1 --secret credhub-encryption-key | base64 -w 0)
+kubectl -n concourse patch secret credhub-encryption-key -p="{\"data\":{\"password\": \"$enc_key\"}}"
 ```
 
 ### Github config
@@ -27,7 +27,7 @@ kubectl -n concourse create secret generic github --from-literal=id=${ghID} --fr
 
 Get the original config yaml and save it to a temp file:
 ```
-  kubectl get secret credhub-config -o json | jq -r '.data["application.yml"]' | base64 --decode > tmp.yml
+  kubectl -n concourse get secret credhub-config -o json | jq -r '.data["application.yml"]' | base64 --decode > tmp.yml
 ```
 
 Replace encryption.providers[0].keys[0].encryption_password in tmp.yml to match the one from Google Secrets:
