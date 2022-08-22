@@ -25,7 +25,7 @@ concourse:
       host: 127.0.0.1
       database: concourse
     localAuth:
-      enabled: true
+      enabled: false
     auth:
       github:
         enabled: true
