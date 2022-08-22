@@ -27,7 +27,7 @@ directories:
 - contents:
   - helmChart:
       appVersion: 7.8.1
-      version: 17.0.6
+      version: 17.0.27
     path: .
   path: build/concourse/_vendir/
 kind: LockConfig

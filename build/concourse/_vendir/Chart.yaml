@@ -4,7 +4,7 @@ dependencies:
 - condition: postgresql.enabled
   name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 11.6.10
+  version: 11.7.6
 description: Concourse is a simple and scalable CI system.
 home: https://concourse-ci.org/
 icon: https://avatars1.githubusercontent.com/u/7809479
@@ -20,4 +20,4 @@ sources:
 - https://github.com/concourse/concourse-chart
 - https://github.com/concourse/concourse
 type: application
-version: 17.0.6
+version: 17.0.27

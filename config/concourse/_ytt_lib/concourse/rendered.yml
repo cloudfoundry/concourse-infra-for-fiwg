@@ -4,7 +4,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
@@ -19,7 +19,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 data:
@@ -34,7 +34,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
@@ -56,7 +56,7 @@ metadata:
   name: concourse-web-worker-gateway
   labels:
     app: concourse-web
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
@@ -74,7 +74,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
@@ -90,7 +90,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
@@ -155,11 +155,6 @@ spec:
           value: "80"
         - name: CONCOURSE_BIND_IP
           value: 0.0.0.0
-        - name: CONCOURSE_ADD_LOCAL_USER
-          valueFrom:
-            secretKeyRef:
-              name: concourse-web
-              key: local-users
         - name: CONCOURSE_TLS_BIND_PORT
           value: "443"
         - name: CONCOURSE_EXTERNAL_URL
@@ -330,7 +325,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.6
+    chart: concourse-17.0.27
     release: concourse
     heritage: Helm
 spec:
