@@ -13,6 +13,14 @@ Application Runtime Deployments WG Concourse.
 - jq
 - kubectl
 
+## NOTICE:
+as we just moved away from quarks to carvel secretgen.
+the following steps will be need to made as all secrets/certs will be rotated
+it will also rotate the database credentials and the credhub-encryoption key.
+
+follow the [credhub-ecryoption-key recovery](docs/disaster_recovery.md#credhub-encryption-key)
+and restore database credentials by following the [secret-rotation](docs/secret_rotation.md)
+
 ## Getting started
 
 Authenticate to your GCP account with:
