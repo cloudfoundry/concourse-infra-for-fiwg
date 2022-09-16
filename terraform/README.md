@@ -18,4 +18,12 @@ terraform init
 terraform apply
 ```
 
+#### Apply terraform 
+
+```
+#cd to terraform folder
+terraform init
+terraform plan
+terraform apply
+```
 
