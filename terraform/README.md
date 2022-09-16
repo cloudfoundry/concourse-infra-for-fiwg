@@ -21,7 +21,7 @@ terraform apply
 #### Apply terraform 
 
 ```
-#cd to terraform folder
+cd ../
 terraform init
 terraform plan
 terraform apply

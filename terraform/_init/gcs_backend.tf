@@ -33,7 +33,7 @@ resource "google_storage_bucket" "terraform-state-wg-ci" {
   }
 
   location                    = var.region
-  name                        = var.gcs-terrafom-state-bucket-name
+  name                        = var.gcs_state_bucket
   project                     = var.project
   requester_pays              = "false"
   storage_class               = "STANDARD"

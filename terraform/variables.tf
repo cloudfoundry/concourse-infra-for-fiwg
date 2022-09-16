@@ -13,7 +13,16 @@ variable "zone" {
   default = "europe-west3-a"
 }
 
-variable "gcs-terrafom-state-bucket" {
+variable "gcs_state_bucket" {
   type = string
   default = "terraform-state-wg-ci"
 }
+
+variable "dns_address" {
+  type = map
+  default = {
+    name = "concourse-app-runtime-interfaces-ci-cloudfoundry-org"
+    description = "https://concourse.app-runtime-interfaces.ci.cloudfoundry.org"
+  }
+}
+
