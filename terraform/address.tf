@@ -10,8 +10,8 @@ resource "google_dns_managed_zone" "app-runtime-interfaces" {
   name        = "app-runtime-interfaces"
   dns_name    = "app-runtime-interfaces.ci.cloudfoundry.org."
   description = "app-runtime-interfaces WG DNS zone"
-  project = var.project
-  visibility = "public"
+  project     = var.project
+  visibility  = "public"
 }
 
 
@@ -23,3 +23,4 @@ resource "google_dns_record_set" "concourse" {
   ttl          = 300
   project = var.project
 }
+

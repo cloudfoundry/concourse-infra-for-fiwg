@@ -18,20 +18,21 @@ terraform init
 terraform apply
 ```
 
-#### Apply terraform 
+
+### Import existing GCP resources to terraform state
+
+```
+terraform import google_dns_managed_zone.app-runtime-interfaces projects/app-runtime-interfaces-wg/managedZones/app-runtime-interfaces
+terraform import google_compute_network.vpc projects/app-runtime-interfaces-wg/global/networks/default
+
+```
+
+
+#### Apply terraform
 
 ```
 cd ../
 terraform init
 terraform plan
 terraform apply
-```
----
-# Examples
-
-### Import existing resource via Terraform
-
-```
-terraform import google_dns_managed_zone.app-runtime-interfaces projects/app-runtime-interfaces-wg/managedZones/app-runtime-interfaces           
-
 ```
