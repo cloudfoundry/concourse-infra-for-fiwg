@@ -30,3 +30,8 @@ variable "db_instance" {
   type = string
   default = "concourse"
 }
+
+variable "databases" {
+  type = list
+  default =  [ "concourse", "credhub", "uaa" ]
+  }

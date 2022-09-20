@@ -1,34 +1,3 @@
-# resource "google_sql_database" "tfer--concourse-concourse" {
-#   charset   = "UTF8"
-#   collation = "en_US.UTF8"
-#   instance  = "concourse"
-#   name      = "concourse"
-#   project   = "cloud-foundry-310819"
-# }
-
-# resource "google_sql_database" "tfer--concourse-credhub" {
-#   charset   = "UTF8"
-#   collation = "en_US.UTF8"
-#   instance  = "concourse"
-#   name      = "credhub"
-#   project   = "cloud-foundry-310819"
-# }
-
-# resource "google_sql_database" "tfer--concourse-postgres" {
-#   charset   = "UTF8"
-#   collation = "en_US.UTF8"
-#   instance  = "concourse"
-#   name      = "postgres"
-#   project   = "cloud-foundry-310819"
-# }
-
-# resource "google_sql_database" "tfer--concourse-uaa" {
-#   charset   = "UTF8"
-#   collation = "en_US.UTF8"
-#   instance  = "concourse"
-#   name      = "uaa"
-#   project   = "cloud-foundry-310819"
-# }
 
 resource "google_sql_database_instance" "concourse" {
   database_version = "POSTGRES_13"
@@ -72,3 +41,16 @@ resource "google_sql_database_instance" "concourse" {
 
   }
 }
+
+resource "google_sql_database"  "concourse_db" {
+
+    for_each = toset(var.databases)
+    charset   = "UTF8"
+    collation = "en_US.UTF8"
+    instance  = var.db_instance
+    name      = each.key
+    project   = var.project
+
+    depends_on = [ google_sql_database_instance.concourse ]
+}
+
