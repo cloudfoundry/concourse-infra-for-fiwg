@@ -26,3 +26,7 @@ variable "dns_address" {
   }
 }
 
+variable "db_instance" {
+  type = string
+  default = "concourse"
+}
