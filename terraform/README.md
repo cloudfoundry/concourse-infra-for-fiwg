@@ -26,4 +26,12 @@ terraform init
 terraform plan
 terraform apply
 ```
+---
+# Examples
 
+### Import existing resource via Terraform
+
+```
+terraform import google_dns_managed_zone.app-runtime-interfaces projects/app-runtime-interfaces-wg/managedZones/app-runtime-interfaces           
+
+```
