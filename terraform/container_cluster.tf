@@ -1,5 +1,9 @@
 resource "google_container_cluster" "wg_ci" {
-  name               = "wg-ci"
+  name         = var.gke.name
+  location     = var.zone
+  project      = var.project
+  node_version = var.gke.node_version
+
   release_channel {
     channel = "STABLE"
   }
@@ -7,7 +11,6 @@ resource "google_container_cluster" "wg_ci" {
   workload_identity_config {
     workload_pool = "${var.project}.svc.id.goog"
   }
-  region = var.region
 
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
@@ -21,10 +24,10 @@ resource "google_container_cluster" "wg_ci" {
     enabled = "false"
   }
 
-  cluster_ipv4_cidr = "10.104.0.0/14"
+  cluster_ipv4_cidr = var.gke.cluster_ipv4_cidr
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "10.104.0.0/14"
-    services_ipv4_cidr_block = "10.108.0.0/20"
+    cluster_ipv4_cidr_block  = var.gke.cluster_ipv4_cidr
+    services_ipv4_cidr_block = var.gke.services_ipv4_cidr_block
   }
   private_cluster_config {
     enable_private_endpoint = "false"
@@ -34,15 +37,12 @@ resource "google_container_cluster" "wg_ci" {
       enabled = "false"
     }
 
-    master_ipv4_cidr_block = "172.16.0.32/28"
+    master_ipv4_cidr_block = var.gke.master_ipv4_cidr_block
   }
-
-
-
 
  ###### old stuff
   monitoring_service = "monitoring.googleapis.com/kubernetes"
-  network            = "projects/cloud-foundry-310819/global/networks/default"
+  network            = google_compute_network.vpc.name
 
   addons_config {
     gce_persistent_disk_csi_driver_config {
@@ -62,9 +62,6 @@ resource "google_container_cluster" "wg_ci" {
     }
   }
 
-
-
-
   database_encryption {
     state = "DECRYPTED"
   }
@@ -75,18 +72,16 @@ resource "google_container_cluster" "wg_ci" {
     disabled = "true"
   }
 
-  enable_binary_authorization = "false"
+  binary_authorization {
+    evaluation_mode = "DISABLED"
+  }
+
   enable_intranode_visibility = "false"
   enable_kubernetes_alpha     = "false"
   enable_legacy_abac          = "false"
   enable_shielded_nodes       = "true"
   enable_tpu                  = "false"
   initial_node_count          = "0"
-
-
-
-  location = "europe-west4-a"
-
 
   logging_service = "logging.googleapis.com/kubernetes"
 
@@ -96,25 +91,17 @@ resource "google_container_cluster" "wg_ci" {
     }
   }
 
-
-
-
   network_policy {
     enabled  = "false"
     provider = "PROVIDER_UNSPECIFIED"
   }
 
   networking_mode = "VPC_NATIVE"
-  node_version    = "1.22.12-gke.500"
-
-
-
-  project = "cloud-foundry-310819"
 
   service_external_ips_config {
     enabled = "true"
   }
 
-  subnetwork = "projects/cloud-foundry-310819/regions/europe-west4/subnetworks/default"
+  subnetwork = google_compute_subnetwork.default.name
 
 }

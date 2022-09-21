@@ -9,6 +9,16 @@ resource "google_compute_network" "vpc" {
   routing_mode                    = "REGIONAL"
 }
 
+resource "google_compute_subnetwork" "default" {
+  ip_cidr_range            = "10.156.0.0/20"
+  name                     = "default"
+  network                  = google_compute_network.vpc.name
+  private_ip_google_access = "true"
+  project                  = var.project
+  purpose                  = "PRIVATE"
+  region                   = var.region
+  stack_type = "IPV4_ONLY"
+}
 
 # create subnets required for deploying bosh workloads and running  tests
 resource "google_compute_subnetwork" "bosh-integration-0" {

@@ -35,3 +35,15 @@ variable "databases" {
   type = list
   default =  [ "concourse", "credhub", "uaa" ]
   }
+
+variable "gke" {
+  type = map
+  default = {
+    name = "wg-ci"
+    node_version = "1.22.12-gke.500"
+    cluster_ipv4_cidr = "10.104.0.0/14"
+    services_ipv4_cidr_block = "10.108.0.0/20"
+    master_ipv4_cidr_block = "172.16.0.32/28"
+  }
+}
+
