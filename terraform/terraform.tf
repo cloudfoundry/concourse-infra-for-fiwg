@@ -10,3 +10,10 @@ terraform {
     prefix  = "terraform/state/wg-ci"
    }
 }
+
+provider "google" {
+  project = var.project
+  region  = var.region
+  zone    = var.zone
+}
+

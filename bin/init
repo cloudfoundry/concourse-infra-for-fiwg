@@ -85,10 +85,10 @@ gcloud compute routers create nat-router \
 gcloud compute routers nats create nat-config \
     --router-region "$PROJECT_REGION" \
     --router nat-router \
-    #--nat-all-subnet-ip-ranges \
+    --nat-all-subnet-ip-ranges \
     --auto-allocate-nat-external-ips \
-    #--min-ports-per-vm=4095 \
-    #--tcp-established-idle-timeout=60 
+    --min-ports-per-vm=4095 \
+    --tcp-established-idle-timeout=60 
 
 # setup firewall to connect from gke to internal instance vms
 # https://cloud.google.com/kubernetes-engine/docs/troubleshooting#autofirewall
