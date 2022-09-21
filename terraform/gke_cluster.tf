@@ -24,7 +24,6 @@ resource "google_container_cluster" "wg_ci" {
     enabled = "false"
   }
 
-  cluster_ipv4_cidr = var.gke.cluster_ipv4_cidr
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = var.gke.cluster_ipv4_cidr
     services_ipv4_cidr_block = var.gke.services_ipv4_cidr_block
@@ -40,10 +39,16 @@ resource "google_container_cluster" "wg_ci" {
     master_ipv4_cidr_block = var.gke.master_ipv4_cidr_block
   }
 
- ###### old stuff
-  monitoring_service = "monitoring.googleapis.com/kubernetes"
   network            = google_compute_network.vpc.name
+  subnetwork         = google_compute_subnetwork.default.name
+  network_policy {
+    enabled  = "false"
+    provider = "PROVIDER_UNSPECIFIED"
+  }
 
+  networking_mode = "VPC_NATIVE"
+
+ # other config
   addons_config {
     gce_persistent_disk_csi_driver_config {
       enabled = "true"
@@ -91,17 +96,10 @@ resource "google_container_cluster" "wg_ci" {
     }
   }
 
-  network_policy {
-    enabled  = "false"
-    provider = "PROVIDER_UNSPECIFIED"
-  }
-
-  networking_mode = "VPC_NATIVE"
 
   service_external_ips_config {
     enabled = "true"
   }
-
-  subnetwork = google_compute_subnetwork.default.name
-
+  
+  monitoring_service = "monitoring.googleapis.com/kubernetes"
 }

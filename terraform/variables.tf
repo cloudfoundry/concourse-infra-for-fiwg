@@ -44,6 +44,7 @@ variable "gke" {
     cluster_ipv4_cidr = "10.104.0.0/14"
     services_ipv4_cidr_block = "10.108.0.0/20"
     master_ipv4_cidr_block = "172.16.0.32/28"
+    machine_type = "n1-standard-4"
   }
 }
 
