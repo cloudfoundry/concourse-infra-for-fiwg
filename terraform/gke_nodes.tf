@@ -1,6 +1,5 @@
 resource "google_container_node_pool" "default-pool" {
   cluster            = google_container_cluster.wg_ci.name
-  initial_node_count = "1"
   node_count     = "1"
 
   node_locations = [var.zone]
@@ -61,7 +60,6 @@ resource "google_container_node_pool" "default-pool" {
 
 resource "google_container_node_pool" "concourse-workers" {
   cluster            = google_container_cluster.wg_ci.name
-  initial_node_count = "2"
   node_count     = "2"
 
   node_locations = [var.zone]

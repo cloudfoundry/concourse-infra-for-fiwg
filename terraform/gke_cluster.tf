@@ -1,9 +1,11 @@
 resource "google_container_cluster" "wg_ci" {
-  name         = var.gke.name
-  location     = var.zone
-  project      = var.project
-  node_version = var.gke.node_version
-
+  name               = var.gke.name
+  location           = var.zone
+  project            = var.project
+  node_version       = var.gke.node_version
+  min_master_version = var.gke.node_version
+  initial_node_count = "1"
+  
   release_channel {
     channel = "STABLE"
   }
@@ -86,9 +88,8 @@ resource "google_container_cluster" "wg_ci" {
   enable_legacy_abac          = "false"
   enable_shielded_nodes       = "true"
   enable_tpu                  = "false"
-  initial_node_count          = "0"
-
-  logging_service = "logging.googleapis.com/kubernetes"
+  
+  
 
   master_auth {
     client_certificate_config {
@@ -101,5 +102,8 @@ resource "google_container_cluster" "wg_ci" {
     enabled = "true"
   }
   
-  monitoring_service = "monitoring.googleapis.com/kubernetes"
+  #googleapi: Error 400: Cannot specify logging_config or monitoring_config together with logging_service or monitoring_service., badRequest
+  #logging_service = "logging.googleapis.com/kubernetes"
+  #monitoring_service = "monitoring.googleapis.com/kubernetes"
+
 }
