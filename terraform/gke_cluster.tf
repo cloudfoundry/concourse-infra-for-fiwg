@@ -2,7 +2,6 @@ resource "google_container_cluster" "wg_ci" {
   name               = var.gke.name
   location           = var.zone
   project            = var.project
-  min_master_version = var.gke.node_version
   initial_node_count = "1"
   remove_default_node_pool = true
 

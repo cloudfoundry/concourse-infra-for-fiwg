@@ -120,7 +120,6 @@ resource "google_container_node_pool" "concourse-workers" {
     max_surge       = "1"
     max_unavailable = "0"
   }
-
-  version = var.gke.node_version
+  
 }
 
