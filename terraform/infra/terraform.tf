@@ -7,7 +7,7 @@ terraform {
 
    backend "gcs" {
     bucket  = "terraform-state-wg-ci"
-    prefix  = "terraform/state/wg-ci"
+    prefix  = "terraform/state/infra"
    }
 }
 
