@@ -39,7 +39,7 @@ metadata:
     heritage: Helm
 spec:
   type: LoadBalancer
-  loadBalancerIP: 34.90.62.88
+  loadBalancerIP: 34.141.111.11
   ports:
   - name: atc
     port: 80
@@ -158,7 +158,7 @@ spec:
         - name: CONCOURSE_TLS_BIND_PORT
           value: "443"
         - name: CONCOURSE_EXTERNAL_URL
-          value: https://bosh.ci.cloudfoundry.org
+          value: https://concourse.app-runtime-interfaces.ci.cloudfoundry.org
         - name: CONCOURSE_DEBUG_BIND_IP
           value: 127.0.0.1
         - name: CONCOURSE_DEBUG_BIND_PORT
@@ -224,7 +224,7 @@ spec:
         - name: CONCOURSE_MAIN_TEAM_LOCAL_USER
           value: test
         - name: CONCOURSE_MAIN_TEAM_GITHUB_TEAM
-          value: cloudfoundry:bosh-stemcell
+          value: cloudfoundry:bosh-stemcell,cloudfoundry:app-autoscaler
         - name: CONCOURSE_GITHUB_CLIENT_ID
           valueFrom:
             secretKeyRef:

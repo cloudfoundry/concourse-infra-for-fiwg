@@ -41,14 +41,14 @@ concourse:
 
           ## Comma-separated allow list of GitHub teams.
           ##
-          team: cloudfoundry:bosh-stemcell
-    externalUrl: https://bosh.ci.cloudfoundry.org
+          team: cloudfoundry:bosh-stemcell,cloudfoundry:app-autoscaler
+    externalUrl: https://concourse.app-runtime-interfaces.ci.cloudfoundry.org
     enableResourceCausality: true
 web:
   service:
     api:
       type: LoadBalancer
-      loadBalancerIP: 34.90.62.88
+      loadBalancerIP: 34.141.111.11
 worker:
   additionalAffinities:
     nodeAffinity:
