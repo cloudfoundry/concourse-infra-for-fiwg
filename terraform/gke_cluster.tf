@@ -4,6 +4,7 @@ resource "google_container_cluster" "wg_ci" {
   project            = var.project
   initial_node_count = "1"
   remove_default_node_pool = true
+  min_master_version = var.gke.controlplane_version
 
   release_channel {
     channel = "STABLE"
