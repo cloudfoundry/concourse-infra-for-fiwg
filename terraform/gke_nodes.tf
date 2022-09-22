@@ -35,7 +35,7 @@ resource "google_container_node_pool" "default-pool" {
 
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/userinfo.email"]
     preemptible     = "false"
-    service_account = google_service_account.autoscaler_deployer.account_id
+    service_account = google_service_account.autoscaler_deployer.email
 
     shielded_instance_config {
       enable_integrity_monitoring = "true"
@@ -94,7 +94,7 @@ resource "google_container_node_pool" "concourse-workers" {
 
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/userinfo.email"]
     preemptible     = "false"
-    service_account = google_service_account.autoscaler_deployer.account_id
+    service_account = google_service_account.autoscaler_deployer.email
 
     shielded_instance_config {
       enable_integrity_monitoring = "true"
