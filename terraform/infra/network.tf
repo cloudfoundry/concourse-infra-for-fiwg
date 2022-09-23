@@ -7,6 +7,10 @@ resource "google_compute_network" "vpc" {
   name                            = "default"
   project                         = var.project
   routing_mode                    = "REGIONAL"
+
+  lifecycle {
+   prevent_destroy = true
+ }
 }
 
 resource "google_compute_subnetwork" "default" {
@@ -18,6 +22,9 @@ resource "google_compute_subnetwork" "default" {
   purpose                  = "PRIVATE"
   region                   = var.region
   stack_type = "IPV4_ONLY"
+  lifecycle {
+   prevent_destroy = true
+ }
 }
 
 # create subnets required for deploying bosh workloads and running  tests
