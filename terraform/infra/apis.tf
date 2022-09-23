@@ -1,27 +1,18 @@
 # Set apis to not disable in case we issue `terraform destroy`
-
-resource "google_project_service" "cloudresourcemanager" {
-  service = "cloudresourcemanager.googleapis.com"
-  disable_on_destroy = false
+variable "apis" {
+  type = list
+  default = [
+    "cloudresourcemanager.googleapis.com",
+    "secretmanager.googleapis.com",
+    "sqladmin.googleapis.com",
+    "container.googleapis.com",
+    "iam.googleapis.com"
+  ]
 }
 
-resource "google_project_service" "secretmanager" {
-  service = "secretmanager.googleapis.com"
+resource "google_project_service" "apis" {
+  for_each = toset(var.apis)
+  service = each.key
+  project = var.project
   disable_on_destroy = false
 }
-
-resource "google_project_service" "sqladmin" {
-  service = "sqladmin.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_project_service" "container" {
-  service = "container.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_project_service" "iam" {
-  service = "iam.googleapis.com"
-  disable_on_destroy = false
-}
-

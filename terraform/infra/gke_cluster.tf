@@ -1,4 +1,5 @@
 resource "google_container_cluster" "wg_ci" {
+  provider           = google-beta
   name               = var.gke.name
   location           = var.zone
   project            = var.project
@@ -52,6 +53,9 @@ resource "google_container_cluster" "wg_ci" {
 
  # other config
   addons_config {
+    config_connector_config {
+       enabled = "true"
+     }
     gce_persistent_disk_csi_driver_config {
       enabled = "true"
     }
