@@ -1,4 +1,5 @@
 #!/bin/bash
+echo -e "\nCreating concourse namespace if needed..."
 
 if ! kubectl get ns concourse 2>/dev/null; then
   cat <<EOF | kubectl apply -f -
