@@ -34,12 +34,31 @@ resource "google_service_account_iam_member" "cnrm-system" {
 }
 
 
-# TODO:
-# resource "google_project_iam_custom_role" "wg-ci-role" {
-#   description = "Permissions needed to manage wg-ci project"
-#   permissions = [ ... ]
-#   project     = var.project
-#  role_id     = "WgCiCustomRole"
-#  stage       = "GA"
-#  title       = "WG CI Manage"
-#}
+
+resource "google_project_iam_custom_role" "wg-ci-role" {
+  description = "Permissions needed to manage wg-ci project"
+  permissions = [ 
+    "iam.serviceAccounts.setIamPolicy",
+
+    "container.clusterRoles.bind",
+    "container.clusterRoles.create",
+    "container.clusterRoles.delete",
+    #"container.clusterRoles.escalate",
+    "container.clusterRoles.get",
+    "container.clusterRoles.list",
+    "container.clusterRoles.update",
+
+    "container.clusterRoleBindings.create",
+    "container.clusterRoleBindings.delete",
+    "container.clusterRoleBindings.get",
+    "container.clusterRoleBindings.list",
+    "container.clusterRoleBindings.update",
+
+
+    "container.configMaps.get" ]
+  project     = var.project
+  role_id     = "WgCiCustomRole"
+  stage       = "GA"
+  title       = "WG CI Manage"
+}
+
