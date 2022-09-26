@@ -22,7 +22,6 @@ resource "google_container_cluster" "wg_ci" {
     enable_components = ["SYSTEM_COMPONENTS"]
   }
 
-  # init script uses --enable-autoscaling but in actual, it is disabled
   cluster_autoscaling {
     enabled = "false"
   }
@@ -92,8 +91,6 @@ resource "google_container_cluster" "wg_ci" {
   enable_legacy_abac          = "false"
   enable_shielded_nodes       = "true"
   enable_tpu                  = "false"
-  
-  
 
   master_auth {
     client_certificate_config {
@@ -105,9 +102,5 @@ resource "google_container_cluster" "wg_ci" {
   service_external_ips_config {
     enabled = "true"
   }
-  
-  #googleapi: Error 400: Cannot specify logging_config or monitoring_config together with logging_service or monitoring_service., badRequest
-  #logging_service = "logging.googleapis.com/kubernetes"
-  #monitoring_service = "monitoring.googleapis.com/kubernetes"
 
 }
