@@ -16,3 +16,8 @@ provider "google-beta" {
   region  = var.region
   zone    = var.zone
 }
+
+provider "kubernetes" {
+  config_path    = "~/.kube/config"
+  config_context = "gke_app-runtime-interfaces-wg_europe-west3-a_wg-ci"
+}

@@ -43,7 +43,7 @@ resource "google_project_iam_custom_role" "wg-ci-role" {
     "container.clusterRoles.bind",
     "container.clusterRoles.create",
     "container.clusterRoles.delete",
-    #"container.clusterRoles.escalate",
+    "container.clusterRoles.escalate",
     "container.clusterRoles.get",
     "container.clusterRoles.list",
     "container.clusterRoles.update",
