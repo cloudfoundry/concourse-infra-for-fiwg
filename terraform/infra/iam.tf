@@ -20,14 +20,26 @@ resource "google_service_account" "cnrm-system" {
   project       = var.project
 }
 
-resource "google_project_iam_binding" "project-binding" {
 
-  for_each = toset([
-    "roles/iam.serviceAccountUser",
-    "roles/iam.workloadIdentityUser"
-    ])
-  role               = each.key
-
-  members = [ "serviceAccount:${var.project}.svc.id.goog[${google_service_account.cnrm-system.name}/cnrm-controller-manager"]
-  project       = var.project
+resource "google_project_iam_member" "cnrm-system" {
+  project = var.project
+  member  = "serviceAccount:${google_service_account.cnrm-system.email}"
+  role    = "roles/iam.serviceAccountAdmin"
 }
+
+resource "google_service_account_iam_member" "cnrm-system" {
+  service_account_id = google_service_account.cnrm-system.id
+  member             = "serviceAccount:${var.project}.svc.id.goog[cnrm-system/cnrm-controller-manager-wg-ci]"
+  role               = "roles/iam.workloadIdentityUser"
+}
+
+
+# TODO:
+# resource "google_project_iam_custom_role" "wg-ci-role" {
+#   description = "Permissions needed to manage wg-ci project"
+#   permissions = [ ... ]
+#   project     = var.project
+#  role_id     = "WgCiCustomRole"
+#  stage       = "GA"
+#  title       = "WG CI Manage"
+#}
