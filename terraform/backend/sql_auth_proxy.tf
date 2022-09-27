@@ -26,5 +26,27 @@ resource "kubernetes_service_account" "cloud-sql-auth-proxy" {
       "iam.gke.io/gcp-service-account" = "${google_service_account.cloud-sql-auth-proxy.email}"
     }
   }
+
+  #TODO:
+  # --shared resource gke
+  # depends_on = [
+  #   google_container_cluster.wg_ci
+  # ]
 }
 
+resource "kubernetes_manifest" "sql-auth-proxy" {
+  manifest = yamldecode(templatefile("sql-auth-proxy.yaml",
+  { 
+    project = var.project
+    region = var.region
+    }
+  
+  ))
+
+  #TODO:
+  # wait {}
+  # --shared resource gke
+  # depends_on = [
+  #   google_container_cluster.wg_ci
+  # ]
+}
