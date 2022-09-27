@@ -33,11 +33,9 @@ resource "google_service_account_iam_member" "cnrm-system" {
   role               = "roles/iam.workloadIdentityUser"
 }
 
-
-
 resource "google_project_iam_custom_role" "wg-ci-role" {
-  description = "Permissions needed to manage wg-ci project"
-  permissions = [ 
+  description = "Permissions for humans to manage wg-ci project"
+  permissions = [
     "iam.serviceAccounts.setIamPolicy",
 
     "container.clusterRoles.bind",
@@ -53,7 +51,6 @@ resource "google_project_iam_custom_role" "wg-ci-role" {
     "container.clusterRoleBindings.get",
     "container.clusterRoleBindings.list",
     "container.clusterRoleBindings.update",
-
 
     "container.configMaps.get" ]
   project     = var.project

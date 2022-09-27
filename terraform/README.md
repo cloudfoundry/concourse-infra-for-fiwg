@@ -28,10 +28,10 @@ terraform import google_compute_network.vpc projects/app-runtime-interfaces-wg/g
 ```
 
 
-#### Apply terraform
+### Apply terraform for infrastructure
 
 ```
-cd ../
+cd ../infra
 terraform init
 terraform plan
 terraform apply

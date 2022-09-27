@@ -43,3 +43,9 @@ resource "google_storage_bucket" "terraform-state-wg-ci" {
     enabled = "true"
   }
 }
+
+provider "google" {
+  project = var.project
+  region  = var.region
+  zone    = var.zone
+}
