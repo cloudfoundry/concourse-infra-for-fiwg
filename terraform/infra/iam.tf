@@ -29,7 +29,7 @@ resource "google_project_iam_member" "cnrm-system" {
 
 resource "google_service_account_iam_member" "cnrm-system" {
   service_account_id = google_service_account.cnrm-system.id
-  member             = "serviceAccount:${var.project}.svc.id.goog[cnrm-system/cnrm-controller-manager-wg-ci]"
+  member             = "serviceAccount:${var.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]"
   role               = "roles/iam.workloadIdentityUser"
 }
 
