@@ -28,8 +28,3 @@ resource "kubernetes_service_account" "cloud-sql-auth-proxy" {
   }
 }
 
-resource "kubernetes_namespace" "concourse" {
-  metadata {
-    name = "concourse"
-  }
-}

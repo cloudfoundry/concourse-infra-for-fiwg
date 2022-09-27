@@ -11,13 +11,13 @@ metadata:
   namespace: concourse
 #@ end
 
-# ---
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   name: concourse
-#   labels:
-#     quarks.cloudfoundry.org/monitored: concourse
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: concourse
+  labels:
+    quarks.cloudfoundry.org/monitored: concourse
 
 #@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "concourse-web"}})
 ---
