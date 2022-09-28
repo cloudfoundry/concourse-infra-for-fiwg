@@ -17,6 +17,6 @@ echo -e "\nGenerating ytt config for kapp..."
 ytt -f config --data-value google.project_id="$PROJECT_ID" --data-value google.region="$PROJECT_REGION" > ${SCRIPT_DIR}/ytt_manifest.yaml
 
 echo -e "\nDeploy wit kapp..."
-kapp deploy -c -a concourse -n concourse -f ${SCRIPT_DIR}/ytt_manifest.yaml
+kapp deploy -c -a concourse -n concourse -f ${SCRIPT_DIR}/ytt_manifest.yaml #--dangerous-override-ownership-of-existing-resources
 
 

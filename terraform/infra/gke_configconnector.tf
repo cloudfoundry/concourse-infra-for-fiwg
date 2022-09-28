@@ -7,7 +7,7 @@ resource "kubernetes_manifest" "cnrm" {
         }
         spec = {
             mode = "cluster"
-            googleServiceAccount = "${google_service_account.cnrm-system.email}"
+            googleServiceAccount = "${google_service_account.cnrm_system.email}"
 
         }
     }

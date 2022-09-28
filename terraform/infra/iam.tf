@@ -13,7 +13,7 @@ resource "google_service_account" "autoscaler_deployer" {
 #  project       = var.project
 # }
 
-resource "google_service_account" "cnrm-system" {
+resource "google_service_account" "cnrm_system" {
   account_id    = "cnrm-system"
   description   = "Config Connector account for wg-ci GKE"
   disabled      = "false"
@@ -21,23 +21,28 @@ resource "google_service_account" "cnrm-system" {
 }
 
 
-resource "google_project_iam_member" "cnrm-system" {
+resource "google_project_iam_member" "cnrm_system" {
   project = var.project
-  member  = "serviceAccount:${google_service_account.cnrm-system.email}"
+  member  = "serviceAccount:${google_service_account.cnrm_system.email}"
    for_each = toset([
     "roles/resourcemanager.projectIamAdmin",
-    "roles/iam.serviceAccountAdmin"
+    "roles/iam.serviceAccountAdmin",
+    "projects/${var.project}/roles/${google_project_iam_custom_role.wg_ci_cnrm.role_id}"
   ])
   role    = each.key
+
+  depends_on = [
+    google_project_iam_custom_role.wg_ci_cnrm
+  ]
 }
 
-resource "google_service_account_iam_member" "cnrm-system" {
-  service_account_id = google_service_account.cnrm-system.id
+resource "google_service_account_iam_member" "cnrm_system" {
+  service_account_id = google_service_account.cnrm_system.id
   member             = "serviceAccount:${var.project}.svc.id.goog[cnrm-system/cnrm-controller-manager]"
   role               = "roles/iam.workloadIdentityUser"
 }
 
-resource "google_project_iam_custom_role" "wg-ci-role" {
+resource "google_project_iam_custom_role" "wg_ci_role" {
   description = "Permissions for humans to manage wg-ci project"
   permissions = [
     "iam.serviceAccounts.setIamPolicy",
@@ -66,3 +71,18 @@ resource "google_project_iam_custom_role" "wg-ci-role" {
   title       = "WG CI Manage"
 }
 
+resource "google_project_iam_custom_role" "wg_ci_cnrm" {
+  description = "Additional permissions for cnrm-system on WG CI Concourse deployment"
+  permissions = [
+    "cloudsql.users.create",
+    "cloudsql.users.delete",
+    "cloudsql.users.get",
+    "cloudsql.users.list",
+    "cloudsql.users.update"
+  ]
+
+  project = var.project
+  role_id = "WgCiCNRMcustomRole"
+  stage   = "GA"
+  title   = "WG CI CNRM Custom"
+}

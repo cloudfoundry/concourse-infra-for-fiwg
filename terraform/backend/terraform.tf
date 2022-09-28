@@ -3,6 +3,9 @@ terraform {
     google = {
       source = "hashicorp/google"
     }
+    kubectl = {
+      source = "gavinbunney/kubectl"
+    }
   }
 
    backend "gcs" {
