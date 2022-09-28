@@ -1,7 +1,7 @@
 
 resource "google_sql_database_instance" "concourse" {
   database_version = "POSTGRES_13"
-  name             = var.db_instance
+  name             = "concourse"
   project          = var.project
   region           = var.region
 
@@ -44,13 +44,16 @@ resource "google_sql_database_instance" "concourse" {
 
 resource "google_sql_database"  "concourse_db" {
 
-    for_each = toset(var.databases)
+    for_each = toset([
+      "concourse",
+      "credhub",
+      "uaa"
+    ])
     charset   = "UTF8"
     collation = "en_US.UTF8"
-    instance  = var.db_instance
+    instance  = google_sql_database_instance.concourse.name
     name      = each.key
     project   = var.project
-
     depends_on = [ google_sql_database_instance.concourse ]
 }
 

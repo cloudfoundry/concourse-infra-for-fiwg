@@ -26,16 +26,6 @@ variable "dns_address" {
   }
 }
 
-variable "db_instance" {
-  type = string
-  default = "concourse"
-}
-
-variable "databases" {
-  type = list
-  default =  [ "concourse", "credhub", "uaa" ]
-  }
-
 variable "gke" {
   type = map
   default = {
