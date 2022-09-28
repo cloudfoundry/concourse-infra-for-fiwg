@@ -84,5 +84,5 @@ resource "google_project_iam_custom_role" "wg_ci_cnrm" {
   project = var.project
   role_id = "WgCiCNRMcustomRole"
   stage   = "GA"
-  title   = "WG CI CNRM Custom"
+  title   = "WG CI CNRM-SYSTEM"
 }
