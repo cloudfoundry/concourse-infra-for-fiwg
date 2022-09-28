@@ -11,6 +11,5 @@ resource "kubernetes_manifest" "cnrm" {
 
         }
     }
-  
 }
 

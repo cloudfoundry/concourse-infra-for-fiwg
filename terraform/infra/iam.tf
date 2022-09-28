@@ -24,7 +24,11 @@ resource "google_service_account" "cnrm-system" {
 resource "google_project_iam_member" "cnrm-system" {
   project = var.project
   member  = "serviceAccount:${google_service_account.cnrm-system.email}"
-  role    = "roles/iam.serviceAccountAdmin"
+   for_each = toset([
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/iam.serviceAccountAdmin"
+  ])
+  role    = each.key
 }
 
 resource "google_service_account_iam_member" "cnrm-system" {
@@ -38,6 +42,10 @@ resource "google_project_iam_custom_role" "wg-ci-role" {
   permissions = [
     "iam.serviceAccounts.setIamPolicy",
 
+    "resourcemanager.projects.get",
+    "resourcemanager.projects.getIamPolicy",
+    "resourcemanager.projects.setIamPolicy",
+
     "container.clusterRoles.bind",
     "container.clusterRoles.create",
     "container.clusterRoles.delete",
@@ -45,14 +53,13 @@ resource "google_project_iam_custom_role" "wg-ci-role" {
     "container.clusterRoles.get",
     "container.clusterRoles.list",
     "container.clusterRoles.update",
-
     "container.clusterRoleBindings.create",
     "container.clusterRoleBindings.delete",
     "container.clusterRoleBindings.get",
     "container.clusterRoleBindings.list",
     "container.clusterRoleBindings.update",
-
     "container.configMaps.get" ]
+
   project     = var.project
   role_id     = "WgCiCustomRole"
   stage       = "GA"
