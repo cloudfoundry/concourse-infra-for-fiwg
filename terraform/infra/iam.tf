@@ -78,7 +78,10 @@ resource "google_project_iam_custom_role" "wg_ci_cnrm" {
     "cloudsql.users.delete",
     "cloudsql.users.get",
     "cloudsql.users.list",
-    "cloudsql.users.update"
+    "cloudsql.users.update",
+    "cloudsql.databases.get",
+    "cloudsql.databases.list",
+    "cloudsql.databases.update"
   ]
 
   project = var.project
