@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "cnrm" {
+resource "kubernetes_manifest" "config_connector" {
     manifest = {
         apiVersion = "core.cnrm.cloud.google.com/v1beta1"
         kind = "ConfigConnector"
