@@ -38,3 +38,10 @@ variable "gke" {
   }
 }
 
+variable "kube" {
+  type = map
+  default = {
+    config = "~/.kube/config"
+    context = "gke_app-runtime-interfaces-wg_europe-west3-a_wg-ci"
+  }
+}
