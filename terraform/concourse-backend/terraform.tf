@@ -3,20 +3,18 @@ terraform {
     google = {
       source = "hashicorp/google"
     }
-
+    kubectl = {
+      source = "gavinbunney/kubectl"
+    }
     carvel = {
       source  = "vmware-tanzu/carvel"
     }
 
-    kubectl = {
-      source = "gavinbunney/kubectl"
-    }
   }
 
-
-backend "gcs" {
+   backend "gcs" {
     bucket  = "terraform-state-wg-ci"
-    prefix  = "terraform/state/app"
+    prefix  = "terraform/state/concourse-backend"
    }
 }
 
@@ -39,9 +37,4 @@ provider "carvel" {
       context = var.kube.context
     }
   }
-}
-
-provider "kubectl" {
-  config_path = var.kube.config
-  config_context = var.kube.context
 }

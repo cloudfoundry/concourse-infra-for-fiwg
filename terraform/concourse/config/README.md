@@ -1,1 +1,0 @@
-Files here will link to the parent config folder build with bash scripts and tap into changes introduced with terraform.
