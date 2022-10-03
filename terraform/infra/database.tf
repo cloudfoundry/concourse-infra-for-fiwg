@@ -42,7 +42,7 @@ resource "google_sql_database_instance" "concourse" {
   }
 }
 
-resource "google_sql_database"  "concourse_db" {
+resource "google_sql_database"  "concourse" {
 
     for_each = toset([
       "concourse",

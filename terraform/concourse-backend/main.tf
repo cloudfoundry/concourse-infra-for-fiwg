@@ -1,6 +1,3 @@
-
-
-
 data "carvel_ytt" "concourse_backend" {
 
   files = [
@@ -22,11 +19,9 @@ resource "carvel_kapp" "concourse_backend" {
   config_yaml  = data.carvel_ytt.concourse_backend.result
   diff_changes = true
 
-  #depends_on = [kubernetes_namespace.concourse]
-
-  deploy {
-    raw_options = ["--dangerous-override-ownership-of-existing-resources"]
-  }
+  # deploy {
+  #   raw_options = ["--dangerous-override-ownership-of-existing-resources"]
+  # }
 
     delete {
      # WARN: if you change delete options you have to run terraform apply first.

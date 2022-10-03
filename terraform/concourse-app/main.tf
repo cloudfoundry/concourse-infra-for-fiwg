@@ -1,11 +1,8 @@
-
 data "carvel_ytt" "concourse_app" {
 
   files = [
-    #"../../config/carvel-secretgen-controller",
     "../../config/concourse",
     "../../config/credhub",
-    #"../../config/database",
     "../../config/uaa",
     "../../config/values",
     ]
@@ -23,7 +20,9 @@ resource "carvel_kapp" "concourse_app" {
   config_yaml  = data.carvel_ytt.concourse_app.result
   diff_changes = true
 
-  #depends_on = [kubernetes_namespace.concourse]
+  # deploy {
+  #   raw_options = ["--dangerous-override-ownership-of-existing-resources"]
+  # }
 
   delete {
     # WARN: if you change delete options you have to run terraform apply first.
