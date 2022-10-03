@@ -1,4 +1,4 @@
-resource "google_container_node_pool" "default-pool" {
+resource "google_container_node_pool" "default_pool" {
   cluster            = google_container_cluster.wg_ci.name
   node_count     = "1"
 
@@ -27,7 +27,7 @@ resource "google_container_node_pool" "default-pool" {
     disk_type       = "pd-standard"
     image_type      = "COS_CONTAINERD"
     local_ssd_count = "0"
-    machine_type    =  var.gke.machine_type
+    machine_type    =  "e2-standard-4"
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -58,7 +58,7 @@ resource "google_container_node_pool" "default-pool" {
 }
 
 
-resource "google_container_node_pool" "concourse-workers" {
+resource "google_container_node_pool" "concourse_workers" {
   cluster            = google_container_cluster.wg_ci.name
   node_count     = "2"
 
@@ -86,7 +86,7 @@ resource "google_container_node_pool" "concourse-workers" {
     disk_type       = "pd-standard"
     image_type      = "COS_CONTAINERD"
     local_ssd_count = "1"
-    machine_type    = var.gke.machine_type
+    machine_type    = "n2-standard-4"
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -120,6 +120,5 @@ resource "google_container_node_pool" "concourse-workers" {
     max_surge       = "1"
     max_unavailable = "0"
   }
-  
 }
 
