@@ -1,11 +1,11 @@
 resource "google_container_cluster" "wg_ci" {
-  provider           = google-beta
-  name               = var.gke.name
-  location           = var.zone
-  project            = var.project
-  initial_node_count = "1"
+  provider                 = google-beta
+  name                     = var.gke.name
+  location                 = var.zone
+  project                  = var.project
+  initial_node_count       = "1"
   remove_default_node_pool = true
-  min_master_version = var.gke.controlplane_version
+  min_master_version       = var.gke.controlplane_version
 
   release_channel {
     channel = "STABLE"
@@ -41,8 +41,8 @@ resource "google_container_cluster" "wg_ci" {
     master_ipv4_cidr_block = var.gke.master_ipv4_cidr_block
   }
 
-  network            = google_compute_network.vpc.name
-  subnetwork         = google_compute_subnetwork.default.name
+  network    = google_compute_network.vpc.name
+  subnetwork = google_compute_subnetwork.default.name
   network_policy {
     enabled  = "false"
     provider = "PROVIDER_UNSPECIFIED"
@@ -50,11 +50,11 @@ resource "google_container_cluster" "wg_ci" {
 
   networking_mode = "VPC_NATIVE"
 
- # other config
+  # other config
   addons_config {
     config_connector_config {
-       enabled = "true"
-     }
+      enabled = "true"
+    }
     gce_persistent_disk_csi_driver_config {
       enabled = "true"
     }

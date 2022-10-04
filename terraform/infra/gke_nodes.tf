@@ -1,10 +1,17 @@
+resource "google_service_account" "gke_node_pools" {
+  account_id   = "${var.gke.name}-node-pool"
+  display_name = "Service account for ${var.gke.name} GKE node pools"
+  project      = var.project
+}
+
+
 resource "google_container_node_pool" "default_pool" {
-  cluster            = google_container_cluster.wg_ci.name
-  node_count     = "1"
+  cluster    = google_container_cluster.wg_ci.name
+  node_count = "1"
 
   node_locations = [var.zone]
   project        = var.project
-  location           = var.zone
+  location       = var.zone
 
   autoscaling {
     max_node_count       = "3"
@@ -27,7 +34,7 @@ resource "google_container_node_pool" "default_pool" {
     disk_type       = "pd-standard"
     image_type      = "COS_CONTAINERD"
     local_ssd_count = "0"
-    machine_type    =  "e2-standard-4"
+    machine_type    = var.gke.machine_type_default_pool
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -35,7 +42,7 @@ resource "google_container_node_pool" "default_pool" {
 
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/userinfo.email"]
     preemptible     = "false"
-    service_account = google_service_account.autoscaler_deployer.email
+    service_account = google_service_account.gke_node_pools.email
 
     shielded_instance_config {
       enable_integrity_monitoring = "true"
@@ -53,14 +60,12 @@ resource "google_container_node_pool" "default_pool" {
     max_surge       = "1"
     max_unavailable = "0"
   }
-
-  
 }
 
 
 resource "google_container_node_pool" "concourse_workers" {
-  cluster            = google_container_cluster.wg_ci.name
-  node_count     = "2"
+  cluster    = google_container_cluster.wg_ci.name
+  node_count = "2"
 
   node_locations = [var.zone]
   project        = var.project
@@ -86,7 +91,7 @@ resource "google_container_node_pool" "concourse_workers" {
     disk_type       = "pd-standard"
     image_type      = "COS_CONTAINERD"
     local_ssd_count = "1"
-    machine_type    = "n2-standard-4"
+    machine_type    = var.gke.machine_type_workers_pool
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -94,7 +99,7 @@ resource "google_container_node_pool" "concourse_workers" {
 
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/userinfo.email"]
     preemptible     = "false"
-    service_account = google_service_account.autoscaler_deployer.email
+    service_account = google_service_account.gke_node_pools.email
 
     shielded_instance_config {
       enable_integrity_monitoring = "true"
