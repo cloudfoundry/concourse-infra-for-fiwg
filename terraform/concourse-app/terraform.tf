@@ -5,7 +5,7 @@ terraform {
     }
 
     carvel = {
-      source  = "vmware-tanzu/carvel"
+      source = "vmware-tanzu/carvel"
     }
 
     kubectl = {
@@ -14,10 +14,19 @@ terraform {
   }
 
 
-backend "gcs" {
-    bucket  = "terraform-state-wg-ci"
-    prefix  = "terraform/state/concourse-app"
-   }
+  backend "gcs" {
+    bucket = "terraform-state-wg-ci"
+    prefix = "terraform/state/concourse-app"
+  }
+}
+
+data "terraform_remote_state" "infra" {
+  backend = "gcs"
+  config = {
+    bucket = "terraform-state-wg-ci"
+    prefix = "terraform/state/infra"
+
+  }
 }
 
 provider "google-beta" {
@@ -42,6 +51,6 @@ provider "carvel" {
 }
 
 provider "kubectl" {
-  config_path = var.kube.config
+  config_path    = var.kube.config
   config_context = var.kube.context
 }

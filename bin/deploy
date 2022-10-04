@@ -3,20 +3,13 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 
 if [[ ${PROJECT_REGION:-"unset"} == "unset" ]]; then
-  echo "Please set environment variable \"export PROJECT_REGION=<region>\" to the desired region."
+  echo "Please set environment variable \"PROJECT_REGION\" to the desired region."
   echo "For a list of all regions, see https://cloud.google.com/compute/docs/regions-zones"
   exit 1
 fi
 
 PROJECT_ID=$(gcloud config get-value core/project 2>/dev/null)
 
-echo -e "\nUsing GCP project \"$PROJECT_ID\" and region \"$PROJECT_REGION\" for deployment..."
+echo "Using GCP project \"$PROJECT_ID\" and region \"$PROJECT_REGION\" for deployment..."
 "${SCRIPT_DIR}/bin/create-concourse-namespace"
-
-echo -e "\nGenerating ytt config for kapp..."
-ytt -f config --data-value google.project_id="$PROJECT_ID" --data-value google.region="$PROJECT_REGION" > ${SCRIPT_DIR}/ytt_manifest.yaml
-
-echo -e "\nDeploy wit kapp..."
-kapp deploy -c -a concourse -n concourse -f ${SCRIPT_DIR}/ytt_manifest.yaml #--dangerous-override-ownership-of-existing-resources
-
-
+kapp deploy -c -a concourse -n concourse -f <(ytt -f config --data-value google.project_id="$PROJECT_ID" --data-value google.region="$PROJECT_REGION")

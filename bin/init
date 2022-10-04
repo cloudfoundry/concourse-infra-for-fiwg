@@ -46,8 +46,8 @@ done
 # create gke cluster and dedicated node pool for concourse workers using preemptible vms
 gcloud container clusters create $CLUSTER_NAME \
   --release-channel regular \
-  #--addons ConfigConnector \ TODO: currently not included in the cluster
-  #--workload-pool=${PROJECT_ID}.svc.id.goog \
+  --addons ConfigConnector \
+  --workload-pool=${PROJECT_ID}.svc.id.goog \
   --region "$PROJECT_REGION" \
   --logging=SYSTEM,WORKLOAD \
   --monitoring=SYSTEM \
