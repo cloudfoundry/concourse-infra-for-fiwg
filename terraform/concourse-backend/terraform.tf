@@ -7,15 +7,15 @@ terraform {
       source = "gavinbunney/kubectl"
     }
     carvel = {
-      source  = "vmware-tanzu/carvel"
+      source = "vmware-tanzu/carvel"
     }
 
   }
 
-   backend "gcs" {
-    bucket  = "terraform-state-wg-ci"
-    prefix  = "terraform/state/concourse-backend"
-   }
+  backend "gcs" {
+    bucket = "terraform-state-wg-ci"
+    prefix = "terraform/state/concourse-backend"
+  }
 }
 
 provider "google-beta" {

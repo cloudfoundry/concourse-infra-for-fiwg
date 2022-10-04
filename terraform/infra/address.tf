@@ -3,7 +3,7 @@ resource "google_compute_address" "concourse_app-runtime-interfaces_ci" {
   region       = var.region
   address_type = "EXTERNAL"
   name         = var.dns_address["name"]
-  description =  var.dns_address["description"]
+  description  = var.dns_address["description"]
 }
 
 resource "google_dns_managed_zone" "app-runtime-interfaces" {
@@ -21,6 +21,6 @@ resource "google_dns_record_set" "concourse" {
   type         = "A"
   rrdatas      = [google_compute_address.concourse_app-runtime-interfaces_ci.address]
   ttl          = 300
-  project = var.project
+  project      = var.project
 }
 

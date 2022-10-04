@@ -42,18 +42,18 @@ resource "google_sql_database_instance" "concourse" {
   }
 }
 
-resource "google_sql_database"  "concourse" {
+resource "google_sql_database" "concourse" {
 
   for_each = toset([
     "concourse",
     "credhub",
     "uaa"
   ])
-    charset   = "UTF8"
-    collation = "en_US.UTF8"
-    instance  = google_sql_database_instance.concourse.name
-    name      = each.key
-    project   = var.project
-    depends_on = [ google_sql_database_instance.concourse ]
+  charset    = "UTF8"
+  collation  = "en_US.UTF8"
+  instance   = google_sql_database_instance.concourse.name
+  name       = each.key
+  project    = var.project
+  depends_on = [google_sql_database_instance.concourse]
 }
 

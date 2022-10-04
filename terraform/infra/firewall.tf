@@ -22,7 +22,7 @@ resource "google_compute_firewall" "gke_to_all_vms" {
   allow {
     protocol = "udp"
   }
-  
+
   # TODO: confirm this is intended direction as description is suggesting egress
   direction     = "INGRESS"
   source_ranges = [var.gke.cluster_ipv4_cidr]
@@ -31,5 +31,5 @@ resource "google_compute_firewall" "gke_to_all_vms" {
   network       = google_compute_network.vpc.name
   priority      = "1000"
   project       = var.project
-  
+
 }

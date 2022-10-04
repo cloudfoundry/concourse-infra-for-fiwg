@@ -4,7 +4,7 @@ data "carvel_ytt" "concourse_backend" {
     "../../config/carvel-secretgen-controller",
     "../../config/database",
     "../../config/values",
-    ]
+  ]
 
   values = {
     "google.project_id" = var.project
@@ -23,8 +23,8 @@ resource "carvel_kapp" "concourse_backend" {
   #   raw_options = ["--dangerous-override-ownership-of-existing-resources"]
   # }
 
-    delete {
-     # WARN: if you change delete options you have to run terraform apply first.
-     raw_options = ["--filter={\"and\":[{\"not\":{\"resource\":{\"kinds\":[\"SQLUser\"]}}}]}"]
-    }
+  delete {
+    # WARN: if you change delete options you have to run terraform apply first.
+    raw_options = ["--filter={\"and\":[{\"not\":{\"resource\":{\"kinds\":[\"SQLUser\"]}}}]}"]
+  }
 }

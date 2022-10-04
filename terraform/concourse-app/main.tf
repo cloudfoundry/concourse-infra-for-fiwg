@@ -14,21 +14,21 @@ data "helm_template" "concourse" {
   }
 
   set {
-    name = "concourse.web.auth.mainTeam.github.team"
+    name  = "concourse.web.auth.mainTeam.github.team"
     value = var.concourse_app.github_mainTeam
   }
 
 }
 
 data "carvel_ytt" "concourse_helm_ytt" {
-  files = [ "../../build/concourse/scrub_default_creds.yml" ]
-  config_yaml = data.helm_template.concourse.manifest
+  files                   = ["../../build/concourse/scrub_default_creds.yml"]
+  config_yaml             = data.helm_template.concourse.manifest
   ignore_unknown_comments = true
 }
 
 resource "local_file" "concourse_rendered" {
-  content = data.carvel_ytt.concourse_helm_ytt.result
-  filename = "./config/concourse/_ytt_lib/concourse/rendered.yml"
+  content         = data.carvel_ytt.concourse_helm_ytt.result
+  filename        = "./config/concourse/_ytt_lib/concourse/rendered.yml"
   file_permission = "0644"
 }
 
@@ -49,7 +49,7 @@ data "carvel_ytt" "concourse_app" {
     "google.region"     = var.region
   }
 
-  depends_on = [ local_file.concourse_rendered ]
+  depends_on = [local_file.concourse_rendered]
 }
 
 

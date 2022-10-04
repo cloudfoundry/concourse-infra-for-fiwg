@@ -7,7 +7,7 @@ resource "google_project_service" "apis" {
     "container.googleapis.com",
     "iam.googleapis.com"
   ])
-  service = each.key
-  project = var.project
+  service            = each.key
+  project            = var.project
   disable_on_destroy = false
 }

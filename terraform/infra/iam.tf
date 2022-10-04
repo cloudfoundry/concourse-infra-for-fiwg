@@ -1,9 +1,9 @@
 resource "google_service_account" "autoscaler_deployer" {
-  account_id    = "autoscaler-deployer"
-  description   = "Used by concourse ci to deploy autoscaler service+infra"
-  disabled      = "false"
-  display_name  = "autoscaler-deployer"
-  project       = var.project
+  account_id   = "autoscaler-deployer"
+  description  = "Used by concourse ci to deploy autoscaler service+infra"
+  disabled     = "false"
+  display_name = "autoscaler-deployer"
+  project      = var.project
 }
 
 # resource "google_service_account" "concourse" {
@@ -14,22 +14,22 @@ resource "google_service_account" "autoscaler_deployer" {
 # }
 
 resource "google_service_account" "cnrm_system" {
-  account_id    = "cnrm-system"
-  description   = "Config Connector account for wg-ci GKE"
-  disabled      = "false"
-  project       = var.project
+  account_id  = "cnrm-system"
+  description = "Config Connector account for wg-ci GKE"
+  disabled    = "false"
+  project     = var.project
 }
 
 
 resource "google_project_iam_member" "cnrm_system" {
   project = var.project
   member  = "serviceAccount:${google_service_account.cnrm_system.email}"
-   for_each = toset([
+  for_each = toset([
     "roles/resourcemanager.projectIamAdmin",
     "roles/iam.serviceAccountAdmin",
     "projects/${var.project}/roles/${google_project_iam_custom_role.wg_ci_cnrm.role_id}"
   ])
-  role    = each.key
+  role = each.key
 
   depends_on = [
     google_project_iam_custom_role.wg_ci_cnrm
@@ -63,12 +63,12 @@ resource "google_project_iam_custom_role" "wg_ci_role" {
     "container.clusterRoleBindings.get",
     "container.clusterRoleBindings.list",
     "container.clusterRoleBindings.update",
-    "container.configMaps.get" ]
+  "container.configMaps.get"]
 
-  project     = var.project
-  role_id     = "WgCiCustomRole"
-  stage       = "GA"
-  title       = "WG CI Manage"
+  project = var.project
+  role_id = "WgCiCustomRole"
+  stage   = "GA"
+  title   = "WG CI Manage"
 }
 
 resource "google_project_iam_custom_role" "wg_ci_cnrm" {
