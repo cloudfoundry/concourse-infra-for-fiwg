@@ -67,5 +67,7 @@ resource "carvel_kapp" "concourse_app" {
     # WARN: if you change delete options you have to run terraform apply first.
     raw_options = ["--filter={\"and\":[{\"not\":{\"resource\":{\"kinds\":[\"Namespace\"]}}}]}"]
   }
+
+  depends_on = [kubernetes_secret_v1.github_oauth]
 }
 

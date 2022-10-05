@@ -42,14 +42,12 @@ terraform import google_compute_network.vpc projects/app-runtime-interfaces-wg/g
 ```
 
 
-### Apply terraform for infrastructure
+### Apply terrgrunt for infrastructure
 
 ```
-cd ../infra
-terraform init
-terraform plan
-terraform apply
 cd ..
+terragrunt run-all plan
+terragrunt run-all apply
 ```
 ### Obtain GKE credentials
 ( pending automation with tf )
@@ -68,20 +66,23 @@ gke_app-runtime-interfaces-wg_europe-west3-a_wg-ci
 
 
 #### Manually provide Github OAuth token as k8s secret
-( pending automation with tf )
-
 This is necessary if you want to be able to authenticate with your GitHub profile. Log on to github.com and navigate to:
 "Settings" -> "Developer settings" -> "OAuth Apps" -> "New OAuth App"
 
 As "Homepage URL", enter the Concourse's base URL. As "Authorization callback URL", enter the Concourse URL followed
 by `/sky/issuer/callback`.
 
-```
-ghID=paste your Client ID
-ghSecret=paste your Client secret
-kubectl -n concourse create secret generic github --from-literal=id=${ghID} --from-literal=secret=${ghSecret}
-```
+Terraform will provision github secret on GCP without no version (no data) at the concourse-infra stage.
+Please create a version for it using gcloud command or webui, using k-v format
 
+```
+id: paste your Client ID
+secret: paste your Client secret
+```
+Terraform fail for concourse-app if no github secret version is be present. Please rerun after version is created.
+This problem occurs only when provisioning for the 1st time
+
+More of automation can be achieved here ie. with syncing the secret directly from Vault.
 
 ### Sync exernal repositories
 You might wish to bump versions of software in [vendir.yml](vendir.yml) file
