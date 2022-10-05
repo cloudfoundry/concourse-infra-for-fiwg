@@ -28,7 +28,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 # create subnets required for deploying bosh workloads and running  tests
-resource "google_compute_subnetwork" "bosh-integration-0" {
+resource "google_compute_subnetwork" "bosh_integration_0" {
   ip_cidr_range              = "10.100.0.0/24"
   name                       = "bosh-integration-0"
   network                    = google_compute_network.vpc.name
@@ -40,7 +40,7 @@ resource "google_compute_subnetwork" "bosh-integration-0" {
   stack_type                 = "IPV4_ONLY"
 }
 
-resource "google_compute_subnetwork" "bosh-integration-1" {
+resource "google_compute_subnetwork" "bosh_integration_1" {
   ip_cidr_range              = "10.100.1.0/24"
   name                       = "bosh-integration-1"
   network                    = google_compute_network.vpc.name
@@ -52,7 +52,7 @@ resource "google_compute_subnetwork" "bosh-integration-1" {
   stack_type                 = "IPV4_ONLY"
 }
 
-resource "google_compute_subnetwork" "bosh-integration-2" {
+resource "google_compute_subnetwork" "bosh_integration_2" {
   ip_cidr_range              = "10.100.2.0/24"
   name                       = "bosh-integration-2"
   network                    = google_compute_network.vpc.name
@@ -64,7 +64,7 @@ resource "google_compute_subnetwork" "bosh-integration-2" {
   stack_type                 = "IPV4_ONLY"
 }
 
-resource "google_compute_subnetwork" "bosh-integration-3" {
+resource "google_compute_subnetwork" "bosh_integration_3" {
   ip_cidr_range              = "10.100.3.0/24"
   name                       = "bosh-integration-3"
   network                    = google_compute_network.vpc.name
