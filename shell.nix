@@ -1,12 +1,14 @@
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.google-cloud-sdk
-    pkgs.ytt
-    pkgs.kapp
-    pkgs.vendir
-    pkgs.kubectl
-    pkgs.kubernetes-helm
+  buildInputs = with pkgs; [
+    google-cloud-sdk
+    kapp
+    kubectl
+    kubernetes-helm
+    terraform
+    terragrunt
+    vendir
+    ytt
   ];
 }

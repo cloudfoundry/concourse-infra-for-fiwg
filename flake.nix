@@ -19,15 +19,7 @@
         let
           pkgs = nixpkgsFor.${system};
         in {
-          default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              kapp
-              terraform
-              terragrunt
-              # vendir
-              ytt
-            ];
-          };
-      });
-  };
+          default = import ./shell.nix { inherit pkgs; };
+        });
+    };
 }
