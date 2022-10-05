@@ -1,13 +1,13 @@
 
 ## Requirements
-* glcoud
-* helm
-* terraform
-* terragrunt (optional,recommended)
-* kapp
-* ytt
-* vendir
-* kubectl
+* glcoud => 403.0.0
+* helm => 3.10.0
+* terraform => 1.3.1
+* terragrunt => 0.39.0
+* kapp => 0.53.0
+* ytt =>  0.43.0
+* vendir => 0.31.0
+* kubectl => 1.23
 * jq (if needed for other scripts ie. disaster recovery tasks, currently not in use)
 
 
