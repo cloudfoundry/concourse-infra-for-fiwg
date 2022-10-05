@@ -63,7 +63,11 @@ resource "google_project_iam_custom_role" "wg_ci_role" {
     "container.clusterRoleBindings.get",
     "container.clusterRoleBindings.list",
     "container.clusterRoleBindings.update",
-  "container.configMaps.get"]
+    "container.configMaps.get",
+    
+    # TODO: rather give access to particular secret 
+    "secretmanager.versions.access"
+    ]
 
   project = var.project
   role_id = "WgCiCustomRole"
