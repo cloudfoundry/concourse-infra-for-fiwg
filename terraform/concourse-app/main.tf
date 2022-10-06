@@ -18,6 +18,16 @@ data "helm_template" "concourse" {
     value = var.concourse_app.github_mainTeam
   }
 
+  # set {
+  #   name = "concourse.web.auth.mainTeam.github.user"
+  #   value = var.concourse_app.github_user
+  # }
+
+  set {
+    # For security reasons, remove local (test) users.
+    name = "concourse.web.auth.mainTeam.localUser"
+    value = ""
+  }
 }
 
 data "carvel_ytt" "concourse_helm_ytt" {

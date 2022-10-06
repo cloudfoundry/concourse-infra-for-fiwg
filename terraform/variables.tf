@@ -35,10 +35,11 @@ variable "gke" {
 }
 
 variable "concourse_app" {
-  type = map(any)
+  type = map(string)
   default = {
-    github_mainTeam = "sap-cloudfoundry:app-autoscaler"
     fly_target = "app-runtime-interfaces"
+    github_mainTeam = "cloudfoundry:wg-app-runtime-interfaces-autoscaler-approvers" # "sap-cloudfoundry:app-autoscaler"
+    github_user = "joergdw\\,marcinkubica" # Escaping for the ',' needed because helm-chart-provider otherwise interprets it.
   }
 }
 
