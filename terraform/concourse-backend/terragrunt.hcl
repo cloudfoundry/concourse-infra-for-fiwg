@@ -1,3 +1,3 @@
 dependencies {
-    paths = ["../infra"]
+    paths = ["../concourse-infra"]
 }
