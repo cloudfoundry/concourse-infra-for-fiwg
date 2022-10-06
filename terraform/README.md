@@ -13,9 +13,9 @@
 
 
 # Prerequisites for a fresh project
-Adjust `variables.tf` 
+Adjust `variables.tf`
 
-Alternatively pass as env variables or vars files to terraform / terragrunt 
+Alternatively pass as env variables or vars files to terraform / terragrunt
 #### Logon to your GCP account
 
 ```
@@ -109,7 +109,7 @@ terragrunt run-all apply
 Required actions:
 * changing charts versions
 * `vendir sync`
-  
+
 Build lifecyce:
 * managed by terraform.
 * able to destroy/redeploy concourse app and corresponding 'backend' components separately
@@ -121,6 +121,6 @@ TBD. DR scenario requirement
 TBD. Currently not required.
 
 #### Secret rotation
-Quark Secrets have been dropped. 
+Quark Secrets have been dropped.
 * TBD process with Carvel Secret Manager
 * TBD SQL users password update - might not be an issue due to the separation of concourse backend and app.

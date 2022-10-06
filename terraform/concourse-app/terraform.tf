@@ -11,6 +11,10 @@ terraform {
     kubectl = {
       source = "gavinbunney/kubectl"
     }
+
+    concourse = {
+      source = "terraform-provider-concourse/concourse"
+    }
   }
 
 
@@ -53,4 +57,8 @@ provider "carvel" {
 provider "kubectl" {
   config_path    = var.kube.config
   config_context = var.kube.context
+}
+
+provider "concourse" {
+  target = var.concourse_app.fly_target
 }

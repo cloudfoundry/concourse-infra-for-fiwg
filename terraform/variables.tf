@@ -38,6 +38,7 @@ variable "concourse_app" {
   type = map(any)
   default = {
     github_mainTeam = "sap-cloudfoundry:app-autoscaler"
+    fly_target = "app-runtime-interfaces"
   }
 }
 
