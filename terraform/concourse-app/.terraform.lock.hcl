@@ -22,6 +22,7 @@ provider "registry.terraform.io/hashicorp/google" {
   version = "4.39.0"
   hashes = [
     "h1:EwdL1BAxBnRiXIqL1LADXYi0M+WFCiEkOWuMFTUp8Tk=",
+    "h1:rGWXD5UJI9bTPCll5Hxpal5VmDo/TaHHStmti4a7F0A=",
     "zh:08580c2b69a969a68ea38ae52b586bde903275afd65d6806f75bfbd659fd2863",
     "zh:25713dcf6825212c80f0a00d696c8d3f3d72e3403ae4fc9a63bedc3dc2f0a565",
     "zh:34b83f0b3dc807d5cc7caafa3b924e7e2177bad26abd2caaf504df17ba5299d6",
@@ -40,6 +41,7 @@ provider "registry.terraform.io/hashicorp/google" {
 provider "registry.terraform.io/hashicorp/google-beta" {
   version = "4.39.0"
   hashes = [
+    "h1:9l29rAErq4pFmthbrtgL3Dt3OtqHpt5sqvdCL7K+Nek=",
     "h1:LAtYSqijS4XDmZLMns+hvZmctMCNgM9iBtqcGzLCJFc=",
     "zh:1d22d37141422bb3d5bd978b0e31546184c6bfb057241d6f8ec67f6012da0aa2",
     "zh:2b570d3c38fee7325471c21fafe5561ac0503a24fed2b2630a489e2e10a50d6a",
@@ -120,6 +122,7 @@ provider "registry.terraform.io/terraform-provider-concourse/concourse" {
   version = "7.4.0"
   hashes = [
     "h1:F89cAVm2QBCvSyY+sqXSCWfNPUjbLEdgKTVzzF2M62A=",
+    "h1:G5QPzg8FPoVOoUHOoL1FpzHga2OvcFvnetY4ExqICJk=",
     "zh:01eef2a4207485f261abc59fbcc5e14173f9cd126e713d44f3c5eba53189a99c",
     "zh:4cc198e668f70b91ceaacdc50e5412978f32656fd036d917b5c68f3fbba53783",
     "zh:a1147b56809311c84e4f95966e198beaa41736e5674c33fdfc944177f09e6519",

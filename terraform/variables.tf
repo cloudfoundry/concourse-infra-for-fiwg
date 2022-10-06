@@ -38,8 +38,9 @@ variable "concourse_app" {
   type = map(string)
   default = {
     fly_target = "app-runtime-interfaces"
-    github_mainTeam = "cloudfoundry:wg-app-runtime-interfaces-autoscaler-approvers" # "sap-cloudfoundry:app-autoscaler"
-    github_user = "joergdw\\,marcinkubica" # Escaping for the ',' needed because helm-chart-provider otherwise interprets it.
+    # Use \\ to escape comma separated entries - helm-chart-provider interpration
+    github_mainTeam = "cloudfoundry:wg-app-runtime-interfaces-autoscaler-approvers" 
+    github_mainTeamUser = ""
   }
 }
 
