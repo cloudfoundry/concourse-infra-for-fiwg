@@ -72,7 +72,7 @@ This is necessary if you want to be able to authenticate with your GitHub profil
 As "Homepage URL", enter the Concourse's base URL. As "Authorization callback URL", enter the Concourse URL followed
 by `/sky/issuer/callback`.
 
-Terraform will provision github secret on GCP without no version (no data) at the concourse-infra stage.
+Terraform will provision github secret on GCP without no version (no data) during concourse-infra stage.
 Please create a version for it using gcloud command or webui, using k-v format
 
 ```
@@ -94,13 +94,8 @@ Since the stack contains separately managed infra, backend and app it would requ
 
 To simplify this we use [terragrunt](https://terragrunt.gruntwork.io/) (with most basic functionality for now).
 
-#### Initialise terraform state backends and required providers
-```
-cd ./terraform
-terragrunt run-all init
-```
 
-#### Manage entire stack
+#### Manage the entire stack
 ```
 # view incoming changes (if any)
 terragrunt run-all plan
