@@ -1,22 +1,4 @@
-data "google_secret_manager_secret_version" "github_oauth" {
-  secret = data.terraform_remote_state.infra.outputs.github_oauth.name
-}
-
-locals {
-  github_oauth = yamldecode(data.google_secret_manager_secret_version.github_oauth.secret_data)
-}
-
-resource "kubernetes_secret_v1" "github_oauth" {
-  metadata {
-    name      = "github"
-    namespace = "concourse"
-  }
-
-  data = {
-    id     = local.github_oauth["id"]
-    secret = local.github_oauth["secret"]
-  }
-}
+# Saving credhub encryption key and config for DR purposes
 
 data "kubernetes_secret_v1" "credhub_encryption_key" {
   metadata {
@@ -27,6 +9,8 @@ data "kubernetes_secret_v1" "credhub_encryption_key" {
   binary_data = {
     password = ""
   }
+
+  depends_on = [carvel_kapp.concourse_app]
 }
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
@@ -58,4 +42,46 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
     # See: https://github.com/hashicorp/terraform-provider-google/issues/8653
     prevent_destroy = true
   }
+  depends_on = [carvel_kapp.concourse_app]
+}
+
+# -------------------------------------------------------------------------------------------------------------------
+
+data "kubernetes_secret_v1" "credhub_config" {
+  metadata {
+    name      = "credhub-config"
+    namespace = "concourse"
+  }
+
+  binary_data = {
+    "application.yml" = ""
+  }
+  depends_on = [carvel_kapp.concourse_app]
+}
+
+resource "google_secret_manager_secret" "credhub_config" {
+  secret_id = "${var.gke.name}-credhub-config"
+  project = var.project
+
+# when creating versions with gcloud it creates empty labels
+  labels = {
+
+  }
+  replication {
+    user_managed {
+      replicas {
+        location = "europe-west3"
+      }
+    }
+  }
+}
+
+resource "google_secret_manager_secret_version" "credhub_config" {
+  secret = google_secret_manager_secret.credhub_config.id
+  secret_data = base64decode(data.kubernetes_secret_v1.credhub_config.binary_data["application.yml"])
+
+  lifecycle {
+    prevent_destroy = true
+   }
+   depends_on = [carvel_kapp.concourse_app]
 }
