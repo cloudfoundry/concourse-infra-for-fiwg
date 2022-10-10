@@ -10,7 +10,6 @@ data "kubernetes_secret_v1" "credhub_encryption_key" {
     password = ""
   }
 
-  depends_on = [carvel_kapp.concourse_app]
 }
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
@@ -42,7 +41,7 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
     # See: https://github.com/hashicorp/terraform-provider-google/issues/8653
     prevent_destroy = true
   }
-  depends_on = [carvel_kapp.concourse_app]
+
 }
 
 # -------------------------------------------------------------------------------------------------------------------
@@ -56,7 +55,6 @@ data "kubernetes_secret_v1" "credhub_config" {
   binary_data = {
     "application.yml" = ""
   }
-  depends_on = [carvel_kapp.concourse_app]
 }
 
 resource "google_secret_manager_secret" "credhub_config" {
@@ -83,5 +81,4 @@ resource "google_secret_manager_secret_version" "credhub_config" {
   lifecycle {
     prevent_destroy = true
    }
-   depends_on = [carvel_kapp.concourse_app]
 }
