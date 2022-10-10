@@ -8,3 +8,4 @@ output "github_oauth" {
   value = google_secret_manager_secret.github_oauth
   sensitive = true
 }
+

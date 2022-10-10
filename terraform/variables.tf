@@ -37,9 +37,10 @@ variable "gke" {
 variable "concourse_app" {
   type = map(string)
   default = {
+    namespace = "concourse"
     fly_target = "app-runtime-interfaces"
     # Use \\ to escape comma separated entries - helm-chart-provider interpration
-    github_mainTeam = "cloudfoundry:wg-app-runtime-interfaces-autoscaler-approvers" 
+    github_mainTeam     = "cloudfoundry:wg-app-runtime-interfaces-autoscaler-approvers"
     github_mainTeamUser = ""
   }
 }
@@ -50,4 +51,14 @@ variable "kube" {
     config  = "~/.kube/config"
     context = "gke_app-runtime-interfaces-wg_europe-west3-a_wg-ci"
   }
+}
+
+variable "sql_instance_name" {
+  type = string
+  default = "concourse"
+}
+
+variable "sql_database" {
+  type = list
+  default =  [ "concourse", "uaa", "credhub"]
 }

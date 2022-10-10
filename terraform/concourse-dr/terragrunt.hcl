@@ -1,3 +1,0 @@
-dependencies {
-    paths = ["../concourse-app"]
-}

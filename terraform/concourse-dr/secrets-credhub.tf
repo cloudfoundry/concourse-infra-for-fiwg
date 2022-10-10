@@ -14,9 +14,9 @@ data "kubernetes_secret_v1" "credhub_encryption_key" {
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
   secret_id = "${var.gke.name}-credhub-encryption-key"
-  project = var.project
+  project   = var.project
 
-# when creating versions with gcloud it creates empty labels
+  # when creating versions with gcloud it creates empty labels
   labels = {
 
   }
@@ -29,8 +29,9 @@ resource "google_secret_manager_secret" "credhub_encryption_key" {
   }
 }
 
+
 resource "google_secret_manager_secret_version" "credhub_encryption_key" {
-  secret = google_secret_manager_secret.credhub_encryption_key.id
+  secret      = google_secret_manager_secret.credhub_encryption_key.id
   secret_data = base64decode(data.kubernetes_secret_v1.credhub_encryption_key.binary_data.password)
 
   lifecycle {
@@ -40,7 +41,12 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
     #
     # See: https://github.com/hashicorp/terraform-provider-google/issues/8653
     prevent_destroy = true
+
+    # this secret will be created only once. to rotate it needs to be deleted via other means
+    ignore_changes = all
   }
+
+
 
 }
 
@@ -59,9 +65,9 @@ data "kubernetes_secret_v1" "credhub_config" {
 
 resource "google_secret_manager_secret" "credhub_config" {
   secret_id = "${var.gke.name}-credhub-config"
-  project = var.project
+  project   = var.project
 
-# when creating versions with gcloud it creates empty labels
+  # when creating versions with gcloud it creates empty labels
   labels = {
 
   }
@@ -75,10 +81,11 @@ resource "google_secret_manager_secret" "credhub_config" {
 }
 
 resource "google_secret_manager_secret_version" "credhub_config" {
-  secret = google_secret_manager_secret.credhub_config.id
+  secret      = google_secret_manager_secret.credhub_config.id
   secret_data = base64decode(data.kubernetes_secret_v1.credhub_config.binary_data["application.yml"])
 
   lifecycle {
     prevent_destroy = true
-   }
+    ignore_changes  = all
+  }
 }

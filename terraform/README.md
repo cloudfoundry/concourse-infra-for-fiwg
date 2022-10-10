@@ -49,6 +49,7 @@ cd ..
 terragrunt run-all plan
 terragrunt run-all apply
 ```
+
 ### Obtain GKE credentials
 ( pending automation with tf )
 ```
@@ -82,7 +83,14 @@ secret: paste your Client secret
 Terraform fail for concourse-app if no github secret version is be present. Please rerun after version is created.
 This problem occurs only when provisioning for the 1st time
 
-More of automation can be achieved here ie. with syncing the secret directly from Vault.
+### Collect secrets needed for DR scenario
+This part is not yet fully automated with terragrunt
+```
+cd ./concourse-dr
+terraform init
+terraform apply
+```
+
 
 ### Sync exernal repositories
 You might wish to bump versions of software in [vendir.yml](vendir.yml) file
@@ -105,7 +113,7 @@ terragrunt run-all apply
 ```
 
 
-# Upgrade components managed by kapp
+# Upgrade components managed by kapp (when needed)
 Required actions:
 * changing charts versions
 * `vendir sync`
@@ -115,10 +123,10 @@ Build lifecyce:
 * able to destroy/redeploy concourse app and corresponding 'backend' components separately
 
 # Other matters
-### Store CredHub encryption key
-TBD. DR scenario requirement
+### DR scenario
+Please see [DR scenario readme](concourse-dr/README.md)
 #### Create hmac keys for concourse service account
-TBD. Currently not required.
+TBD. Currently not required?
 
 #### Secret rotation
 Quark Secrets have been dropped.
