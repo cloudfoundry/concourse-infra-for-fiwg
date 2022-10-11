@@ -8,7 +8,7 @@ terraform {
 
   backend "gcs" {
     bucket = "terraform-state-wg-ci"
-    prefix = "terraform/state/concourse-dr-create"
+    prefix = "terraform/state/concourse-dr-restore"
   }
 }
 
@@ -18,11 +18,4 @@ provider "kubernetes" {
   config_context = var.kube.context
 }
 
-data "terraform_remote_state" "concourse_app" {
-  backend = "gcs"
-  config = {
-    bucket = "terraform-state-wg-ci"
-    prefix = "terraform/state/concourse-app"
 
-  }
-}

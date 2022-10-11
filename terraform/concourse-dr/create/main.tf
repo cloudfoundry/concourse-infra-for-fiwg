@@ -2,8 +2,8 @@
 
 data "kubernetes_secret_v1" "credhub_encryption_key" {
   metadata {
-    name      = "credhub-encryption-key"
-    namespace = "concourse"
+    name      = var.dr.credhub_encryption_key_name
+    namespace = var.concourse_app.namespace
   }
 
   binary_data = {
@@ -13,7 +13,7 @@ data "kubernetes_secret_v1" "credhub_encryption_key" {
 }
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
-  secret_id = "${var.gke.name}-credhub-encryption-key"
+  secret_id = "${var.gke.name}-${var.dr.credhub_encryption_key_name}"
   project   = var.project
 
   # when creating versions with gcloud it creates empty labels
@@ -23,7 +23,7 @@ resource "google_secret_manager_secret" "credhub_encryption_key" {
   replication {
     user_managed {
       replicas {
-        location = "europe-west3"
+        location = var.region
       }
     }
   }
@@ -37,12 +37,14 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
   lifecycle {
     # If omitted or unset terraform destroys previous versions which will make it impossible to
     # restore them. This is relevant in case of a desaster recovery where the
-    # old secret version is needed to restore all credhub secrets.
+    # history of secret might be needed to restore all credhub secrets.
     #
     # See: https://github.com/hashicorp/terraform-provider-google/issues/8653
     prevent_destroy = true
 
     # this secret will be created only once. to rotate it needs to be deleted via other means
+    # with ignore all we work around credential deletions and build the history.
+    # downside is terraform will be requesting update of metadata on each terraform apply (not an issue)
     ignore_changes = all
   }
 
@@ -54,8 +56,8 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
 
 data "kubernetes_secret_v1" "credhub_config" {
   metadata {
-    name      = "credhub-config"
-    namespace = "concourse"
+    name      = var.dr.credhub_config_name
+    namespace = var.concourse_app.namespace
   }
 
   binary_data = {
@@ -64,7 +66,7 @@ data "kubernetes_secret_v1" "credhub_config" {
 }
 
 resource "google_secret_manager_secret" "credhub_config" {
-  secret_id = "${var.gke.name}-credhub-config"
+  secret_id = "${var.gke.name}-${var.dr.credhub_config_name}"
   project   = var.project
 
   # when creating versions with gcloud it creates empty labels
@@ -74,7 +76,7 @@ resource "google_secret_manager_secret" "credhub_config" {
   replication {
     user_managed {
       replicas {
-        location = "europe-west3"
+        location = var.region
       }
     }
   }
