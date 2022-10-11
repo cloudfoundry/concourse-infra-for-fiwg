@@ -25,6 +25,6 @@ resource "carvel_kapp" "concourse_backend" {
 
   delete {
     # WARN: if you change delete options you have to run terraform apply first.
-    raw_options = ["--filter={\"and\":[{\"not\":{\"resource\":{\"kinds\":[\"SQLUser\"]}}}]}"]
+    raw_options = ["--filter={\"and\":[{\"not\":{\"resource\":{\"kinds\":[\"SQLUser\",\"Namespace\"]}}}]}"]
   }
 }
