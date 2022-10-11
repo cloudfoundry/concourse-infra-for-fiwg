@@ -1,16 +1,4 @@
-# Saving credhub encryption key and config for DR purposes
-
-data "kubernetes_secret_v1" "credhub_encryption_key" {
-  metadata {
-    name      = var.dr.credhub_encryption_key_name
-    namespace = var.concourse_app.namespace
-  }
-
-  binary_data = {
-    password = ""
-  }
-
-}
+# Saving for DR purposes
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
   secret_id = "${var.gke.name}-${var.dr.credhub_encryption_key_name}"
@@ -32,8 +20,7 @@ resource "google_secret_manager_secret" "credhub_encryption_key" {
 
 resource "google_secret_manager_secret_version" "credhub_encryption_key" {
   secret      = google_secret_manager_secret.credhub_encryption_key.id
-  secret_data = base64decode(data.kubernetes_secret_v1.credhub_encryption_key.binary_data.password)
-
+  secret_data = base64decode(var.credhub_encryption_key.binary_data.password)
   lifecycle {
     # If omitted or unset terraform destroys previous versions which will make it impossible to
     # restore them. This is relevant in case of a desaster recovery where the
@@ -48,22 +35,10 @@ resource "google_secret_manager_secret_version" "credhub_encryption_key" {
     ignore_changes = all
   }
 
-
-
 }
 
 # -------------------------------------------------------------------------------------------------------------------
 
-data "kubernetes_secret_v1" "credhub_config" {
-  metadata {
-    name      = var.dr.credhub_config_name
-    namespace = var.concourse_app.namespace
-  }
-
-  binary_data = {
-    "application.yml" = ""
-  }
-}
 
 resource "google_secret_manager_secret" "credhub_config" {
   secret_id = "${var.gke.name}-${var.dr.credhub_config_name}"
@@ -84,7 +59,7 @@ resource "google_secret_manager_secret" "credhub_config" {
 
 resource "google_secret_manager_secret_version" "credhub_config" {
   secret      = google_secret_manager_secret.credhub_config.id
-  secret_data = base64decode(data.kubernetes_secret_v1.credhub_config.binary_data["application.yml"])
+  secret_data = base64decode(var.credhub_config.binary_data["application.yml"])
 
   lifecycle {
     prevent_destroy = true
