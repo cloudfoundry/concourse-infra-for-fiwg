@@ -10,9 +10,9 @@ Scenarios assume terraform apply was run after 1st deployment from `concourse-dr
 ## DR scenarios tested
 
 Scenario A:
-* deleted entrie deployment including 'concourse' namespace
+* deleted entire deployment including 'concourse' namespace
 * deleted all databases and database users
-* GKE cluster not destroyed
+* GKE cluster not destroyed 
 
 
 TODO:
@@ -20,16 +20,23 @@ TODO:
 
 ### Recovery Scenario A
 
-1. Ensure infra part is up to scratch
+1. Restore SQL Instance from backup
+* https://console.cloud.google.com/sql/instances/concourse/backups -> Restore desired backup version
 
-Should report namespace is deleted
+2. Ensure infra part is up to scratch. Should report a namespace will be created.
+##### Please note usage of brackets as these allow to execute bash commands from subfolders and return to the current folder once finished.
 ```
-cd ./concourse-infra
-terraform apply
+( cd ./concourse-infra && terragrunt apply )
 ```
+*Note: terraform reporting missing databases at this point is an indication instance restoration needs to be run.*
 
 2. Recreate 'backend' part.
-*WARNING* proceed with caution if you use backend components in other projects on the cluster (ie. carvel secret gen).
+```
+( cd concourse-backend && terragrunt apply )
+```
+
+**MAINTENANCE step:** In case carvel kapp complains you can taint and reprovision.
+ _WARNING_ proceed with caution if you use backend components in other projects on the cluster (ie. carvel secret gen).
 ```
 cd ./concourse-backend
 terraform taint carvel_kapp.concourse_backend
@@ -37,25 +44,19 @@ terraform plan
 terraform apply
 ```
 
-3. Restore SQL Instance from backup
-* https://console.cloud.google.com/sql/instances/concourse/backups -> Restore desired backup version
 
-
-4. Restore required secrets
-* Edit [concourse-dr/restore.tf](concourse-dr/restore.tf) variables to indicate what to restore. 
-
-To restore all
+4. Restore secrets
 ```
-    credhub_restore_encryption_password = true
-    credhub_restore_config              = true
-    sql_users_restore_passwords         = true
+( cd concourse-dr/restore && terraform apply )
 ```
-Apply terraform with `terraform apply`
+*NOTE:* due to the dr recovery workflow need this part is not managed with terragrunt.
 
 5. Deploy remaining components
+From this moment onward `terragrunt` should be happy to run again as usual.
+
 ```
-cd ../concourse-app
-terraform apply
+terragrunt run-all plan
+terragrunt run-all apply
 ```
 
 

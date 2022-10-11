@@ -63,11 +63,4 @@ variable "sql_database" {
   default = ["concourse", "uaa", "credhub"]
 }
 
-variable "dr" {
-  type = map(any)
-  default = {
-    credhub_encryption_key_name = "credhub-encryption-key"
-    credhub_config_name         = "credhub-config"
-  }
-}
 
