@@ -1,13 +1,11 @@
-# --- credhub encryption key
-# data "google_secret_manager_secret" "credhub_encryption_key" {
-#   secret_id = var.dr.credhub_encryption_key_name
-#   project   = var.project
-# }
+# Ensure concourse-backend has been provisioned prior to running restore
+#   otherwise it will complain about missing sql user secrets
 
+
+# --- Credhub encryption key
 data "google_secret_manager_secret_version" "credhub_encryption_key" {
   project = var.project
-  secret  = data.terraform_remote_state.concourse_app.outputs.credhub_encryption_key_id
-  #secret = "projects/app-runtime-interfaces-wg/secrets/wg-ci-credhub-encryption-key"
+  secret = "${var.gke.name}-credhub-encryption-key"
 }
 
 resource "kubernetes_secret_v1" "credhub_encryption_key" {
@@ -20,29 +18,6 @@ resource "kubernetes_secret_v1" "credhub_encryption_key" {
     password = data.google_secret_manager_secret_version.credhub_encryption_key.secret_data
   }
 }
-
-# # --- credhub config
-# data "google_secret_manager_secret" "credhub_config" {
-#   secret_id = var.dr.credhub_config_name
-#   project   = var.project
-# }
-
-# data "google_secret_manager_secret_version" "credhub_config" {
-#   secret  = "${var.gke.name}-${var.dr.credhub_config_name}"
-#   project = var.project
-# }
-
-# resource "kubernetes_secret_v1" "credhub_config_restored" {
-
-#   metadata {
-#     name      = var.dr.credhub_config_name
-#     namespace = var.concourse_app.namespace
-#   }
-
-#   data = {
-#     "application.yml" = data.google_secret_manager_secret_version.credhub_config.secret_data
-#   }
-# }
 
 # --- SQL user passwords
 

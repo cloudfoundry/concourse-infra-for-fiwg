@@ -8,7 +8,7 @@ terraform {
 
   backend "gcs" {
     bucket = "terraform-state-wg-ci"
-    prefix = "terraform/state/concourse-dr-restore"
+    prefix = "terraform/state/concourse-dr-create"
   }
 }
 
