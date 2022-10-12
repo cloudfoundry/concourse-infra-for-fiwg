@@ -7,7 +7,6 @@ data "kubernetes_secret_v1" "credhub_encryption_key" {
   binary_data = {
     password = ""
   }
-  
 }
 
 resource "google_secret_manager_secret" "credhub_encryption_key" {
