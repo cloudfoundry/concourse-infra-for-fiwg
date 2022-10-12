@@ -1,17 +1,18 @@
 # --- credhub encryption key
-data "google_secret_manager_secret" "credhub_encryption_key" {
-  secret_id = var.dr.credhub_encryption_key_name
-  project   = var.project
-}
+# data "google_secret_manager_secret" "credhub_encryption_key" {
+#   secret_id = var.dr.credhub_encryption_key_name
+#   project   = var.project
+# }
 
 data "google_secret_manager_secret_version" "credhub_encryption_key" {
   project = var.project
-  secret  = "${var.gke.name}-${var.dr.credhub_encryption_key_name}"
+  secret  = data.terraform_remote_state.concourse_app.outputs.credhub_encryption_key_id
+  #secret = "projects/app-runtime-interfaces-wg/secrets/wg-ci-credhub-encryption-key"
 }
 
-resource "kubernetes_secret_v1" "credhub_encryption_key_restored" {
+resource "kubernetes_secret_v1" "credhub_encryption_key" {
   metadata {
-    name      = var.dr.credhub_encryption_key_name
+    name      = "credhub-encryption-key"
     namespace = var.concourse_app.namespace
   }
 

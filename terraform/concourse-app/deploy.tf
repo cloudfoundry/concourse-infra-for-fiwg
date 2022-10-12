@@ -19,13 +19,13 @@ data "helm_template" "concourse" {
   }
 
   set {
-    name = "concourse.web.auth.mainTeam.github.user"
+    name  = "concourse.web.auth.mainTeam.github.user"
     value = var.concourse_app.github_mainTeamUser
   }
 
   set {
     # For security reasons, remove any local users
-    name = "concourse.web.auth.mainTeam.localUser"
+    name  = "concourse.web.auth.mainTeam.localUser"
     value = ""
   }
 }
@@ -64,8 +64,8 @@ data "carvel_ytt" "concourse_app" {
 
 
 resource "carvel_kapp" "concourse_app" {
-  app          = "concourse-app"
-  namespace    = "concourse"
+  app          = var.concourse_app.kapp_app
+  namespace    = var.concourse_app.namespace
   config_yaml  = data.carvel_ytt.concourse_app.result
   diff_changes = true
 

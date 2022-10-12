@@ -37,6 +37,7 @@ variable "gke" {
 variable "concourse_app" {
   type = map(string)
   default = {
+    kapp_app   = "concourse-app"
     namespace  = "concourse"
     fly_target = "app-runtime-interfaces"
     # Use \\ to escape comma separated entries - helm-chart-provider interpration
@@ -49,6 +50,7 @@ variable "kube" {
   type = map(any)
   default = {
     config  = "~/.kube/config"
+    # TODO: try to provide context dynamically by reading GKE
     context = "gke_app-runtime-interfaces-wg_europe-west3-a_wg-ci"
   }
 }

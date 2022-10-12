@@ -19,3 +19,11 @@ provider "kubernetes" {
 }
 
 
+data "terraform_remote_state" "concourse_app" {
+  backend = "gcs"
+  config = {
+    bucket = "terraform-state-wg-ci"
+    prefix = "terraform/state/concourse-app"
+
+  }
+}
