@@ -10,6 +10,8 @@ resource "google_sql_database_instance" "concourse" {
     availability_type = "REGIONAL"
 
     backup_configuration {
+
+      location = "eu"
       backup_retention_settings {
         retained_backups = "7"
         retention_unit   = "COUNT"
@@ -34,6 +36,13 @@ resource "google_sql_database_instance" "concourse" {
 
     location_preference {
       zone = var.zone
+      secondary_zone = var.secondary_zone
+    }
+
+    maintenance_window {
+      day          = 7     #Sunday
+      hour         = 0     #0:00 - 1:00 hours
+      update_track = "stable"
     }
 
     pricing_plan = "PER_USE"

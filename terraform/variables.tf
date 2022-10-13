@@ -13,11 +13,17 @@ variable "zone" {
   default = "europe-west3-a"
 }
 
+variable "secondary_zone" {
+  type    = string
+  default = "europe-west3-b"
+}
+
+
 variable "dns_address" {
   type = map(any)
   default = {
-    name        = "concourse-app-runtime-interfaces-ci-cloudfoundry-org"
-    description = "https://concourse.app-runtime-interfaces.ci.cloudfoundry.org"
+    name = "concourse-app-runtime-interfaces-ci-cloudfoundry-org"
+    url  = "https://concourse.app-runtime-interfaces.ci.cloudfoundry.org"
   }
 }
 
