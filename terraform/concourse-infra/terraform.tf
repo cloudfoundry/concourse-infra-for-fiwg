@@ -5,10 +5,10 @@ terraform {
     }
   }
 
-  # backend "gcs" {
-  #   bucket = "terraform-state-wg-ci"
-  #   prefix = "terraform/state/infra"
-  # }
+  backend "gcs" {
+    bucket = "terraform-state-wg-ci"
+    prefix = "terraform/state/infra"
+  }
 }
 
 provider "google-beta" {
