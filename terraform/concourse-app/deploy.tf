@@ -5,7 +5,7 @@ data "helm_template" "concourse" {
 
   set {
     name  = "concourse.web.externalUrl"
-    value = var.dns_address.description
+    value = var.dns_address.url
   }
 
   set {
