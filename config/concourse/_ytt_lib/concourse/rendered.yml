@@ -224,7 +224,7 @@ spec:
         - name: CONCOURSE_MAIN_TEAM_LOCAL_USER
           value: test
         - name: CONCOURSE_MAIN_TEAM_GITHUB_TEAM
-          value: cloudfoundry:bosh-stemcell
+          value: cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers
         - name: CONCOURSE_GITHUB_CLIENT_ID
           valueFrom:
             secretKeyRef:
