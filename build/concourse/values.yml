@@ -41,7 +41,7 @@ concourse:
 
           ## Comma-separated allow list of GitHub teams.
           ##
-          team: cloudfoundry:bosh-stemcell
+          team: cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers
     externalUrl: https://bosh.ci.cloudfoundry.org
     enableResourceCausality: true
 web:
@@ -50,6 +50,7 @@ web:
       type: LoadBalancer
       loadBalancerIP: 34.90.62.88
 worker:
+  replicas: 2
   additionalAffinities:
     nodeAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
