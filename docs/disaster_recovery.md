@@ -24,6 +24,7 @@ kubectl -n concourse create secret generic github --from-literal=id=${ghID} --fr
 ```
 
 ### credhub-config
+####not sure if this is stil neccary
 
 Get the original config yaml and save it to a temp file:
 ```
@@ -49,7 +50,7 @@ Once both secrets have been modified, delete the credhub pod for the changes to 
 There is an issue with [Config Connector](https://cloud.google.com/config-connector/docs/overview), when concourse/uaa/credhub are redeployed from scratch, SQL user passwords are not updated and pods cannot connect to their databases. In such situation update the passwords by running the script below:
 ```
 for user in concourse credhub uaa; do \
-  pass=$(kubectl get secret "$user-postgresql-password" -o json | jq -r .data.password | base64 --decode); \
+  pass=$(kubectl -n concourse get secret "$user-postgresql-password" -o json | jq -r .data.password | base64 --decode); \
   gcloud sql users set-password "$user" -i concourse --password="$pass";\
 done
 ```
