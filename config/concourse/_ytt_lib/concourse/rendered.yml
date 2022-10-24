@@ -4,7 +4,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -19,7 +19,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 data:
@@ -34,7 +34,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -56,7 +56,7 @@ metadata:
   name: concourse-web-worker-gateway
   labels:
     app: concourse-web
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -74,7 +74,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -90,7 +90,7 @@ metadata:
   name: concourse-web
   labels:
     app: concourse-web
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -108,7 +108,7 @@ spec:
       serviceAccountName: default
       initContainers:
       - name: concourse-migration
-        image: concourse/concourse:7.8.1
+        image: concourse/concourse:7.8.3
         args:
         - migrate
         - --migrate-to-latest-version
@@ -136,7 +136,7 @@ spec:
         volumeMounts: null
       containers:
       - name: concourse-web
-        image: concourse/concourse:7.8.1
+        image: concourse/concourse:7.8.3
         imagePullPolicy: IfNotPresent
         args:
         - web
@@ -325,7 +325,7 @@ metadata:
   name: concourse-worker
   labels:
     app: concourse-worker
-    chart: concourse-17.0.27
+    chart: concourse-17.0.37
     release: concourse
     heritage: Helm
 spec:
@@ -351,7 +351,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
       - name: concourse-worker
-        image: concourse/concourse:7.8.1
+        image: concourse/concourse:7.8.3
         imagePullPolicy: IfNotPresent
         args:
         - worker
