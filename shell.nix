@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    google-cloud-sdk
+    (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     kapp
     kubectl
     kubernetes-helm
@@ -10,5 +10,6 @@ pkgs.mkShell {
     terragrunt
     vendir
     ytt
+    nodePackages.snyk
   ];
 }
