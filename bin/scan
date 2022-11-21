@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+snyk container test --severity-threshold=high \
+     $(kapp -n concourse inspect -a concourse --raw | grep imageID | sort | uniq | cut -d' ' -f6 | xargs)
