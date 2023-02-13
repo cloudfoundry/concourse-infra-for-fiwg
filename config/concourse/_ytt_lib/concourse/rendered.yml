@@ -342,6 +342,7 @@ spec:
     spec:
       nodeSelector:
         cloud.google.com/gke-local-ssd: "true"
+        cloud.google.com/gke-nodepool: concourse-workers
       serviceAccountName: default
       tolerations:
       - effect: NoSchedule
@@ -473,3 +474,6 @@ spec:
             path: worker_key
   strategy:
     type: RollingUpdate
+---
+windows_image: foundationalinfrastructure/concourse-windows
+windows_imageTag: latest

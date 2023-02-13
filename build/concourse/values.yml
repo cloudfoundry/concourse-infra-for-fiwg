@@ -80,3 +80,23 @@ worker:
   resources:
     requests:
       cpu: "3000m"
+
+windows_worker:
+  enabled: false
+  replicas: 1
+  tolerations:
+    - key: "workers"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "node.kubernetes.io/os"
+      operator: "Equal"
+      value: "windows"
+      effect: "NoSchedule"
+  kind: Deployment
+  nodeSelector:
+    cloud.google.com/gke-local-ssd: "true"
+    cloud.google.com/gke-nodepool: "concourse-windows-workers"
+  resources:
+    requests:
+      cpu: "3000m"

@@ -1,0 +1,12 @@
+jobs:
+- name: test-windows
+  serial: true
+  plan:
+  - task: get-help
+    config:
+      platform: windows
+      run:
+        path: powershell
+        args:
+        - -c
+        - Get-Help Get-Help -Full

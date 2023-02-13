@@ -1,0 +1,2 @@
+windows_image: foundationalinfrastructure/concourse-windows
+windows_imageTag: "latest"
