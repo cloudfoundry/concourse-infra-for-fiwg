@@ -17,7 +17,7 @@ directories:
 - contents:
   - githubRelease:
       tag: v0.10.3
-      url: https://api.github.com/repos/vmware-tanzu/carvel-secretgen-controller/releases/71524101
+      url: https://api.github.com/repos/carvel-dev/secretgen-controller/releases/71524101
     path: .
   path: config/carvel-secretgen-controller
 - contents:
@@ -26,8 +26,8 @@ directories:
   path: config/concourse/_ytt_lib
 - contents:
   - helmChart:
-      appVersion: 7.8.1
-      version: 17.0.27
+      appVersion: 7.9.1
+      version: 17.1.1
     path: .
   path: build/concourse/_vendir/
 kind: LockConfig

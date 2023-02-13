@@ -46,6 +46,6 @@ directories:
   - path: .
     helmChart:
       name: concourse
-      version: "17.0.27"
+      version: "17.1.1"
       repository:
         url: https://concourse-charts.storage.googleapis.com/
