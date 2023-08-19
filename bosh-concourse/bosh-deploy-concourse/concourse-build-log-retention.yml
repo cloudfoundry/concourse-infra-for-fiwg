@@ -1,0 +1,5 @@
+- type: replace
+  path: /instance_groups/name=web/jobs/name=web/properties/build_log_retention?
+  value:
+    default_builds: 50
+    default_days: 365

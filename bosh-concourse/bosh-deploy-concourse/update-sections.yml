@@ -1,0 +1,9 @@
+- type: replace
+  path: /update/max_in_flight
+  value: 1
+- type: replace
+  path: /instance_groups/name=worker/update?/max_in_flight
+  value: 50%
+- type: replace
+  path: /instance_groups/name=worker/update/canaries?
+  value: 0

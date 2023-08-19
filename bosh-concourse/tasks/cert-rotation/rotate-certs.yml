@@ -1,0 +1,21 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-community-ci-infra
+  - name: creds
+  - name: vars
+    optional: true
+  - name: terraform
+    optional: true
+
+outputs:
+  - name: creds
+
+params:
+  ROTATE_DIRECTOR: false
+  EXTERNAL_IP: false
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-certs.sh

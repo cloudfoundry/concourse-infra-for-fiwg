@@ -1,0 +1,19 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-community-ci-infra
+  - name: terraform
+
+params:
+  BOSH_CA_CERT:
+  BOSH_CLIENT:
+  BOSH_CLIENT_SECRET:
+  BOSH_ENVIRONMENT:
+  CLOUD_CONFIG_PATH:
+  JUMPBOX_PRIVATE_KEY:
+  JUMPBOX_URL:
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/update-director-configs.sh

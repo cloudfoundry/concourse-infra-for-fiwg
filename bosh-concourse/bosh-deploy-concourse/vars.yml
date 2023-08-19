@@ -1,0 +1,19 @@
+azs:
+  - az1
+credhub_db_password: ((postgres_credhub_user.password))
+external_url: "https://bosh.ci.cloudfoundry.org"
+external_host: "bosh.ci.cloudfoundry.org"
+main_team.github_orgs: []
+main_team.github_users: []
+main_team.github_teams:
+- "cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers"
+max_containers: 1000
+network_name: default
+postgres_host: ((postgres_host))
+postgres_password: ((postgres_concourse_user.password))
+postgres_port: 5432
+postgres_role: ((postgres_concourse_user.username))
+postgres_ca_cert: ((postgres_ca.certificate))
+tls_port: 443
+uaa_db_password: ((postgres_uaa_user.password))
+web_vm_extension: concourse-web

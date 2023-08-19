@@ -1,0 +1,13 @@
+- type: replace
+  path: /instance_groups/name=web/jobs/name=web/properties/main_team?/auth/local/users/-
+  value: ci-user
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=web/properties/add_local_users?/ci-user
+  value: ((ci_user_password))
+
+- type: replace
+  path: /variables/-
+  value:
+    name: ci_user_password
+    type: password

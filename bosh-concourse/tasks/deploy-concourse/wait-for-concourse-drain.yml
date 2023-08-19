@@ -1,0 +1,14 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-community-ci-infra
+
+params:
+  CONCOURSE_URL:
+  CONCOURSE_USERNAME: ((concourse_ci_user.username))
+  CONCOURSE_PASSWORD: ((concourse_ci_user.password))
+  IGNORE_JOB: ""
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/wait-for-concourse-drain.sh

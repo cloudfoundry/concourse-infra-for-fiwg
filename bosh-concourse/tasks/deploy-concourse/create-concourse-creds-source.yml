@@ -1,0 +1,21 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-community-ci-infra
+
+outputs:
+  - name: concourse-creds-source
+
+params:
+  CREDHUB_CLIENT:
+  CREDHUB_SECRET:
+  CREDHUB_SERVER:
+  CREDHUB_CA_CERT:
+  JUMPBOX_PRIVATE_KEY:
+  JUMPBOX_USERNAME:
+  JUMPBOX_URL:
+  WEB_IP:
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/create-concourse-creds-source.sh

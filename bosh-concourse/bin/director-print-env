@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+gsutil cat "gs://bosh-concourse-deployment/director/creds-source.sh"

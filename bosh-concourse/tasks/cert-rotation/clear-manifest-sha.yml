@@ -1,0 +1,12 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-community-ci-infra
+  - name: state
+
+outputs:
+  - name: state
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/clear-manifest-sha.sh

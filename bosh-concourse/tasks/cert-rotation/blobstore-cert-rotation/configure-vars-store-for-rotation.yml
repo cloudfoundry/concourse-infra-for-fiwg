@@ -1,0 +1,16 @@
+---
+- type: replace
+  path: /next_blobstore_server_tls?
+  value: ((blobstore_server_tls))
+- type: replace
+  path: /blobstore_ca/certificate
+  value: ((next_blobstore_server_tls.ca))((blobstore_ca.ca))
+- type: replace
+  path: /blobstore_server_tls/ca
+  value: ((next_blobstore_server_tls.ca))((blobstore_ca.ca))
+- type: replace
+  path: /blobstore_server_tls/certificate
+  value: ((next_blobstore_server_tls.certificate))
+- type: replace
+  path: /blobstore_server_tls/private_key
+  value: ((next_blobstore_server_tls.private_key))

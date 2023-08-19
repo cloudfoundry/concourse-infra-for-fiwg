@@ -1,0 +1,25 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-community-ci-infra
+  - name: director-creds
+
+outputs:
+  - name: director-creds-source
+
+params:
+  BOSH_CA_CERT:
+  BOSH_CLIENT:
+  BOSH_CLIENT_SECRET:
+  BOSH_ENVIRONMENT:
+  CREDHUB_CLIENT:
+  CREDHUB_SECRET:
+  CREDHUB_SERVER:
+  CREDHUB_CA_CERT:
+  JUMPBOX_PRIVATE_KEY:
+  JUMPBOX_USERNAME:
+  JUMPBOX_URL:
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/create-director-creds-source.sh

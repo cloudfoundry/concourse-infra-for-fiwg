@@ -1,0 +1,17 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-community-ci-infra
+
+params:
+  CREDHUB_CA_CERT:
+  CREDHUB_CLIENT:
+  CREDHUB_SECRET:
+  CREDHUB_SERVER:
+  JUMPBOX_URL:
+  JUMPBOX_PRIVATE_KEY:
+  CAS_TO_ROTATE:
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-ca-certificate.rb

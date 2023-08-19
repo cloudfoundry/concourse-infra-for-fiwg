@@ -1,0 +1,23 @@
+- type: replace
+  path: /releases/name=bpm
+  value:
+    name: bpm
+    version: latest
+
+- type: replace
+  path: /releases/name=concourse
+  value:
+    name: concourse
+    version: latest
+
+- type: replace
+  path: /releases/name=credhub
+  value:
+    name: credhub
+    version: latest
+
+- type: replace
+  path: /releases/name=uaa
+  value:
+    name: uaa
+    version: latest

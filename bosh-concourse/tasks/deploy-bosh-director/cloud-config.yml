@@ -1,0 +1,57 @@
+azs:
+  - name: az1
+    cloud_properties:
+      zone: ((zone))
+
+vm_types:
+  - name: concourse_web
+    cloud_properties:
+      machine_type: e2-standard-2 # 2 CPU, 8 GB RAM
+      root_disk_size_gb: 20
+      root_disk_type: pd-ssd
+  - name: concourse_worker_2_8
+    cloud_properties:
+      machine_type: e2-standard-2 # 2 CPU, 8 GB RAM
+      root_disk_size_gb: 256
+      root_disk_type: pd-ssd
+  - name: concourse_worker_4_16
+    cloud_properties:
+      machine_type: e2-standard-4 # 4 CPU, 16 GB RAM
+      root_disk_size_gb: 1000
+      root_disk_type: pd-ssd
+  - name: compilation
+    cloud_properties:
+      machine_type: e2-highcpu-4 # 4 CPU, 4 GB RAM
+      root_disk_size_gb: 128
+      root_disk_type: pd-ssd
+
+vm_extensions:
+  - name: concourse-web
+    cloud_properties:
+      target_pool: ((concourse_web_target_pool))
+
+compilation:
+  workers: 5
+  reuse_compilation_vms: true
+  az: az1
+  vm_type: compilation
+  network: default
+
+networks:
+  - name: vip
+    type: vip
+  - name: default
+    type: manual
+    subnets:
+      - az: az1
+        cloud_properties:
+          network_name: ((network))
+          subnetwork_name: ((subnetwork))
+          ephemeral_external_ip: true
+          tags:
+            - bosh-deployed
+        gateway: ((internal_gw))
+        range: ((internal_cidr))
+        reserved: [((internal_jumpbox_ip)), ((internal_director_ip))]
+        static: [10.0.0.4, 10.0.0.50]
+disk_types: []

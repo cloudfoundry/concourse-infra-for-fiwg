@@ -1,0 +1,21 @@
+---
+platform: linux
+
+inputs:
+  - name: bosh-deployment
+  - name: bosh-community-ci-infra
+  - name: director-creds
+  - name: director-state
+  - name: jumpbox-creds
+  - name: terraform
+
+outputs:
+  - name: director-creds
+  - name: director-state
+
+params:
+  GCP_CREDENTIALS_JSON:
+  ADDITIONAL_OPS_FILES:
+
+run:
+  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/director-create-env-gcp.sh
