@@ -178,14 +178,14 @@ jobs:
           - get: terraform
       - in_parallel:
           - task: remove-old-jumpbox-certs
-            file: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-certs.yml
+            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-certs.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               creds: jumpbox-creds
             output_mapping:
               creds: jumpbox-creds
           - task: remove-old-director-certs
-            file: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-certs.yml
+            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-certs.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               creds: director-creds
@@ -194,21 +194,21 @@ jobs:
             params:
               ROTATE_DIRECTOR: true
           - task: clear-director-manifest-sha
-            file: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/clear-manifest-sha.yml
+            file: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               state: director-state
             output_mapping:
               state: director-state
           - task: clear-jumpbox-manifest-sha
-            file: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/clear-manifest-sha.yml
+            file: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               state: jumpbox-state
             output_mapping:
               state: jumpbox-state
           - task: regenerate-certificates-in-credhub
-            file: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-ca-certificate.yml
+            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-ca-certificate.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CREDHUB_CA_CERT: ((director_credhub_ca_cert.ca))
@@ -251,7 +251,7 @@ jobs:
           passed:
           - terraform
       - task: jumpbox-create-env
-        file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-jumpbox/jumpbox-create-env-gcp.yml
+        file: bosh-community-ci-infra/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           GCP_CREDENTIALS_JSON: ((gcp_credentials_json))
@@ -284,7 +284,7 @@ jobs:
           passed:
             - create-jumpbox
       - task: director-create-env
-        file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/director-create-env-gcp.yml
+        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/director-create-env-gcp.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           GCP_CREDENTIALS_JSON: ((gcp_credentials_json))
@@ -298,10 +298,10 @@ jobs:
                 params:
                   file: director-state/state.json
       - task: update-credhub-credentials
-        file: bosh-community-ci-infra/bosh-concourse/tasks/update-credhub-credentials/update-credhub-credentials.yml
+        file: bosh-community-ci-infra/ci/tasks/update-credhub-credentials/update-credhub-credentials.yml
         image: cf-deployment-concourse-tasks-registry-image
       - task: create-director-creds-source
-        file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/create-director-creds-source.yml
+        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/create-director-creds-source.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           BOSH_CA_CERT: ((director_ca_cert.ca))
@@ -319,7 +319,7 @@ jobs:
         params:
           file: director-creds-source/creds-source.sh
       - task: create-concourse-creds-source
-        file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/create-concourse-creds-source.yml
+        file: bosh-community-ci-infra/ci/tasks/deploy-concourse/create-concourse-creds-source.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           CREDHUB_CLIENT: ((director_credhub_admin.username))
@@ -334,14 +334,14 @@ jobs:
         params:
           file: concourse-creds-source/creds-source.sh
       - task: update-director-configs
-        file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/update-director-configs.yml
+        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/update-director-configs.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           BOSH_CA_CERT: ((director_ca_cert.ca))
           BOSH_CLIENT: ((director_admin.username))
           BOSH_CLIENT_SECRET: ((director_admin.password))
           BOSH_ENVIRONMENT: ((director_target))
-          CLOUD_CONFIG_PATH: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/cloud-config.yml
+          CLOUD_CONFIG_PATH: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/cloud-config.yml
           JUMPBOX_PRIVATE_KEY: ((jumpbox_ssh.private_key))
           JUMPBOX_URL: ((jumpbox_url))
       - task: cleanup-bosh-director
@@ -380,7 +380,7 @@ jobs:
       - in_parallel:
         - do:
           - task: pause-all-pipelines
-            file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/pause-all-pipelines.yml
+            file: bosh-community-ci-infra/ci/tasks/deploy-concourse/pause-all-pipelines.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
@@ -390,7 +390,7 @@ jobs:
             params:
               file: paused-pipelines/pipelines.tgz
           - task: wait-for-concourse-drain
-            file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/wait-for-concourse-drain.yml
+            file: bosh-community-ci-infra/ci/tasks/deploy-concourse/wait-for-concourse-drain.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
@@ -549,7 +549,7 @@ jobs:
       - get: cf-deployment-concourse-tasks-registry-image
       - get: paused-pipelines
     - task: unpause-all-pipelines
-      file: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/unpause-all-pipelines.yml
+      file: bosh-community-ci-infra/ci/tasks/deploy-concourse/unpause-all-pipelines.yml
       image: cf-deployment-concourse-tasks-registry-image
       params:
         CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
