@@ -39,7 +39,7 @@ bosh create-env "${WORKSPACE_DIR}/bosh-deployment/bosh.yml" \
   -o "${WORKSPACE_DIR}/bosh-deployment/uaa.yml" \
   -o "${WORKSPACE_DIR}/bosh-deployment/credhub.yml" \
   -o "${WORKSPACE_DIR}/bosh-deployment/jumpbox-user.yml" \
-  -o "${WORKSPACE_DIR}/bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/gcp-enable-external-ip.yml" \
+  -o "${WORKSPACE_DIR}/bosh-community-ci-infra/ci/tasks/deploy-bosh-director/gcp-enable-external-ip.yml" \
   ${additional_ops_files} \
   --state "${WORKSPACE_DIR}/director-state/state.json" \
   --vars-store "${WORKSPACE_DIR}/director-creds/creds.yml" \

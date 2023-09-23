@@ -161,7 +161,7 @@ jobs:
       - get: bosh-community-ci-infra
       - put: terraform
         params:
-          terraform_source: bosh-community-ci-infra/bosh-concourse/terraform/concourse-gcp
+          terraform_source: bosh-community-ci-infra/terraform/concourse-gcp
 
   - name: regenerate-certs
     plan:
@@ -412,20 +412,20 @@ jobs:
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/add-local-user.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/concourse-build-log-retention.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/container-placement-strategies.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/modify-max-containers.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/postgres-updates.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/remove-release-metadata.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/static-web-ip.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/tls-port.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/uaa-uses-internal-ip.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/update-sections.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/web-lb-extension.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/update-variables-for-upgrader.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/modify-max-containers.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/tls-port.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/uaa-uses-internal-ip.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/update-sections.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/web-lb-extension.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/update-variables-for-upgrader.yml
             releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
@@ -441,7 +441,7 @@ jobs:
               worker_instances: 1
               worker_vm_type: concourse_worker_2_8
             vars_files:
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/vars.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
   - name: bosh-deploy-concourse
     serial_groups: [ concourse-deploy ]
     plan:
@@ -497,19 +497,19 @@ jobs:
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/add-local-user.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/concourse-build-log-retention.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/container-placement-strategies.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/modify-max-containers.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/postgres-updates.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/remove-release-metadata.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/static-web-ip.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/tls-port.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/uaa-uses-internal-ip.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/update-sections.yml
-            - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/web-lb-extension.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/modify-max-containers.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/tls-port.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/uaa-uses-internal-ip.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/update-sections.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/web-lb-extension.yml
           releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
@@ -526,7 +526,7 @@ jobs:
             worker_instances: 2
             worker_vm_type: concourse_worker_4_16
           vars_files:
-          - bosh-community-ci-infra/bosh-concourse/bosh-deploy-concourse/vars.yml
+          - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
   - name: destroy-upgrader-deployment
     serial_groups: [ concourse-deploy ]
     plan:

@@ -22,4 +22,4 @@ params:
   JUMPBOX_URL:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/create-director-creds-source.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/create-director-creds-source.sh

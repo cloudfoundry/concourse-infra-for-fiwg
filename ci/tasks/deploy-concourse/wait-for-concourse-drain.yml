@@ -11,4 +11,4 @@ params:
   IGNORE_JOB: ""
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/wait-for-concourse-drain.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-concourse/wait-for-concourse-drain.sh

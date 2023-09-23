@@ -18,4 +18,4 @@ params:
   WEB_IP:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-concourse/create-concourse-creds-source.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-concourse/create-concourse-creds-source.sh

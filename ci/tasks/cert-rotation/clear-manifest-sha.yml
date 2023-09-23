@@ -9,4 +9,4 @@ outputs:
   - name: state
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/clear-manifest-sha.sh
+  path: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.sh

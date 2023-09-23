@@ -16,4 +16,4 @@ params:
   GCP_CREDENTIALS_JSON:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-jumpbox/jumpbox-create-env-gcp.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.sh

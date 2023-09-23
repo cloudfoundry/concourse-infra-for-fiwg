@@ -16,4 +16,4 @@ params:
   JUMPBOX_URL:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/update-director-configs.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/update-director-configs.sh

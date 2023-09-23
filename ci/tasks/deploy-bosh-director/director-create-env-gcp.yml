@@ -18,4 +18,4 @@ params:
   ADDITIONAL_OPS_FILES:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/deploy-bosh-director/director-create-env-gcp.sh
+  path: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/director-create-env-gcp.sh

@@ -18,4 +18,4 @@ params:
   EXTERNAL_IP: false
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-certs.sh
+  path: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-certs.sh

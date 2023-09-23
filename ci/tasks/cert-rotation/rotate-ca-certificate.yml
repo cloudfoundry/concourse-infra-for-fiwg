@@ -14,4 +14,4 @@ params:
   CAS_TO_ROTATE:
 
 run:
-  path: bosh-community-ci-infra/bosh-concourse/tasks/cert-rotation/rotate-ca-certificate.rb
+  path: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-ca-certificate.rb
