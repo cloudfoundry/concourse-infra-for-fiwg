@@ -24,6 +24,11 @@ vm_types:
       machine_type: e2-standard-8 # 8 CPU, 32 GB RAM
       root_disk_size_gb: 1000
       root_disk_type: pd-ssd
+  - name: concourse_worker_16_64
+    cloud_properties:
+      machine_type: e2-standard-16 # 16 CPU, 64 GB RAM
+      root_disk_size_gb: 1000
+      root_disk_type: pd-ssd
   - name: compilation
     cloud_properties:
       machine_type: e2-highcpu-4 # 4 CPU, 4 GB RAM
