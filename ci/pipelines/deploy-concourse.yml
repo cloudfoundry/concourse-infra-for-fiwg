@@ -384,7 +384,7 @@ jobs:
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
-              TEAMS: main ubuntu-bionic-fips uaa
+              TEAMS: main uaa
               EXCLUDE_PIPELINE: deploy-concourse
           - put: paused-pipelines
             params:
