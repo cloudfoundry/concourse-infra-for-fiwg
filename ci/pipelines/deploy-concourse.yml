@@ -523,7 +523,7 @@ jobs:
             web_instances: 1
             web_ip: 10.0.0.4
             web_vm_type: concourse_web
-            worker_instances: 2
+            worker_instances: 3
             worker_vm_type: concourse_worker_16_64
           vars_files:
           - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
