@@ -384,7 +384,7 @@ jobs:
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
-              TEAMS: main uaa
+              TEAMS: main uaa stemcell bosh-io
               EXCLUDE_PIPELINE: deploy-concourse
           - put: paused-pipelines
             params:
