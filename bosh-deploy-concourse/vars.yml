@@ -5,8 +5,17 @@ external_url: "https://bosh.ci.cloudfoundry.org"
 external_host: "bosh.ci.cloudfoundry.org"
 main_team.github_orgs: []
 main_team.github_users: []
-main_team.github_teams:
-- "cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers"
+main_team.github_teams: []
+main_team.auth_config:
+  roles:
+  - name: owner
+    github:
+      orgs: ["cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers"]
+    local:
+      users: ["ci-user"]
+  - name: viewer
+    github:
+      orgs: ["cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-reviewers"]
 max_containers: 1000
 network_name: default
 postgres_host: ((postgres_host))
