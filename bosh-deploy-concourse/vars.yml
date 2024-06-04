@@ -3,10 +3,10 @@ azs:
 credhub_db_password: ((postgres_credhub_user.password))
 external_url: "https://bosh.ci.cloudfoundry.org"
 external_host: "bosh.ci.cloudfoundry.org"
-main_team.github_orgs: []
-main_team.github_users: []
-main_team.github_teams: []
-main_team.auth_config:
+main_team.github_orgs: nil
+main_team.github_users: nil
+main_team.github_teams: nil
+main_team.auth_config: |
   roles:
   - name: owner
     github:
