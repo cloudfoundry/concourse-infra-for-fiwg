@@ -384,7 +384,7 @@ jobs:
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
-              TEAMS: main uaa stemcell bosh-io
+              TEAMS: main uaa stemcell x-bosh-io
               EXCLUDE_PIPELINE: deploy-concourse
           - put: paused-pipelines
             params:
@@ -409,6 +409,7 @@ jobs:
             - concourse-deployment/cluster/operations/scale.yml
             - concourse-deployment/cluster/operations/secure-internal-postgres-uaa.yml
             - concourse-deployment/cluster/operations/github-auth.yml
+            - concourse-deployment/cluster/operations/add-main-team-auth-config.yml
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
