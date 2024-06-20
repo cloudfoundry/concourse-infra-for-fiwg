@@ -15,7 +15,10 @@ main_team.auth_config: |
       users: ["ci-user"]
   - name: viewer
     github:
-      orgs: ["cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-reviewers"]
+      orgs:
+      - "cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-reviewers"
+      - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-reviewers"
+      - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-approvers"
 max_containers: 1000
 network_name: default
 postgres_host: ((postgres_host))
