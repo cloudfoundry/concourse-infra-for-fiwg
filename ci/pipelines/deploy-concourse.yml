@@ -437,6 +437,7 @@ jobs:
             - gcp-stemcell/stemcell.tgz
             vars:
               deployment_name: concourse-upgrader
+              storage_driver: btrfs
               web_instances: 1
               web_ip: 10.0.0.50
               web_vm_type: concourse_web
