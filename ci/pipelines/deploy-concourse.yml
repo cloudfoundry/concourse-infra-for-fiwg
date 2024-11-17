@@ -498,6 +498,7 @@ jobs:
             - concourse-deployment/cluster/operations/secure-internal-postgres-uaa.yml
             - concourse-deployment/cluster/operations/github-auth.yml
             - concourse-deployment/cluster/operations/add-main-team-auth-config.yml
+            - concourse-deployment/cluster/operations/storage-driver.yml
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
@@ -523,6 +524,7 @@ jobs:
             - gcp-stemcell/stemcell.tgz
           vars:
             deployment_name: concourse
+            storage_driver: btrfs
             upgrader_web_ip: 10.0.0.50
             web_instances: 1
             web_ip: 10.0.0.4
