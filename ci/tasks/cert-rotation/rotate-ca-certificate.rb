@@ -36,7 +36,7 @@ def cert_signed_by_ca?(certificate_id, ca_id)
 end
 
 def fetch_data(cert_name)
-  escaped_name = URI.escape(cert_name)
+  escaped_name = CGI.escape(cert_name)
   JSON.parse(`credhub curl -p 'api/v1/certificates?name=#{escaped_name}'`)['certificates'].first
 end
 
