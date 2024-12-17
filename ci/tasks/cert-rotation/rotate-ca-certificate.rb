@@ -2,7 +2,6 @@
 
 require 'json'
 require 'tempfile'
-require 'uri'
 require 'openssl'
 require 'cgi/util'
 
