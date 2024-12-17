@@ -4,6 +4,7 @@ require 'json'
 require 'tempfile'
 require 'uri'
 require 'openssl'
+require 'cgi/util'
 
 jumpbox_private_key = Tempfile.new
 jumpbox_private_key.write(ENV['JUMPBOX_PRIVATE_KEY'])
@@ -36,7 +37,7 @@ def cert_signed_by_ca?(certificate_id, ca_id)
 end
 
 def fetch_data(cert_name)
-  escaped_name = CGI::Util.escape(cert_name)
+  escaped_name = CGI.escape(cert_name)
   JSON.parse(`credhub curl -p 'api/v1/certificates?name=#{escaped_name}'`)['certificates'].first
 end
 
