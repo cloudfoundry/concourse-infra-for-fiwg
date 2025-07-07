@@ -15,9 +15,9 @@ variable "internal_cidr" {
 }
 
 variable "zone" {
-  default = "europe-north2-a"
+  default = "europe-west4-b"
 }
 
 variable "region" {
-  default = "europe-north2"
+  default = "europe-west4"
 }
