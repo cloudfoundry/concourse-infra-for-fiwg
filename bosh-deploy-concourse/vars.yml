@@ -10,15 +10,19 @@ main_team.auth_config: |
   roles:
   - name: owner
     github:
-      orgs: ["cloudfoundry:wg-foundational-infrastructure-vm-deployment-lifecycle-bosh-approvers"]
+      teams: 
+      - "cloudfoundry:wg-foundational-infrastructure-vm-deployment-lifecycle-bosh-approvers"
     local:
       users: ["ci-user"]
+  - name: member
+    github:
+      teams: 
+      - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-approvers"
   - name: viewer
     github:
-      orgs:
+      teams:
       - "cloudfoundry:wg-foundational-infrastructure-vm-deployment-lifecycle-bosh-reviewers"
       - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-reviewers"
-      - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-approvers"
 max_containers: 1000
 network_name: default
 postgres_host: ((postgres_host))
