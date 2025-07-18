@@ -1,0 +1,15 @@
+roles:
+  - name: owner
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-approvers
+    local:
+      users: ["ci-user"]
+  - name: viewer
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-vm-deployment-lifecycle-bosh-approvers
+      - cloudfoundry:wg-foundational-infrastructure-vm-deployment-lifecycle-bosh-reviewers
+      - cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-reviewers
+    local:
+      users: []

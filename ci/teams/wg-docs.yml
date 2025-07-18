@@ -1,0 +1,7 @@
+roles:
+  - name: owner
+    github:
+      teams:
+      - cloudfoundry:wg-documentation-docs-approvers
+    local:
+      users: ["ci-user"]

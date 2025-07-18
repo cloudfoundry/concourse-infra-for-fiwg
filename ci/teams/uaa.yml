@@ -1,0 +1,14 @@
+roles:
+  - name: owner
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-identity-and-auth-uaa-approvers
+      - cloudfoundry:temp-uaa-ci-admins
+    local:
+      users: ["ci-user"]
+  - name: viewer
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-identity-and-auth-uaa-reviewers
+    local:
+      users: []
