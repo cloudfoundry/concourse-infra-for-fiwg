@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# List all disks in the project that are not attached to any VM
+unused_disks=$(gcloud compute disks list --format="value(name,zone)" --filter="-users:*")
+
+if [[ -z "$unused_disks" ]]; then
+    echo "No unused disks found."
+    exit 0
+fi
+
+echo "Unused disks found:"
+echo "$unused_disks"
+
+# Delete each unused disk
+while read -r disk zone; do
+    echo "Deleting disk: $disk in zone: $zone"
+    gcloud compute disks delete "$disk" --zone="$zone" --quiet
+done <<< "$unused_disks"
+
