@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <date in YYYY-MM-DD format>"
+  exit 1
+fi
+
+DATE="$1"
+
+IMAGES_TO_DELETE=$(gcloud compute images list --filter="creationTimestamp<'${DATE}'" --format="value(name)")
+
+if [ -z "$IMAGES_TO_DELETE" ]; then
+  echo "No images found to delete before ${DATE}."
+else
+  echo "The following images will be deleted:"
+  echo "$IMAGES_TO_DELETE"
+  echo "Deleting images..."
+ # echo "$IMAGES_TO_DELETE" | xargs gcloud compute images delete --quiet
+fi
+
+
+echo "Done."
