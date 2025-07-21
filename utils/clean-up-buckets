@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Calculate the date 3 years ago in YYYY-MM-DD format
+DATE=$(date -u -v-3y +"%Y-%m-%d")
+echo "Deleting buckets created before $DATE"
+
+echo "Listing GCP buckets with prefix 'stemcell' and created before ${DATE}:"
+
+BUCKETS_TO_LIST=$(gcloud storage buckets list --format="json")
+
+# Print buckets and their creation dates
+echo "$BUCKETS_TO_LIST" | jq -r --arg date "$DATE" '
+    .[]
+    | select(.name | startswith("stemcell"))
+    | select(.creation_time < ($date + "T00:00:00Z"))
+    | "\(.name), \(.creation_time)"
+'
+
+# Delete the matching buckets
+echo "$BUCKETS_TO_LIST" | jq -r --arg date "$DATE" '
+    .[]
+    | select(.name | startswith("stemcell"))
+    | select(.creation_time < ($date + "T00:00:00Z"))
+    | .name
+' | while read -r bucket_name; do
+    echo "Deleting bucket: $bucket_name"
+    gcloud storage buckets delete "$bucket_name" --quiet
+done
+
+echo "Done."
