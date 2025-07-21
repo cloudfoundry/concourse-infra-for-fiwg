@@ -2,9 +2,9 @@
 set -euo pipefail
 
 PROJECT_ID="$1"
-AUTOCLASS="--autoclass-enabled"
+AUTOCLASS="--enable-autoclass"
 if [[ "${2:-}" == "off" ]]; then
-    AUTOCLASS="--no-autoclass-enabled"
+    AUTOCLASS="--no-enable-autoclass"
 fi
 
 
@@ -24,7 +24,7 @@ echo "$BUCKETS" | sed 's/^/  - /'
 
 for BUCKET in $BUCKETS; do
   echo "Enabling Autoclass on: $BUCKET"
-  gcloud storage buckets update "$BUCKET" \
+  gcloud storage buckets update "gs://$BUCKET" \
     --project="${PROJECT_ID}" \
     ${AUTOCLASS} \
     --quiet \
