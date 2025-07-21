@@ -8,16 +8,15 @@ fi
 
 DATE="$1"
 
-IMAGES_TO_DELETE=$(gcloud compute images list --filter="creationTimestamp<'${DATE}'" --format="value(name)")
+IMAGES_TO_DELETE=$(gcloud compute images list --filter="creationTimestamp<'${DATE}'" --format="value(name,creationTimestamp)")
 
 if [ -z "$IMAGES_TO_DELETE" ]; then
   echo "No images found to delete before ${DATE}."
 else
-  echo "The following images will be deleted:"
+  echo "The following images will be deleted (name, creation date):"
   echo "$IMAGES_TO_DELETE"
   echo "Deleting images..."
- # echo "$IMAGES_TO_DELETE" | xargs gcloud compute images delete --quiet
+  echo "$IMAGES_TO_DELETE" | awk '{print $1}' | xargs gcloud compute images delete --quiet
 fi
-
 
 echo "Done."
