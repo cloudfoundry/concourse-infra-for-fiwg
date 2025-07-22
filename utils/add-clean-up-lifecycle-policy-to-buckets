@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# List of buckets to update
+BUCKETS="bosh-core-stemcells bosh-core-stemcells-fips bosh-core-stemcells-candidate bosh-core-stemcells-candidate-fips"
+
+for bucket_name in $BUCKETS; do
+    echo "Setting lifecycle policy for bucket: $bucket_name"
+    gcloud storage buckets update "$bucket_name" \
+      --lifecycle-file=<(cat <<EOF
+{
+  "rule": [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 1095}
+    }
+  ]
+}
+EOF
+)
+done
+
+echo "Done."
