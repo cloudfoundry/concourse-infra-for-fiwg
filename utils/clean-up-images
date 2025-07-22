@@ -1,17 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 <date in YYYY-MM-DD format>"
-  exit 1
-fi
-
-DATE="$1"
-
-IMAGES_TO_DELETE=$(gcloud compute images list --filter="creationTimestamp<'${DATE}'" --format="value(name,creationTimestamp)")
+IMAGES_TO_DELETE=$(gcloud compute images list --filter="name~^stemcell-[a-zA-Z0-9]{8}-" --format="value(name,creationTimestamp)")
 
 if [ -z "$IMAGES_TO_DELETE" ]; then
-  echo "No images found to delete before ${DATE}."
+  echo "No images found matching pattern 'stemcell-<quid>-'."
 else
   echo "The following images will be deleted (name, creation date):"
   echo "$IMAGES_TO_DELETE"
