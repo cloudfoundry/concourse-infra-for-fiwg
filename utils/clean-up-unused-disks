@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DRY_RUN=true
+if [[ "${1:-}" == "delete" ]]; then
+    DRY_RUN=false
+fi
+
 # List all disks in the project that are not attached to any VM
 unused_disks=$(gcloud compute disks list --format="value(name,zone)" --filter="-users:*")
 
@@ -12,9 +17,12 @@ fi
 echo "Unused disks found:"
 echo "$unused_disks"
 
-# Delete each unused disk
 while read -r disk zone; do
-    echo "Deleting disk: $disk in zone: $zone"
-    gcloud compute disks delete "$disk" --zone="$zone" --quiet
+    if $DRY_RUN; then
+        echo "[DRY RUN] Would delete disk: $disk in zone: $zone"
+    else
+        echo "Deleting disk: $disk in zone: $zone"
+        gcloud compute disks delete "$disk" --zone="$zone" --quiet
+    fi
 done <<< "$unused_disks"
 
