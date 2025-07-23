@@ -2,12 +2,13 @@
 set -euo pipefail
 
 # List of buckets to update
-BUCKETS="bosh-core-stemcells bosh-core-stemcells-fips bosh-core-stemcells-candidate bosh-core-stemcells-candidate-fips"
+RELEASE_BUCKETS="bosh-core-stemcells bosh-core-stemcells-fips"
+CANDIDATE_BUCKETS="bosh-core-stemcells-candidate bosh-core-stemcells-candidate-fips"
 
-for bucket_name in $BUCKETS; do
+for bucket_name in $RELEASE_BUCKETS; do
     echo "Setting lifecycle policy for bucket: $bucket_name"
-    gcloud storage buckets update "$bucket_name" \
-      --lifecycle-file=<(cat <<EOF
+    tmpfile=$(mktemp)
+    cat <<EOF > "$tmpfile"
 {
   "rule": [
     {
@@ -17,7 +18,25 @@ for bucket_name in $BUCKETS; do
   ]
 }
 EOF
-)
+    gcloud storage buckets update "gs://$bucket_name" --lifecycle-file="$tmpfile"
+    rm -f "$tmpfile"
+done
+
+for bucket_name in $CANDIDATE_BUCKETS; do
+  echo "Setting lifecycle policy for bucket: $bucket_name"
+    tmpfile=$(mktemp)
+    cat <<EOF > "$tmpfile"
+{
+  "rule": [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 365}
+    }
+  ]
+}
+EOF
+    gcloud storage buckets update "gs://$bucket_name" --lifecycle-file="$tmpfile"
+    rm -f "$tmpfile"
 done
 
 echo "Done."
