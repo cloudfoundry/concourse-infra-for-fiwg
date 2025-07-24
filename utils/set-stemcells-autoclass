@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROJECT_ID="$1"
 AUTOCLASS="--enable-autoclass"
-if [[ "${2:-}" == "off" ]]; then
+if [[ "${1:-}" == "off" ]]; then
     AUTOCLASS="--no-enable-autoclass"
 fi
 
 
-echo "Fetching buckets in project ${PROJECT_ID} to apply autoclass '${AUTOCLASS}'…"
+echo "Fetching buckets to apply autoclass '${AUTOCLASS}'…"
 BUCKETS=$(gcloud storage buckets list \
-  --project="${PROJECT_ID}" \
   --format="value(name)")
 
 if [[ -z "$BUCKETS" ]]; then
-  echo "No buckets found in project ${PROJECT_ID}"
+  echo "No buckets found"
   exit 0
 fi
 
@@ -24,7 +22,6 @@ echo "$BUCKETS" | sed 's/^/  - /'
 for BUCKET in $BUCKETS; do
   echo "Enabling Autoclass on: $BUCKET"
   gcloud storage buckets update "gs://$BUCKET" \
-    --project="${PROJECT_ID}" \
     ${AUTOCLASS} \
     --quiet \
     && echo "   Autoclass enabled on $BUCKET" \
