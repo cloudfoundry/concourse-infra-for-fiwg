@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+AUTOCLASS="--enable-autoclass"
+if [[ "${1:-}" == "off" ]]; then
+    AUTOCLASS="--no-enable-autoclass"
+fi
+
+
+echo "Fetching buckets to apply autoclass '${AUTOCLASS}'…"
+BUCKETS=$(gcloud storage buckets list \
+  --format="value(name)")
+
+if [[ -z "$BUCKETS" ]]; then
+  echo "No buckets found"
+  exit 0
+fi
+
+echo "Found buckets:"
+echo "$BUCKETS" | sed 's/^/  - /'
+
+for BUCKET in $BUCKETS; do
+  echo "Enabling Autoclass on: $BUCKET"
+  gcloud storage buckets update "gs://$BUCKET" \
+    ${AUTOCLASS} \
+    --quiet \
+    && echo "   Autoclass enabled on $BUCKET" \
+    || echo "   Failed to enable Autoclass on $BUCKET"
+done
+
+
+echo "Done."
