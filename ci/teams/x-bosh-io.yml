@@ -1,0 +1,13 @@
+roles:
+  - name: owner
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-approvers
+    local:
+      users: ["ci-user"]
+  - name: viewer
+    github:
+      teams:
+      - cloudfoundry:wg-foundational-infrastructure-stemcell-release-engineering-bosh-reviewers
+    local:
+      users: []
