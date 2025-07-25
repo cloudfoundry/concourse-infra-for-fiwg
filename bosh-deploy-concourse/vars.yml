@@ -21,11 +21,11 @@ main_team.auth_config: |
       - "cloudfoundry:wg-foundational-infrastructure-integrated-databases-mysql-postgres-approvers"
 max_containers: 1000
 network_name: default
-postgres_host: ((postgres_host))
+postgres_host: ((postgres_host_new))
 postgres_password: ((postgres_concourse_user.password))
 postgres_port: 5432
 postgres_role: ((postgres_concourse_user.username))
-postgres_ca_cert: ((postgres_ca.certificate))
+postgres_ca_cert: ((postgres_ca_new.certificate))
 storage_driver: btrfs
 tls_port: 443
 uaa_db_password: ((postgres_uaa_user.password))
