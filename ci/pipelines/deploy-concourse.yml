@@ -384,7 +384,7 @@ jobs:
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
-              TEAMS: database main stemcell storage-cli uaa wg-docs x-bosh-io
+              TEAMS: databases main stemcell storage-cli uaa wg-docs x-bosh-io
               EXCLUDE_PIPELINE: deploy-concourse
           - put: paused-pipelines
             params:
