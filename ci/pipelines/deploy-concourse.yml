@@ -501,6 +501,7 @@ jobs:
             - concourse-deployment/cluster/operations/storage-driver.yml
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
+            - concourse-deployment/cluster/operations/update-stemcell.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
