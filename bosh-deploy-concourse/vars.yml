@@ -26,8 +26,8 @@ postgres_password: ((postgres_concourse_user.password))
 postgres_port: 5432
 postgres_role: ((postgres_concourse_user.username))
 postgres_ca_cert: ((postgres_ca.certificate))
-stemcell_alias: bosh-google-kvm-ubuntu-noble
-stemcell_os: ubuntu
+stemcell_alias: noble
+stemcell_os: ubuntu-noble
 storage_driver: btrfs
 tls_port: 443
 uaa_db_password: ((postgres_uaa_user.password))

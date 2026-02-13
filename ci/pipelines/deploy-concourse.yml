@@ -488,6 +488,7 @@ jobs:
           cleanup: true
           manifest: "concourse-deployment/cluster/concourse.yml"
           ops_files:
+            # update-stemcell.yml must come before external-postgres* ops files
             - concourse-deployment/cluster/operations/update-stemcell.yml
             - concourse-deployment/cluster/operations/uaa.yml
             - concourse-deployment/cluster/operations/credhub-colocated.yml
