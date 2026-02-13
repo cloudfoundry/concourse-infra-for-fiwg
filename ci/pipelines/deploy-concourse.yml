@@ -488,6 +488,7 @@ jobs:
           cleanup: true
           manifest: "concourse-deployment/cluster/concourse.yml"
           ops_files:
+            - concourse-deployment/cluster/operations/update-stemcell.yml
             - concourse-deployment/cluster/operations/uaa.yml
             - concourse-deployment/cluster/operations/credhub-colocated.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
@@ -502,7 +503,6 @@ jobs:
             - concourse-deployment/cluster/operations/storage-driver.yml
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
-#            - concourse-deployment/cluster/operations/update-stemcell.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
@@ -516,7 +516,6 @@ jobs:
             - bosh-community-ci-infra/bosh-deploy-concourse/uaa-uses-internal-ip.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/update-sections.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/web-lb-extension.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/update-stemcell-no-db.yml
           releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
