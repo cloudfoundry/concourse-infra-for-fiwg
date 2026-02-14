@@ -1,4 +1,11 @@
 ---
+stemcell_vars:
+  - &stemcell_bosh_io_name bosh-google-kvm-ubuntu-jammy-go_agent
+  - &stemcell_alias jammy
+  - &stemcell_os ubuntu-jammy
+#  - &stemcell_bosh_io_name bosh-google-kvm-ubuntu-noble
+#  - &stemcell_alias noble
+#  - &stemcell_os ubuntu-noble
 resource_types:
   - name: bosh-deployment
     type: docker-image
@@ -116,7 +123,7 @@ resources:
   - name: gcp-stemcell
     type: bosh-io-stemcell
     source:
-      name: bosh-google-kvm-ubuntu-noble
+      name: *stemcell_bosh_io_name
   - name: jumpbox-deployment
     type: git
     source:
@@ -438,6 +445,8 @@ jobs:
             vars:
               deployment_name: concourse-upgrader
               storage_driver: btrfs
+              stemcell_alias: *stemcell_alias
+              stemcell_os: *stemcell_os
               web_instances: 1
               web_ip: 10.0.0.50
               web_vm_type: concourse_web
