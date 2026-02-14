@@ -1,11 +1,11 @@
 ---
-stemcell_vars:
-  - &stemcell_bosh_io_name bosh-google-kvm-ubuntu-jammy-go_agent
-  - &stemcell_alias jammy
-  - &stemcell_os ubuntu-jammy
-#  - &stemcell_bosh_io_name bosh-google-kvm-ubuntu-noble
-#  - &stemcell_alias noble
-#  - &stemcell_os ubuntu-noble
+stemcell_bosh_io_name: &stemcell_bosh_io_name bosh-google-kvm-ubuntu-jammy-go_agent
+#stemcell_bosh_io_name: &stemcell_bosh_io_name bosh-google-kvm-ubuntu-noble
+stemcell_vars: &stemcell_vars
+  stemcell_alias: jammy
+  stemcell_os: ubuntu-jammy
+#  stemcell_alias: noble
+#  stemcell_os: ubuntu-noble
 resource_types:
   - name: bosh-deployment
     type: docker-image
@@ -445,13 +445,12 @@ jobs:
             vars:
               deployment_name: concourse-upgrader
               storage_driver: btrfs
-              stemcell_alias: *stemcell_alias
-              stemcell_os: *stemcell_os
               web_instances: 1
               web_ip: 10.0.0.50
               web_vm_type: concourse_web
               worker_instances: 1
               worker_vm_type: concourse_worker_2_8
+              <<: *stemcell_vars
             vars_files:
             - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
   - name: bosh-deploy-concourse
@@ -542,6 +541,7 @@ jobs:
             web_vm_type: concourse_web
             worker_instances: 4
             worker_vm_type: concourse_worker_16_64
+            <<: *stemcell_vars
           vars_files:
           - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
   - name: destroy-upgrader-deployment
