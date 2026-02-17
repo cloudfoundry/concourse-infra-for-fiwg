@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
 
 params:
   CONCOURSE_URL:
@@ -11,4 +11,4 @@ params:
   IGNORE_JOB: ""
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/deploy-concourse/wait-for-concourse-drain.sh
+  path: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/wait-for-concourse-drain.sh

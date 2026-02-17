@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
   - name: jumpbox-creds
   - name: jumpbox-deployment
   - name: jumpbox-state
@@ -16,4 +16,4 @@ params:
   GCP_CREDENTIALS_JSON:
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.sh
+  path: concourse-infra-for-fiwg/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.sh

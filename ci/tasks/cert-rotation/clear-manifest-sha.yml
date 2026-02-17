@@ -2,11 +2,11 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
   - name: state
 
 outputs:
   - name: state
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.sh
+  path: concourse-infra-for-fiwg/ci/tasks/cert-rotation/clear-manifest-sha.sh

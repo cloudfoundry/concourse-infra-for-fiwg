@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
   - name: paused-pipelines
 
 params:
@@ -11,4 +11,4 @@ params:
   CONCOURSE_PASSWORD: ((concourse_ci_user.password))
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/deploy-concourse/unpause-all-pipelines.sh
+  path: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/unpause-all-pipelines.sh

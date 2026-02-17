@@ -39,10 +39,10 @@ resources:
     type: git
     source:
       uri: https://github.com/cloudfoundry/bosh-deployment.git
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
     type: git
     source:
-      uri: git@github.com:cloudfoundry/bosh-community-stemcell-ci-infra.git
+      uri: git@github.com:cloudfoundry/concourse-infra-for-fiwg.git
       branch: main
       private_key: ((github_deploy_key_bosh-community-stemcell-ci-infra.private_key))
   - name: cf-deployment-concourse-tasks-registry-image
@@ -162,17 +162,17 @@ resources:
 jobs:
   - name: terraform
     plan:
-      - get: bosh-community-ci-infra
+      - get: concourse-infra-for-fiwg
       - put: terraform
         params:
-          terraform_source: bosh-community-ci-infra/terraform/concourse-gcp
+          terraform_source: concourse-infra-for-fiwg/terraform/concourse-gcp
 
   - name: regenerate-certs
     plan:
       - in_parallel:
           - get: monthly
             trigger: true
-          - get: bosh-community-ci-infra
+          - get: concourse-infra-for-fiwg
           - get: cf-deployment-concourse-tasks-registry-image
           - get: bosh-deployment
           - get: director-creds
@@ -182,14 +182,14 @@ jobs:
           - get: terraform
       - in_parallel:
           - task: remove-old-jumpbox-certs
-            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-certs.yml
+            file: concourse-infra-for-fiwg/ci/tasks/cert-rotation/rotate-certs.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               creds: jumpbox-creds
             output_mapping:
               creds: jumpbox-creds
           - task: remove-old-director-certs
-            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-certs.yml
+            file: concourse-infra-for-fiwg/ci/tasks/cert-rotation/rotate-certs.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               creds: director-creds
@@ -198,21 +198,21 @@ jobs:
             params:
               ROTATE_DIRECTOR: true
           - task: clear-director-manifest-sha
-            file: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.yml
+            file: concourse-infra-for-fiwg/ci/tasks/cert-rotation/clear-manifest-sha.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               state: director-state
             output_mapping:
               state: director-state
           - task: clear-jumpbox-manifest-sha
-            file: bosh-community-ci-infra/ci/tasks/cert-rotation/clear-manifest-sha.yml
+            file: concourse-infra-for-fiwg/ci/tasks/cert-rotation/clear-manifest-sha.yml
             image: cf-deployment-concourse-tasks-registry-image
             input_mapping:
               state: jumpbox-state
             output_mapping:
               state: jumpbox-state
           - task: regenerate-certificates-in-credhub
-            file: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-ca-certificate.yml
+            file: concourse-infra-for-fiwg/ci/tasks/cert-rotation/rotate-ca-certificate.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CREDHUB_CA_CERT: ((director_credhub_ca_cert.ca))
@@ -239,7 +239,7 @@ jobs:
   - name: create-jumpbox
     plan:
       - in_parallel:
-        - get: bosh-community-ci-infra
+        - get: concourse-infra-for-fiwg
         - get: cf-deployment-concourse-tasks-registry-image
         - get: gcp-cpi-release
         - get: gcp-stemcell
@@ -255,7 +255,7 @@ jobs:
           passed:
           - terraform
       - task: jumpbox-create-env
-        file: bosh-community-ci-infra/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.yml
+        file: concourse-infra-for-fiwg/ci/tasks/deploy-jumpbox/jumpbox-create-env-gcp.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           GCP_CREDENTIALS_JSON: ((gcp_credentials_json))
@@ -273,7 +273,7 @@ jobs:
     plan:
       - in_parallel:
         - get: bosh-deployment
-        - get: bosh-community-ci-infra
+        - get: concourse-infra-for-fiwg
         - get: cf-deployment-concourse-tasks-registry-image
         - get: director-creds
         - get: director-state
@@ -288,7 +288,7 @@ jobs:
           passed:
             - create-jumpbox
       - task: director-create-env
-        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/director-create-env-gcp.yml
+        file: concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/director-create-env-gcp.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           GCP_CREDENTIALS_JSON: ((gcp_credentials_json))
@@ -302,10 +302,10 @@ jobs:
                 params:
                   file: director-state/state.json
       - task: update-credhub-credentials
-        file: bosh-community-ci-infra/ci/tasks/update-credhub-credentials/update-credhub-credentials.yml
+        file: concourse-infra-for-fiwg/ci/tasks/update-credhub-credentials/update-credhub-credentials.yml
         image: cf-deployment-concourse-tasks-registry-image
       - task: create-director-creds-source
-        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/create-director-creds-source.yml
+        file: concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/create-director-creds-source.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           BOSH_CA_CERT: ((director_ca_cert.ca))
@@ -323,7 +323,7 @@ jobs:
         params:
           file: director-creds-source/creds-source.sh
       - task: create-concourse-creds-source
-        file: bosh-community-ci-infra/ci/tasks/deploy-concourse/create-concourse-creds-source.yml
+        file: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/create-concourse-creds-source.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           CREDHUB_CLIENT: ((director_credhub_admin.username))
@@ -338,14 +338,14 @@ jobs:
         params:
           file: concourse-creds-source/creds-source.sh
       - task: update-director-configs
-        file: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/update-director-configs.yml
+        file: concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/update-director-configs.yml
         image: cf-deployment-concourse-tasks-registry-image
         params:
           BOSH_CA_CERT: ((director_ca_cert.ca))
           BOSH_CLIENT: ((director_admin.username))
           BOSH_CLIENT_SECRET: ((director_admin.password))
           BOSH_ENVIRONMENT: ((director_target))
-          CLOUD_CONFIG_PATH: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/cloud-config.yml
+          CLOUD_CONFIG_PATH: concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/cloud-config.yml
           JUMPBOX_PRIVATE_KEY: ((jumpbox_ssh.private_key))
           JUMPBOX_URL: ((jumpbox_url))
       - task: cleanup-bosh-director
@@ -369,7 +369,7 @@ jobs:
     plan:
       - in_parallel:
         - put: time-trigger
-        - get: bosh-community-ci-infra
+        - get: concourse-infra-for-fiwg
         - get: bpm-bosh-release
         - get: cf-deployment-concourse-tasks-registry-image
         - get: concourse-bosh-release
@@ -384,7 +384,7 @@ jobs:
       - in_parallel:
         - do:
           - task: pause-all-pipelines
-            file: bosh-community-ci-infra/ci/tasks/deploy-concourse/pause-all-pipelines.yml
+            file: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/pause-all-pipelines.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
@@ -394,7 +394,7 @@ jobs:
             params:
               file: paused-pipelines/pipelines.tgz
           - task: wait-for-concourse-drain
-            file: bosh-community-ci-infra/ci/tasks/deploy-concourse/wait-for-concourse-drain.yml
+            file: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/wait-for-concourse-drain.yml
             image: cf-deployment-concourse-tasks-registry-image
             params:
               CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
@@ -420,20 +420,20 @@ jobs:
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
             - concourse-deployment/cluster/operations/enable-global-resources.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/worker-container-overrides.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/tls-port.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/uaa-uses-internal-ip.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/update-sections.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/web-lb-extension.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/update-variables-for-upgrader.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/add-local-user.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/concourse-build-log-retention.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/container-placement-strategies.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/longer-login.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/worker-container-overrides.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/postgres-updates.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/remove-release-metadata.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/static-web-ip.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/tls-port.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/uaa-uses-internal-ip.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/update-sections.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/web-lb-extension.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/update-variables-for-upgrader.yml
             releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
@@ -452,12 +452,12 @@ jobs:
               containerd_dns_servers: 8.8.8.8
               <<: *stemcell_vars
             vars_files:
-            - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/vars.yml
   - name: bosh-deploy-concourse
     serial_groups: [ concourse-deploy ]
     plan:
       - in_parallel:
-        - get: bosh-community-ci-infra
+        - get: concourse-infra-for-fiwg
           tags: [upgrader]
         - get: bpm-bosh-release
           tags: [upgrader]
@@ -512,19 +512,19 @@ jobs:
             - concourse-deployment/cluster/operations/storage-driver.yml
             - concourse-deployment/cluster/operations/tls-vars.yml
             - concourse-deployment/cluster/operations/tls-port.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/add-local-user.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/concourse-build-log-retention.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/worker-container-overrides.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/tls-port.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/uaa-uses-internal-ip.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/update-sections.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/web-lb-extension.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/add-local-user.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/concourse-build-log-retention.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/container-placement-strategies.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/longer-login.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/worker-container-overrides.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/postgres-updates.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/remove-release-metadata.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/static-web-ip.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/tls-port.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/uaa-uses-internal-ip.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/update-sections.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/web-lb-extension.yml
           releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
@@ -544,7 +544,7 @@ jobs:
             containerd_dns_servers: 8.8.8.8
             <<: *stemcell_vars
           vars_files:
-          - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
+          - concourse-infra-for-fiwg/bosh-deploy-concourse/vars.yml
   - name: destroy-upgrader-deployment
     serial_groups: [ concourse-deploy ]
     plan:
@@ -563,11 +563,11 @@ jobs:
         trigger: true
         passed:
         - destroy-upgrader-deployment
-      - get: bosh-community-ci-infra
+      - get: concourse-infra-for-fiwg
       - get: cf-deployment-concourse-tasks-registry-image
       - get: paused-pipelines
     - task: unpause-all-pipelines
-      file: bosh-community-ci-infra/ci/tasks/deploy-concourse/unpause-all-pipelines.yml
+      file: concourse-infra-for-fiwg/ci/tasks/deploy-concourse/unpause-all-pipelines.yml
       image: cf-deployment-concourse-tasks-registry-image
       params:
         CONCOURSE_URL: https://bosh.ci.cloudfoundry.org/
