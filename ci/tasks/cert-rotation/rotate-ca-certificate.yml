@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
 
 params:
   CREDHUB_CA_CERT:
@@ -14,4 +14,4 @@ params:
   CAS_TO_ROTATE:
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/cert-rotation/rotate-ca-certificate.rb
+  path: concourse-infra-for-fiwg/ci/tasks/cert-rotation/rotate-ca-certificate.rb

@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: bosh-community-ci-infra
+  - name: concourse-infra-for-fiwg
   - name: director-creds
 
 outputs:
@@ -22,4 +22,4 @@ params:
   JUMPBOX_URL:
 
 run:
-  path: bosh-community-ci-infra/ci/tasks/deploy-bosh-director/create-director-creds-source.sh
+  path: concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/create-director-creds-source.sh
