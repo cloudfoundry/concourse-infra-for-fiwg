@@ -426,7 +426,7 @@ jobs:
             - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/modify-max-containers.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/worker-container-overrides.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
@@ -517,7 +517,7 @@ jobs:
             - bosh-community-ci-infra/bosh-deploy-concourse/container-placement-strategies.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/enable-cache-streamed-volumes.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/longer-login.yml
-            - bosh-community-ci-infra/bosh-deploy-concourse/modify-max-containers.yml
+            - bosh-community-ci-infra/bosh-deploy-concourse/worker-container-overrides.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/postgres-updates.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/remove-release-metadata.yml
             - bosh-community-ci-infra/bosh-deploy-concourse/static-web-ip.yml
@@ -541,6 +541,7 @@ jobs:
             web_vm_type: concourse_web
             worker_instances: 4
             worker_vm_type: concourse_worker_16_64
+            containerd_dns_servers: 8.8.8.8
             <<: *stemcell_vars
           vars_files:
           - bosh-community-ci-infra/bosh-deploy-concourse/vars.yml
