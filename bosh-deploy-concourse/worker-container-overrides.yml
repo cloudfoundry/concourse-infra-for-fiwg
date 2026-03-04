@@ -1,5 +1,5 @@
 - type: replace
-  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd/allowed_devices?
+  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd?/allowed_devices?
   value:
     - b 7:* rwm
     - b 252:* rwm
@@ -7,10 +7,10 @@
     - c 10:237 rwm
 
 - type: replace
-  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd/dns_servers
+  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd?/dns_servers
   value:
     - ((containerd_dns_servers))
 
 - type: replace
-  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd/max_containers
+  path: /instance_groups/name=worker/jobs/name=worker/properties/containerd?/max_containers
   value: ((max_containers))
