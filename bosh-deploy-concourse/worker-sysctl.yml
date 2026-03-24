@@ -1,0 +1,14 @@
+- type: replace
+  path: /releases/-
+  value:
+    name: os-conf
+    version: latest
+
+- type: replace
+  path: /instance_groups/name=worker/jobs/-
+  value:
+    name: sysctl
+    release: os-conf
+    properties:
+      sysctl:
+        - kernel.apparmor_restrict_unprivileged_userns=0

@@ -380,6 +380,7 @@ jobs:
           trigger: true
           passed:
             - create-director
+        - get: os-conf-release
         - get: uaa-bosh-release
       - in_parallel:
         - do:
@@ -433,11 +434,13 @@ jobs:
             - concourse-infra-for-fiwg/bosh-deploy-concourse/uaa-uses-internal-ip.yml
             - concourse-infra-for-fiwg/bosh-deploy-concourse/update-sections.yml
             - concourse-infra-for-fiwg/bosh-deploy-concourse/web-lb-extension.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/worker-sysctl.yml
             - concourse-infra-for-fiwg/bosh-deploy-concourse/update-variables-for-upgrader.yml
             releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
             - credhub-bosh-release/release.tgz
+            - os-conf-release/release.tgz
             - uaa-bosh-release/release.tgz
             stemcells:
             - gcp-stemcell/stemcell.tgz
@@ -486,6 +489,10 @@ jobs:
           trigger: true
           passed:
           - bosh-deploy-upgrader-concourse
+        - get: os-conf-release
+          tags: [upgrader]
+          passed:
+          - bosh-deploy-upgrader-concourse
         - get: uaa-bosh-release
           tags: [upgrader]
           passed:
@@ -525,10 +532,12 @@ jobs:
             - concourse-infra-for-fiwg/bosh-deploy-concourse/uaa-uses-internal-ip.yml
             - concourse-infra-for-fiwg/bosh-deploy-concourse/update-sections.yml
             - concourse-infra-for-fiwg/bosh-deploy-concourse/web-lb-extension.yml
+            - concourse-infra-for-fiwg/bosh-deploy-concourse/worker-sysctl.yml
           releases:
             - bpm-bosh-release/release.tgz
             - concourse-bosh-release/release.tgz
             - credhub-bosh-release/release.tgz
+            - os-conf-release/release.tgz
             - uaa-bosh-release/release.tgz
           stemcells:
             - gcp-stemcell/stemcell.tgz
