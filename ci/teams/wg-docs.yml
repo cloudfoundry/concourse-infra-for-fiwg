@@ -3,5 +3,6 @@ roles:
     github:
       teams:
       - cloudfoundry:wg-documentation-docs-approvers
+      - cloudfoundry:toc
     local:
       users: ["ci-user"]
