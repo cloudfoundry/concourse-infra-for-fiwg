@@ -5,11 +5,11 @@ stemcell_vars: &stemcell_vars
   stemcell_os: ubuntu-noble
 resource_types:
   - name: bosh-deployment
-    type: docker-image
+    type: registry-image
     source:
       repository: cloudfoundry/bosh-deployment-resource
   - name: gcs-resource
-    type: docker-image
+    type: registry-image
     source:
       repository: frodenas/gcs-resource
       username: ((dockerhub_username))
