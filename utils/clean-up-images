@@ -2,19 +2,19 @@
 set -euo pipefail
 
 # Check for GNU vs BSD date compatibility: GNU uses '-d', BSD (macOS) uses '-v'
-if date -u -d '1 year ago' +%Y-%m-%dT%H:%M:%S >/dev/null 2>&1; then
-  ONE_YEAR_AGO=$(date -u -d '1 year ago' +%Y-%m-%dT%H:%M:%S)
+if date -u -d '1 month ago' +%Y-%m-%dT%H:%M:%S >/dev/null 2>&1; then
+  ONE_MONTH_AGO=$(date -u -d '1 month ago' +%Y-%m-%dT%H:%M:%S)
 else
-  ONE_YEAR_AGO=$(date -u -v-1y +%Y-%m-%dT%H:%M:%S)
+  ONE_MONTH_AGO=$(date -u -v-1m +%Y-%m-%dT%H:%M:%S)
 fi
 
 IMAGES_TO_DELETE=$(gcloud compute images list \
-  --filter="name~^stemcell-[a-zA-Z0-9]{8}- AND creationTimestamp<'$ONE_YEAR_AGO'" \
+  --filter="name~^stemcell-[a-zA-Z0-9]{8}- AND creationTimestamp<'$ONE_MONTH_AGO'" \
   --format="value(name,creationTimestamp)")
 
 
 if [ -z "$IMAGES_TO_DELETE" ]; then
-  echo "No images older than one year found matching pattern 'stemcell-<quid>-'."
+  echo "No images older than one month found matching pattern 'stemcell-<quid>-'."
 else
   echo "The following images older than one year would be deleted (name, creation date):"
   echo "$IMAGES_TO_DELETE"
