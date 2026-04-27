@@ -18,6 +18,8 @@ else
   if [[ "${1:-}" == "delete" ]]; then
     echo "Deleting buckets..."
     echo "$BUCKETS_WITH_SINGLE_TARGZ" | while read bucket; do
+      bucket_name="${bucket#gs://}"
+      gcloud storage rm "${bucket}/${bucket_name}.tar.gz"
       gcloud storage buckets delete "$bucket"
     done
     echo "Buckets deleted."
