@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Check for buckets with pattern 'stemcell-*' older than a month containing one .tar.gz artifact matching the bucket name
+BUCKETS_WITH_SINGLE_TARGZ=$(gcloud storage buckets list --filter="name~^stemcell-[a-zA-Z0-9]{8}- AND timeCreated<-P1M" --format="value(name)" 2>/dev/null | while IFS= read -r bucket; do
+  object_name=$(gcloud storage objects list "gs://$bucket" --limit=2 --format="value(name)" 2>/dev/null)
+  object_count=$(echo "$object_name" | grep -c . || true)
+  if [ "$object_count" -eq 1 ] && [[ "$object_name" == "${bucket}.tar.gz" ]]; then
+    echo "gs://$bucket"
+  fi
+done)
+
+if [ -z "$BUCKETS_WITH_SINGLE_TARGZ" ]; then
+  echo "No buckets found matching pattern 'stemcell-*' with a single .tar.gz artifact."
+else
+  echo "The following buckets contain a single .tar.gz artifact:"
+  echo "$BUCKETS_WITH_SINGLE_TARGZ"
+  if [[ "${1:-}" == "delete" ]]; then
+    echo "Deleting buckets..."
+    echo "$BUCKETS_WITH_SINGLE_TARGZ" | while read bucket; do
+      bucket_name="${bucket#gs://}"
+      gcloud storage rm "${bucket}/${bucket_name}.tar.gz"
+      gcloud storage buckets delete "$bucket"
+    done
+    echo "Buckets deleted."
+  else
+    echo "Dry run mode: No buckets were deleted. Pass 'delete' as an argument to actually delete."
+  fi
+fi
+
+
+echo "Done."
