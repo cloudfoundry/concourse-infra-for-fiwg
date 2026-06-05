@@ -102,8 +102,8 @@ resource "google_compute_firewall" "bosh-internal" {
     protocol = "all"
   }
 
-  source_tags = ["bosh-deployed", "test-stemcells-bats", "test-stemcells-ipv4"]
-  target_tags = ["bosh-deployed", "test-stemcells-bats", "test-stemcells-ipv4"]
+  source_tags = ["bosh-deployed", "test-stemcells-ipv4", "test-stemcells-jammy", "test-stemcells-noble"]
+  target_tags = ["bosh-deployed", "test-stemcells-ipv4", "test-stemcells-jammy", "test-stemcells-noble"]
 }
 
 resource "google_compute_address" "concourse_lb" {
