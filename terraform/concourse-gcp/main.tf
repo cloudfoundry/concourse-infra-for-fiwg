@@ -165,3 +165,42 @@ resource "google_compute_forwarding_rule" "concourse_forwarding_rule_worker" {
   port_range = "2222-2222"
   ip_address = google_compute_address.concourse_lb.address
 }
+
+resource "google_sql_database_instance" "concourse" {
+  name                = "concourse"
+  database_version    = "POSTGRES_13"
+  region              = "${var.region}"
+  deletion_protection = true
+
+  settings {
+    availability_type     = "REGIONAL"
+    activation_policy     = "ALWAYS"
+    disk_type             = "PD_SSD"
+    disk_size             = 100
+    disk_autoresize       = "true"
+    disk_autoresize_limit = "0"
+    tier                  = "db-custom-1-4096"
+    pricing_plan          = "PER_USE"
+
+    backup_configuration {
+      enabled                       = true
+      binary_log_enabled            = false
+      backup_retention_settings {
+        retained_backups = 7
+        retention_unit   = "COUNT"
+      }
+      point_in_time_recovery_enabled = true
+      start_time                     = "00:00"
+      transaction_log_retention_days = 7
+    }
+
+    ip_configuration {
+      ipv4_enabled    = true
+      private_network = "projects/${var.project_id}/global/networks/${var.name}"
+    }
+
+    location_preference {
+      zone = "${var.zone}"
+    }
+  }
+}
