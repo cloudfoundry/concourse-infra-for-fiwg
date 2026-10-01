@@ -23,6 +23,7 @@ echo "${GCP_CREDENTIALS_JSON}" > "${gcp_credentials_file}"
 
 bosh create-env "${WORKSPACE_DIR}/jumpbox-deployment/jumpbox.yml" \
   -o "${WORKSPACE_DIR}/jumpbox-deployment/gcp/cpi.yml" \
+  -o "${WORKSPACE_DIR}/concourse-infra-for-fiwg/ci/tasks/deploy-jumpbox/gcp-labels.yml" \
   --state "${WORKSPACE_DIR}/jumpbox-state/state.json" \
   --vars-store "${WORKSPACE_DIR}/jumpbox-creds/creds.yml" \
   -v external_ip="${jumpbox_ip}" \

@@ -1,0 +1,4 @@
+- path: /resource_pools/name=vms/cloud_properties/labels?
+  type: replace
+  value:
+    pipeline: concourse-infra-for-fiwg
