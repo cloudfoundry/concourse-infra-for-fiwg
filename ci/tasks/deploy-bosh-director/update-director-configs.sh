@@ -51,4 +51,5 @@ bosh -n update-cloud-config "${CLOUD_CONFIG_PATH}" \
 
 bosh -n update-runtime-config \
   --name dns \
-  "${WORKSPACE_DIR}/bosh-deployment/runtime-configs/dns.yml"
+  "${WORKSPACE_DIR}/bosh-deployment/runtime-configs/dns.yml" \
+  --ops-file "${WORKSPACE_DIR}/concourse-infra-for-fiwg/ci/tasks/deploy-bosh-director/gcp-labels-runtime-config.yml"

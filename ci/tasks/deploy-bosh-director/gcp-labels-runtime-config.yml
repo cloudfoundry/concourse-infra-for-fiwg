@@ -1,0 +1,4 @@
+- path: /tags?
+  type: replace
+  value:
+    pipeline: concourse-infra-for-fiwg

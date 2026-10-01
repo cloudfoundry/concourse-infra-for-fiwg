@@ -13,6 +13,13 @@ provider "google" {
   region      = var.region
 }
 
+locals {
+  # GCP resource labels used for cost attribution.
+  labels = {
+    pipeline = "concourse-infra-for-fiwg"
+  }
+}
+
 resource "google_compute_network" "network" {
   name                    = var.name
   auto_create_subnetworks = "false"
@@ -62,6 +69,7 @@ resource "google_compute_router_nat" "nat" {
 resource "google_compute_address" "jumpbox" {
   name   = "${var.name}-jumpbox-ip"
   region = var.region
+  labels = local.labels
 }
 
 resource "google_compute_firewall" "mbus-jumpbox" {
@@ -109,6 +117,7 @@ resource "google_compute_firewall" "bosh-internal" {
 resource "google_compute_address" "concourse_lb" {
   name   = "${var.name}-concourse-web-ip"
   region = var.region
+  labels = local.labels
 }
 
 resource "google_compute_firewall" "concourse-web-ingress" {
