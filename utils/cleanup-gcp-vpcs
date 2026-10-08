@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+toda_utc=$(date -u +%Y-%m-%d)
+
+GCP_PROJECT="${1:-${GCP_PROJECT:-"cloud-foundry-310819"}}"
+ENV_PREFIX="${2:-${ENV_PREFIX:-"bbl-env-"}}"
+TIMESTAMP="${3:-${TIMESTAMP:-${toda_utc}}}"
+
+echo "=========================================================================="
+echo " Scanning for VPCs..."
+echo "           GCP Project:    '${GCP_PROJECT}'"
+echo "           BBL Prefix:     '${ENV_PREFIX}'"
+echo "           Created Before: '${TIMESTAMP}'"
+echo ""
+
+# Fetch both name and creation date, then filter for ENV_PREFIX
+RAW_LIST=$(
+  gcloud compute networks list \
+    --project="${GCP_PROJECT}" \
+    --format="value(name, creationTimestamp)" \
+    --filter="creationTimestamp<${TIMESTAMP}" \
+  | grep "${ENV_PREFIX}"
+)
+
+# Check if the list is empty
+if [ -z "$RAW_LIST" ]; then
+  echo "No VPCs found matching the criteria. Exiting."
+  exit 0
+fi
+
+# ---------------------------------------------------------
+# PREAMBLE & CONFIRMATION
+# ---------------------------------------------------------
+echo "=========================================================================="
+echo "                   🔥 VPC TEARDOWN PRE-CHECK 🔥"
+echo "=========================================================================="
+echo "The following VPCs (and ALL their associated resources) will be DESTROYED:"
+echo ""
+
+# Print header
+printf "%-55s %s\n" "VPC NAME" "CREATION DATE"
+printf "%-55s %s\n" "-------------------------------------------------------" "------------------------"
+
+VPC_NAMES=""
+
+# Read the raw list line by line to display it and extract just the names
+while read -r NAME CREATED; do
+  printf "%-55s %s\n" "${NAME}" "${CREATED}"
+  VPC_NAMES="${VPC_NAMES} ${NAME}"
+done <<< "${RAW_LIST}"
+
+echo ""
+echo "⚠️  CRITICAL WARNING: This action is irreversible and uses the --quiet flag!"
+read -p "Are you absolutely sure you want to proceed? (y/N): " CONFIRM
+
+if [[ "${CONFIRM}" != "y" && "${CONFIRM}" != "Y" ]]; then
+  echo "Teardown aborted by user. Exiting safely."
+  exit 0
+fi
+
+echo ""
+echo "Proceeding with teardown..."
+echo ""
+
+# ---------------------------------------------------------
+# EXECUTE TEARDOWN LOOP
+# ---------------------------------------------------------
+for vpc in ${VPC_NAMES}; do
+  echo "================================================="
+  echo "🚨 INITIATING TOTAL TEARDOWN FOR VPC: "${vpc}""
+  echo "================================================="
+
+  # 1. DELETE VIRTUAL MACHINES (VMs)
+  echo "[1/6] Scanning for Compute Engine Instances..."
+  gcloud compute instances list \
+    --project="${GCP_PROJECT}" \
+    --filter="networkInterfaces.network:"${vpc}"" \
+    --format="value(name,zone)" | while read -r INSTANCE ZONE; do
+    if [ -n "${INSTANCE}" ]; then
+      echo "      -> Deleting VM: ${INSTANCE} in zone ${ZONE}"
+      gcloud compute instances delete "${INSTANCE}" --zone="${ZONE}" --project="${GCP_PROJECT}" --quiet
+    fi
+  done
+
+  # 2. DELETE FIREWALL RULES
+  echo "[2/6] Scanning for Firewall Rules..."
+  gcloud compute firewall-rules list \
+    --project="${GCP_PROJECT}" \
+    --filter="network:"${vpc}"" \
+    --format="value(name)" | while read -r FIREWALL; do
+    if [ -n "${FIREWALL}" ]; then
+      echo "      -> Deleting Firewall: ${FIREWALL}"
+      gcloud compute firewall-rules delete "${FIREWALL}" --project="${GCP_PROJECT}" --quiet
+    fi
+  done
+
+  # 3. DELETE CLOUD ROUTERS AND NATS
+  echo "[3/6] Scanning for Cloud Routers and NATs..."
+  gcloud compute routers list \
+    --project="${GCP_PROJECT}" \
+    --filter="network:"${vpc}"" \
+    --format="value(name,region)" | while read -r ROUTER REGION; do
+    if [ -n "${ROUTER}" ]; then
+      # Delete NATs attached to the router first
+      gcloud compute routers nats list \
+        --router="${ROUTER}" \
+        --region="${REGION}" \
+        --project="${GCP_PROJECT}" \
+        --format="value(name)" | while read -r NAT; do
+        if [ -n "${NAT}" ]; then
+          echo "      -> Deleting Cloud NAT: ${NAT} on Router ${ROUTER}"
+          gcloud compute routers nats delete "${NAT}" --router="${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
+        fi
+      done
+
+      # Now delete the Router itself
+      echo "      -> Deleting Cloud Router: ${ROUTER} in region ${REGION}"
+      gcloud compute routers delete "${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
+    fi
+  done
+
+  # 4. DELETE SUBNETS
+  echo "[4/6] Scanning for Subnets..."
+  gcloud compute networks subnets list \
+    --project="${GCP_PROJECT}" \
+    --network="${vpc}" \
+    --format="value(name,region)" | while read -r SUBNET REGION; do
+    if [ -n "${SUBNET}" ]; then
+      echo "      -> Deleting Subnet: ${SUBNET} in region ${REGION}"
+      gcloud compute networks subnets delete "${SUBNET}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
+    fi
+  done
+
+  # 5. DELETE ROUTES
+  echo "[5/6] Scanning for lingering Routes..."
+  gcloud compute routes list \
+    --project="${GCP_PROJECT}" \
+    --filter="network:"${vpc}"" \
+    --format="value(name)" | while read -r ROUTE; do
+    if [ -n "${ROUTE}" ]; then
+      echo "      -> Deleting Route: ${ROUTE}"
+      gcloud compute routes delete "${ROUTE}" --project="${GCP_PROJECT}" --quiet
+    fi
+  done
+
+  # 6. DELETE THE VPC NETWORK
+  echo "[6/6] Attempting to delete VPC Network: "${vpc}"..."
+  gcloud compute networks delete ""${vpc}"" --project="${GCP_PROJECT}" --quiet
+
+  if [ $? -eq 0 ]; then
+    echo "✅ Successfully destroyed VPC: "${vpc}""
+  else
+    echo "❌ Failed to delete "${vpc}". (Check for Peering connections or Forwarding Rules)."
+  fi
+
+done
