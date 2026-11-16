@@ -20,7 +20,7 @@ RAW_LIST=$(
     --project="${GCP_PROJECT}" \
     --format="value(name, creationTimestamp)" \
     --filter="creationTimestamp<${TIMESTAMP}" \
-  | grep "${ENV_PREFIX}"
+  | grep "${ENV_PREFIX}" || true
 )
 
 # Check if the list is empty
@@ -68,18 +68,19 @@ echo ""
 # ---------------------------------------------------------
 for vpc in ${VPC_NAMES}; do
   echo "================================================="
-  echo "🚨 INITIATING TOTAL TEARDOWN FOR VPC: "${vpc}""
+  echo "🚨 INITIATING TOTAL TEARDOWN FOR VPC: ${vpc}"
   echo "================================================="
 
   # 1. DELETE VIRTUAL MACHINES (VMs)
   echo "[1/6] Scanning for Compute Engine Instances..."
   gcloud compute instances list \
     --project="${GCP_PROJECT}" \
-    --filter="networkInterfaces.network:"${vpc}"" \
+    --filter="networkInterfaces.network:${vpc}" \
     --format="value(name,zone)" | while read -r INSTANCE ZONE; do
     if [ -n "${INSTANCE}" ]; then
       echo "      -> Deleting VM: ${INSTANCE} in zone ${ZONE}"
-      gcloud compute instances delete "${INSTANCE}" --zone="${ZONE}" --project="${GCP_PROJECT}" --quiet
+      gcloud compute instances delete "${INSTANCE}" --zone="${ZONE}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+        echo "      -> (Skipped ${INSTANCE}: Failed to delete or already gone)"
     fi
   done
 
@@ -87,11 +88,12 @@ for vpc in ${VPC_NAMES}; do
   echo "[2/6] Scanning for Firewall Rules..."
   gcloud compute firewall-rules list \
     --project="${GCP_PROJECT}" \
-    --filter="network:"${vpc}"" \
+    --filter="network:${vpc}" \
     --format="value(name)" | while read -r FIREWALL; do
     if [ -n "${FIREWALL}" ]; then
       echo "      -> Deleting Firewall: ${FIREWALL}"
-      gcloud compute firewall-rules delete "${FIREWALL}" --project="${GCP_PROJECT}" --quiet
+      gcloud compute firewall-rules delete "${FIREWALL}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+        echo "      -> (Skipped ${FIREWALL}: Failed to delete or already gone)"
     fi
   done
 
@@ -99,7 +101,7 @@ for vpc in ${VPC_NAMES}; do
   echo "[3/6] Scanning for Cloud Routers and NATs..."
   gcloud compute routers list \
     --project="${GCP_PROJECT}" \
-    --filter="network:"${vpc}"" \
+    --filter="network:${vpc}" \
     --format="value(name,region)" | while read -r ROUTER REGION; do
     if [ -n "${ROUTER}" ]; then
       # Delete NATs attached to the router first
@@ -110,48 +112,61 @@ for vpc in ${VPC_NAMES}; do
         --format="value(name)" | while read -r NAT; do
         if [ -n "${NAT}" ]; then
           echo "      -> Deleting Cloud NAT: ${NAT} on Router ${ROUTER}"
-          gcloud compute routers nats delete "${NAT}" --router="${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
+          gcloud compute routers nats delete "${NAT}" --router="${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+            echo "      -> (Skipped NAT ${NAT}: Failed to delete or already gone)"
         fi
       done
 
       # Now delete the Router itself
       echo "      -> Deleting Cloud Router: ${ROUTER} in region ${REGION}"
-      gcloud compute routers delete "${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
+      gcloud compute routers delete "${ROUTER}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+        echo "      -> (Skipped Router ${ROUTER}: Failed to delete or already gone)"
     fi
   done
 
   # 4. DELETE SUBNETS
   echo "[4/6] Scanning for Subnets..."
-  gcloud compute networks subnets list \
-    --project="${GCP_PROJECT}" \
-    --network="${vpc}" \
-    --format="value(name,region)" | while read -r SUBNET REGION; do
-    if [ -n "${SUBNET}" ]; then
-      echo "      -> Deleting Subnet: ${SUBNET} in region ${REGION}"
-      gcloud compute networks subnets delete "${SUBNET}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet
-    fi
-  done
+  AUTO_MODE=$(gcloud compute networks describe "${vpc}" --project="${GCP_PROJECT}" --format="value(autoCreateSubnetworks)")
+  
+  if [[ "${AUTO_MODE}" == "True" || "${AUTO_MODE}" == "true" ]]; then
+    echo "      -> Network is in auto-subnet mode. Skipping explicit subnet deletion."
+  else
+    gcloud compute networks subnets list \
+      --project="${GCP_PROJECT}" \
+      --network="${vpc}" \
+      --format="value(name,region)" | while read -r SUBNET REGION; do
+      if [ -n "${SUBNET}" ]; then
+        echo "      -> Deleting Custom Subnet: ${SUBNET} in region ${REGION}"
+        gcloud compute networks subnets delete "${SUBNET}" --region="${REGION}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+          echo "      -> (Skipped Subnet ${SUBNET}: Failed to delete or already gone)"
+      fi
+    done
+  fi
 
-  # 5. DELETE ROUTES
+  # 5. DELETE ROUTES (FIXED)
   echo "[5/6] Scanning for lingering Routes..."
   gcloud compute routes list \
     --project="${GCP_PROJECT}" \
-    --filter="network:"${vpc}"" \
+    --filter="network:${vpc}" \
     --format="value(name)" | while read -r ROUTE; do
     if [ -n "${ROUTE}" ]; then
-      echo "      -> Deleting Route: ${ROUTE}"
-      gcloud compute routes delete "${ROUTE}" --project="${GCP_PROJECT}" --quiet
+      echo "      -> Attempting to delete Route: ${ROUTE}"
+      # Route deletion fails intentionally on local routes. This hides the error and allows the loop to continue.
+      gcloud compute routes delete "${ROUTE}" --project="${GCP_PROJECT}" --quiet 2>/dev/null || \
+        echo "      -> (Skipped ${ROUTE}: Likely a protected system route)"
     fi
   done
 
   # 6. DELETE THE VPC NETWORK
-  echo "[6/6] Attempting to delete VPC Network: "${vpc}"..."
-  gcloud compute networks delete ""${vpc}"" --project="${GCP_PROJECT}" --quiet
-
+  echo "[6/6] Attempting to delete VPC Network: ${vpc}..."
+  set +e
+  gcloud compute networks delete "${vpc}" --project="${GCP_PROJECT}" --quiet
+  
   if [ $? -eq 0 ]; then
-    echo "✅ Successfully destroyed VPC: "${vpc}""
+    echo "✅ Successfully destroyed VPC: ${vpc}"
   else
-    echo "❌ Failed to delete "${vpc}". (Check for Peering connections or Forwarding Rules)."
+    echo "❌ Failed to delete ${vpc}. (Check for Peering connections or Forwarding Rules)."
   fi
+  set -e
 
 done
